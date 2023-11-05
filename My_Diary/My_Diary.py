@@ -555,7 +555,7 @@ class Program(customtkinter.CTk, My_Diary_interface.My_Diary_interface):
 		self.main_screen_redo_button.grid_forget()
 		self.main_screen_word_counter.place_forget()
 
-	def __save_text_as__(self, event) -> None:
+	def __save_text_as__(self, event: str) -> None:
 		try:
 			with open(tkinter.filedialog.asksaveasfilename(filetypes=[("All Files (*.*)", "*.*"), ("Text file (*.txt)", "*.txt"), ("Python file (*.py)", "*.py"), ("Java file (*.java)", "*.java"), ("C# file (*.cs)", "*.cs"), ("HTML file (*.html)", "*.html"), ("CSS file (*.css)", "*.css"), ("JavaScript file (*.js)", "*.js"), ("C++ file (*.cpp)", "*.cpp")], defaultextension=[("All Files (*.*)", "*.*"), ("Text file (*.txt)", "*.txt"), ("Python file (*.py)", "*.py"), ("Java file (*.java)", "*.java"), ("C# file (*.cs)", "*.cs"), ("HTML file (*.html)", "*.html"), ("CSS file (*.css)", "*.css"), ("JavaScript file (*.js)", "*.js"), ("C++ file (*.cpp)", "*.cpp")]), "w+", encoding="UTF-8") as self.file:
 				self.file_data: str = self.main_screen_frame_textbox.get("1.0", tkinter.END)
@@ -688,7 +688,7 @@ class Program(customtkinter.CTk, My_Diary_interface.My_Diary_interface):
 		self.main_screen_redo_button.grid_forget()
 		self.main_screen_word_counter.place_forget()
 
-	def __open_file__(self, event) -> None:
+	def __open_file__(self, event: str) -> None:
 		try:
 			with open(tkinter.filedialog.askopenfilename(title="open file", filetypes=[("All Files (*.*)", "*.*"), ("Text file (*.txt)", "*.txt"), ("Python file (*.py)", "*.py"), ("Java file (*.java)", "*.java"), ("C# file (*.cs)", "*.cs"), ("HTML file (*.html)", "*.html"), ("CSS file (*.css)", "*.css"), ("JavaScript file (*.js)", "*.js"), ("C++ file (*.cpp)", "*.cpp")], defaultextension=[("All Files (*.*)", "*.*"), ("Text file (*.txt)", "*.txt"), ("Python file (*.py)", "*.py"), ("Java file (*.java)", "*.java"), ("C# file (*.cs)", "*.cs"), ("HTML file (*.html)", "*.html"), ("CSS file (*.css)", "*.css"), ("JavaScript file (*.js)", "*.js"), ("C++ file (*.cpp)", "*.cpp")]), "r+", encoding="UTF-8") as self.openned_file:
 				self.main_screen_frame_textbox.insert("1.0", self.openned_file.read())
@@ -797,7 +797,7 @@ class Program(customtkinter.CTk, My_Diary_interface.My_Diary_interface):
 	def __open_shell__(self) -> None:
 		subprocess.run(["cmd.exe"])
 
-	def __save_code_as__(self, event) -> None:
+	def __save_code_as__(self, event: str) -> None:
 		try:
 			with open(tkinter.filedialog.asksaveasfilename(filetypes=[("Python file (*.py)", "*.py")], defaultextension=[("Python file (*.py)", "*.py")]), "w+", encoding="UTF-8") as self.script_file:
 				self.script_file_data: str = self.main_screen_frame_textbox.get("1.0", tkinter.END)
