@@ -11,15 +11,7 @@ class My_Diary_interface(abc.ABC):
         pass
     
     @abc.abstractmethod
-    def __save__() -> None:
-        pass
-    
-    @abc.abstractmethod
-    def __save_text_as__() -> None:
-        pass
-    
-    @abc.abstractmethod
-    def __save_text_as_docx__() -> None:
+    def __save_text__() -> None:
         pass
     
     @abc.abstractmethod
@@ -31,15 +23,7 @@ class My_Diary_interface(abc.ABC):
         pass
     
     @abc.abstractmethod
-    def __open__() -> None:
-        pass
-    
-    @abc.abstractmethod
     def __open_file__() -> None:
-        pass
-    
-    @abc.abstractmethod
-    def __open_file_docx__() -> None:
         pass
     
     @abc.abstractmethod
@@ -83,7 +67,7 @@ class My_Diary_interface(abc.ABC):
         pass
     
     @abc.abstractmethod
-    def __save_code_as__() -> None:
+    def __save_code__() -> None:
         pass
     
     @abc.abstractmethod

@@ -1,156 +1,164 @@
-import customtkinter, tkinter, tkinter.messagebox, pickle, os, sys, docx, docx.shared, aspose.words, subprocess, functools, typing, My_Diary_interface
+import tkinter, tkinter.messagebox, pickle, os, sys, docx, docx.shared, aspose.words, subprocess, functools, typing, My_Diary_interface, functools
+from tkinterdnd2 import *
+from customtkinter import *
 
-with open("my_diary_settings.pickle", "rb+") as data:
-	language_data: str = pickle.load(data)
+with open(f"my_diary_settings.pickle", f"rb+") as data: language_data: str = pickle.load(data)
 
-with open('my_diary_saved_text.pickle', "rb+") as text_data:
-	autosaved_text: str = pickle.load(text_data)
+with open(f"my_diary_saved_text.pickle", f"rb+") as text_data: autosaved_text: str = pickle.load(text_data)
 
-with open("my_diary_autosave_settings.pickle", "rb+") as autosave_data:
-	new_autosaved_data: str = pickle.load(autosave_data)
+with open(f"my_diary_autosave_settings.pickle", f"rb+") as autosave_data: new_autosaved_data: str = pickle.load(autosave_data)
 
-with open("my_diary_theme_settings.pickle", "rb+") as theme_data:
-	theme: str = pickle.load(theme_data)
+with open(f"my_diary_theme_settings.pickle", f"rb+") as theme_data: theme: str = pickle.load(theme_data)
 
-with open("my_diary_text_color.pickle", "rb+") as text_color_data:
-	text_color: str = pickle.load(text_color_data)
+with open(f"my_diary_text_color.pickle", f"rb+") as text_color_data: text_color: str = pickle.load(text_color_data)
 
-with open("my_diary_text_field_color.pickle", "rb+") as text_field_color_data:
-	text_field_color: str = pickle.load(text_field_color_data)
+with open(f"my_diary_text_field_color.pickle", f"rb+") as text_field_color_data: text_field_color: str = pickle.load(text_field_color_data)
 
-with open("my_diary_text_field_text_height.pickle", "rb+") as text_field_text_height_data:
-	text_field_text_height: str = pickle.load(text_field_text_height_data)
+with open(f"my_diary_text_field_text_height.pickle", f"rb+") as text_field_text_height_data: text_field_text_height: str = pickle.load(text_field_text_height_data)
 
-with open("my_diary_button_color.pickle", "rb+") as button_color_data:
-	button_color: str = pickle.load(button_color_data)
+with open(f"my_diary_button_color.pickle", f"rb+") as button_color_data: button_color: str = pickle.load(button_color_data)
 
-class Program(customtkinter.CTk, My_Diary_interface.My_Diary_interface):
 
-	TITLE: typing.Final[str] = "My Diary"
-	ICON: typing.Final[str] = "my diary icon.ico"
-	COLOR_THEME: typing.Final[str] = "dark-blue"
+def memorise(function_param: str) -> str:
+
+    cache: dict = {}
+
+    @functools.wraps(function_param)
+    def wrapper(*args, **kwargs) -> str:
+        key: str = str(args) + str(kwargs)
+        if key not in cache:
+            cache[key]: function = function_param(*args, **kwargs)
+
+        return cache[key]
+    
+    return wrapper
+
+
+class Tk(CTk, TkinterDnD.DnDWrapper):
+    def __init__(self, *args, **kwargs):
+        CTk.__init__(self, *args, **kwargs)
+        self.TkdndVersion = TkinterDnD._require(self)
+
+class Program(Tk, My_Diary_interface.My_Diary_interface):
+
+	TITLE: typing.Final[str] = f"My Diary"
+	ICON: typing.Final[str] = f"my diary icon.ico"
+	COLOR_THEME: typing.Final[str] = f"dark-blue"
 	WIDGET_SCALING: typing.Final[float] = 1.251
 
 	def __init__(self, *args, **kwargs) -> None:
-		customtkinter.CTk.__init__(self, *args, **kwargs)
+		Tk.__init__(self, *args, **kwargs)
 
-		customtkinter.set_widget_scaling(self.WIDGET_SCALING)
-		customtkinter.set_default_color_theme(self.COLOR_THEME)
-		customtkinter.set_appearance_mode(theme)
-		customtkinter.deactivate_automatic_dpi_awareness()
+		set_widget_scaling(self.WIDGET_SCALING)
+		set_default_color_theme(self.COLOR_THEME)
+		set_appearance_mode(theme)
+		deactivate_automatic_dpi_awareness()
 
 		self.title(self.TITLE)
 		self.iconbitmap(self.ICON)
   
-		self.bind("<Control_L>" + "<f>", self.__fullscreen__) 
-		self.bind("<Alt_L>" + "<F4>", self.__exit__)
-		self.bind("<Alt_L>" + "<t>", self.__open_terminal__)
-		self.bind("<Escape>", self.__close_taskbar__)
-		self.bind("<Button-3>", self.__right_click_menu__)
-		self.bind("<Control_L>" + "<s>", self.__save_text_as__)
-		self.bind("<Control_L>" + "<o>", self.__open_file__)
-		self.bind("<Control_L>" + "<F1>", self.__save_text_as__)
-
-		self.protocol("WM_DELETE_WINDOW", self.__exit__)
+		self.bind(f"<Control_L>" + f"<f>", self.__fullscreen__) 
+		self.bind(f"<Alt_L>" + f"<F4>", self.__exit__)
+		self.bind(f"<Alt_L>" + f"<t>", self.__open_terminal__)
+		self.bind(f"<Escape>", self.__close_taskbar__)
+		self.bind(f"<Button-3>", self.__right_click_menu__)
+		self.bind(f"<Control_L>" + f"<s>", self.__save_text__)
+		self.bind(f"<Control_L>" + f"<o>", self.__open_file__)
+		self.protocol(f"WM_DELETE_WINDOW", self.__exit__)
 		
 		self.main_screen_fullscreen_numbers: int = 1
 
-		self.main_screen_taskbar_button: customtkinter.CTkButton = customtkinter.CTkButton(master=self, text="☰", text_color=text_color, height=20, width=10, corner_radius=0, fg_color=button_color, command=self.__open_taskbar__)
+		self.main_screen_taskbar_button: CTkButton = CTkButton(master=self, text=f"☰", text_color=text_color, height=20, width=10, corner_radius=0, fg_color=button_color, command=self.__open_taskbar__)
 		self.main_screen_taskbar_button.grid(column=0, row=0)
 
-		self.main_screen_undo_button: customtkinter.CTkButton = customtkinter.CTkButton(master=self, text="⟲", text_color=text_color, height=20, width=10, corner_radius=0, fg_color=button_color, command=self.__undo__)
+		self.main_screen_undo_button: CTkButton = CTkButton(master=self, text=f"⟲", text_color=text_color, height=20, width=10, corner_radius=0, fg_color=button_color, command=self.__undo__)
 		self.main_screen_undo_button.grid(column=1, row=0)
 
-		self.main_screen_redo_button: customtkinter.CTkButton = customtkinter.CTkButton(master=self, text="⟳", text_color=text_color, height=20, width=10, corner_radius=0, fg_color=button_color, command=self.__redo__)
+		self.main_screen_redo_button: CTkButton = CTkButton(master=self, text=f"⟳", text_color=text_color, height=20, width=10, corner_radius=0, fg_color=button_color, command=self.__redo__)
 		self.main_screen_redo_button.grid(column=2, row=0)
 
-		self.main_screen_frame: customtkinter.CTkFrame = customtkinter.CTkFrame(master=self, height=769, width=1535, border_width=1, border_color=("black", "white"), corner_radius=0)
+		self.main_screen_frame: CTkFrame = CTkFrame(master=self, height=769, width=1535, border_width=1, border_color=(f"black", f"white"), corner_radius=0)
 		self.main_screen_frame.place(x=0, y=22.35)
 
-		self.bind("<Configure>", self.__frame_resize__)
+		self.bind(f"<Configure>", self.__frame_resize__)
 
-		self.main_screen_frame_texbox_font: customtkinter.CTkFont = customtkinter.CTkFont(family="Ubuntu", size=int(text_field_text_height), weight="normal", slant="roman", underline=False, overstrike=False)
+		self.main_screen_frame_texbox_font: CTkFont = CTkFont(family=f"Ubuntu", size=int(text_field_text_height), weight=f"normal", slant=f"roman", underline=False, overstrike=False)
 
-		self.main_screen_frame_textbox: customtkinter.CTkTextbox = customtkinter.CTkTextbox(master=self.main_screen_frame, height=767.5, width=1533.57, corner_radius=0, undo=True, fg_color=text_field_color, font=self.main_screen_frame_texbox_font, text_color=("black", "white"))
+		self.main_screen_frame_textbox: CTkTextbox = CTkTextbox(master=self.main_screen_frame, height=767.5, width=1533.57, corner_radius=0, undo=True, fg_color=text_field_color, font=self.main_screen_frame_texbox_font, text_color=(f"black", f"white"))
 		self.main_screen_frame_textbox.place(x=1, y=1)
 
-		self.main_screen_frame_textbox.bind("<KeyRelease>", self.__word_count__)
-		self.main_screen_frame_textbox.bind("<F1>", self.__html_script__)
-		self.main_screen_frame_textbox.bind("<KeyPress>", self.__close_taskbar__)
-		self.main_screen_frame_textbox.bind("<ButtonRelease>", self.__close_taskbar__)
+		self.main_screen_frame_textbox.drop_target_register(DND_ALL)
+		self.main_screen_frame_textbox.dnd_bind(f"<<Drop>>", self.__drop_file_into_textbox__)
 
-		self.main_screen_taskbar: customtkinter.CTkFrame = customtkinter.CTkFrame(master = self, width = 300, height = 791, border_width = 0, corner_radius = 5, fg_color = "transparent")
+		self.main_screen_frame_textbox.bind(f"<KeyRelease>", self.__word_count__)
+		self.main_screen_frame_textbox.bind(f"<F1>", self.__html_script__)
+		self.main_screen_frame_textbox.bind(f"<KeyPress>", self.__close_taskbar__)
+		self.main_screen_frame_textbox.bind(f"<ButtonRelease>", self.__close_taskbar__)
 
-		self.main_screen_taskbar_exit_button: customtkinter.CTkButton = customtkinter.CTkButton(master=self.main_screen_taskbar, text="↵", text_color=text_color, height=20, width=10, corner_radius=5, fg_color=button_color)
+		self.main_screen_taskbar: CTkFrame = CTkFrame(master=self, width=300, height=791, border_width=0, corner_radius=5, fg_color=f"transparent")
+
+		self.main_screen_taskbar_exit_button: CTkButton = CTkButton(master=self.main_screen_taskbar, text=f"↵", text_color=text_color, height=20, width=10, corner_radius=5, fg_color=button_color)
 		self.main_screen_taskbar_exit_button.place(x=278, y=2)
 
-		self.main_screen_taskbar_exit_button.bind("<Button-1>", self.__close_taskbar__)
+		self.main_screen_taskbar_exit_button.bind(f"<Button-1>", self.__close_taskbar__)
 
-		self.main_screen_save_button: customtkinter.CTkButton = customtkinter.CTkButton(master=self.main_screen_taskbar, text="сачувај текст", text_color=text_color, height=20, width=295, corner_radius=5, fg_color=button_color, font=("Roboto Bold", 22), command=self.__save__)
+		self.main_screen_save_button: CTkButton = CTkButton(master=self.main_screen_taskbar, text=f"сачувај текст", text_color=text_color, height=20, width=295, corner_radius=5, fg_color=button_color, font=(f"Roboto Bold", 22))
 		self.main_screen_save_button.place(x=2, y=32)
-
-		self.main_screen_save_as_button: customtkinter.CTkButton = customtkinter.CTkButton(master=self, text="сачувај као ...", text_color=text_color, height=20, width=25, corner_radius=0, fg_color=button_color)
 		
-		self.main_screen_save_as_button.bind("<Button-1>", self.__save_text_as__)
+		self.main_screen_save_button.bind(f"<Button-1>", self.__save_text__)
 
-		self.main_screen_save_as_docx_button: customtkinter.CTkButton = customtkinter.CTkButton(master=self, text="сачувај као docx", text_color=text_color, height=20, width=25, corner_radius=0, fg_color=button_color, command=self.__save_text_as_docx__)
-
-		self.main_screen_clear_button: customtkinter.CTkButton = customtkinter.CTkButton(master=self.main_screen_taskbar, text="обриши текст", text_color=text_color, height=20, width=295, corner_radius=5, fg_color=button_color, font=("Roboto Bold", 22), command=self.__clear_text__)
+		self.main_screen_clear_button: CTkButton = CTkButton(master=self.main_screen_taskbar, text=f"обриши текст", text_color=text_color, height=20, width=295, corner_radius=5, fg_color=button_color, font=(f"Roboto Bold", 22), command=self.__clear_text__)
 		self.main_screen_clear_button.place(x=2, y=67)
 
-		self.main_screen_edit_text_button: customtkinter.CTkButton = customtkinter.CTkButton(master=self.main_screen_taskbar, text="уреди текст", text_color=text_color, height=20, width=295, corner_radius=5, fg_color=button_color, font=("Roboto Bold", 22), command=self.__edit_text__)
+		self.main_screen_edit_text_button: CTkButton = CTkButton(master=self.main_screen_taskbar, text=f"уреди текст", text_color=text_color, height=20, width=295, corner_radius=5, fg_color=button_color, font=(f"Roboto Bold", 22), command=self.__edit_text__)
 		self.main_screen_edit_text_button.place(x=2, y=102)
 
-		self.main_screen_edit_font_button: customtkinter.CTkComboBox = customtkinter.CTkComboBox(master=self, height=20, width=75, corner_radius=0, values=["System", "Terminal", "Ubuntu", "Script", "Roman", "Modern", "MS Serif"], text_color=text_color, fg_color=button_color, border_color=button_color, button_color=button_color, button_hover_color=button_color, dropdown_fg_color=button_color, dropdown_text_color=text_color, command=self.__edit_text_font__)
+		self.main_screen_edit_font_button: CTkComboBox = CTkComboBox(master=self, height=20, width=75, corner_radius=0, values=[f"System", f"Terminal", f"Ubuntu", f"Script", f"Roman", f"Modern", f"MS Serif"], text_color=text_color, fg_color=button_color, border_color=button_color, button_color=button_color, button_hover_color=button_color, dropdown_fg_color=button_color, dropdown_text_color=text_color, command=self.__edit_text_font__)
 
-		self.main_screen_edit_size_button: customtkinter.CTkComboBox = customtkinter.CTkComboBox(master=self, height=20, width=75, corner_radius=0, values=["1", "2", "4", "5", "6", "8", "11", "12", "13", "14", "16", "18", "20", "22", "24", "26", "28", "30", "32", "34", "36", "38", "40", "42", "44", "46", "48", "50", "60", "70", "80", "90", "100"], text_color=text_color, fg_color=button_color, border_color=button_color, button_color=button_color, button_hover_color=button_color, dropdown_fg_color=button_color, dropdown_text_color=text_color, command=self.__edit_text_font__)
+		self.main_screen_edit_size_button: CTkComboBox = CTkComboBox(master=self, height=20, width=75, corner_radius=0, values=[f"1", f"2", f"4", f"5", f"6", f"8", f"11", f"12", f"13", f"14", f"16", f"18", f"20", f"22", f"24", f"26", f"28", f"30", f"32", f"34", f"36", f"38", f"40", f"42", f"44", f"46", f"48", f"50", f"60", f"70", f"80", f"90", f"100"], text_color=text_color, fg_color=button_color, border_color=button_color, button_color=button_color, button_hover_color=button_color, dropdown_fg_color=button_color, dropdown_text_color=text_color, command=self.__edit_text_font__)
 
-		self.main_screen_edit_color_button: customtkinter.CTkComboBox = customtkinter.CTkComboBox(master=self, height=20, width=75, corner_radius=0, values=["black", "white", "red", "green", "blue"], text_color=text_color, fg_color=button_color, border_color=button_color, button_color=button_color, button_hover_color=button_color, dropdown_fg_color=button_color, dropdown_text_color=text_color, command=self.__edit_text_font__)
+		self.main_screen_edit_color_button: CTkComboBox = CTkComboBox(master=self, height=20, width=75, corner_radius=0, values=[f"black", f"white", f"red", f"green", f"blue"], text_color=text_color, fg_color=button_color, border_color=button_color, button_color=button_color, button_hover_color=button_color, dropdown_fg_color=button_color, dropdown_text_color=text_color, command=self.__edit_text_font__)
 
-		self.main_screen_edit_slant_button: customtkinter.CTkComboBox = customtkinter.CTkComboBox(master=self, height=20, width=75, corner_radius=0, values=["roman", "italic"], text_color=text_color, fg_color=button_color, border_color=button_color, button_color=button_color, button_hover_color=button_color, dropdown_fg_color=button_color, dropdown_text_color=text_color, command=self.__edit_text_font__)
+		self.main_screen_edit_slant_button: CTkComboBox = CTkComboBox(master=self, height=20, width=75, corner_radius=0, values=[f"roman", f"italic"], text_color=text_color, fg_color=button_color, border_color=button_color, button_color=button_color, button_hover_color=button_color, dropdown_fg_color=button_color, dropdown_text_color=text_color, command=self.__edit_text_font__)
 
-		self.main_screen_edit_weight_button: customtkinter.CTkComboBox = customtkinter.CTkComboBox(master=self, height=20, width=75, corner_radius=0, values=["normal", "bold"], text_color=text_color, fg_color=button_color, border_color=button_color, button_color=button_color, button_hover_color=button_color, dropdown_fg_color=button_color, dropdown_text_color=text_color, command=self.__edit_text_font__)
+		self.main_screen_edit_weight_button: CTkComboBox = CTkComboBox(master=self, height=20, width=75, corner_radius=0, values=[f"normal", f"bold"], text_color=text_color, fg_color=button_color, border_color=button_color, button_color=button_color, button_hover_color=button_color, dropdown_fg_color=button_color, dropdown_text_color=text_color, command=self.__edit_text_font__)
 
-		self.main_screen_edit_underline_button: customtkinter.CTkComboBox = customtkinter.CTkComboBox(master=self, height=20, width=75, corner_radius=0, values=["not underlined", "underlined"], text_color=text_color, fg_color=button_color, border_color=button_color, button_color=button_color, button_hover_color=button_color, dropdown_fg_color=button_color, dropdown_text_color=text_color, command=self.__edit_text_font__)
+		self.main_screen_edit_underline_button: CTkComboBox = CTkComboBox(master=self, height=20, width=75, corner_radius=0, values=[f"not underlined", f"underlined"], text_color=text_color, fg_color=button_color, border_color=button_color, button_color=button_color, button_hover_color=button_color, dropdown_fg_color=button_color, dropdown_text_color=text_color, command=self.__edit_text_font__)
 
-		self.main_screen_edit_overstrike_button: customtkinter.CTkComboBox = customtkinter.CTkComboBox(master=self, height=20, width=75, corner_radius=0, values=["not overstriked", "overstriked"], text_color=text_color, fg_color=button_color, border_color=button_color, button_color=button_color, button_hover_color=button_color, dropdown_fg_color=button_color, dropdown_text_color=text_color, command=self.__edit_text_font__)
+		self.main_screen_edit_overstrike_button: CTkComboBox = CTkComboBox(master=self, height=20, width=75, corner_radius=0, values=[f"not overstriked", f"overstriked"], text_color=text_color, fg_color=button_color, border_color=button_color, button_color=button_color, button_hover_color=button_color, dropdown_fg_color=button_color, dropdown_text_color=text_color, command=self.__edit_text_font__)
 
-		self.main_screen_open_button: customtkinter.CTkButton = customtkinter.CTkButton(master=self.main_screen_taskbar, text="отвори фајл", text_color=text_color, height=20, width=295, corner_radius=5, fg_color=button_color, font=("Roboto Bold", 22), command=self.__open__)
+		self.main_screen_open_button: CTkButton = CTkButton(master=self.main_screen_taskbar, text=f"отвори фајл", text_color=text_color, height=20, width=295, corner_radius=5, fg_color=button_color, font=(f"Roboto Bold", 22), command=self.__open_file__)
 		self.main_screen_open_button.place(x=2, y=137)
-	
-		self.main_screen_open_file_button: customtkinter.CTkButton = customtkinter.CTkButton(master=self, text="отвори ... фајл", text_color=text_color, height=20, width=25, corner_radius=0, fg_color=button_color)
 		
-		self.main_screen_open_file_button.bind("<Button-1>", self.__open_file__)
+		self.main_screen_open_button.bind(f"<Button-1>", self.__open_file__)
 	
-		self.main_screen_open_file_docx_button: customtkinter.CTkButton = customtkinter.CTkButton(master=self, text="отвори docx фајл", text_color=text_color, height=20, width=25, corner_radius=0, fg_color=button_color, command=self.__open_file_docx__)
-	
-		self.main_screen_converter_button: customtkinter.CTkButton = customtkinter.CTkButton(master=self.main_screen_taskbar, text="претварач", text_color=text_color, height=20, width=295, corner_radius=5, fg_color=button_color, font=("Roboto Bold", 22), command=self.__convert__)
+		self.main_screen_converter_button: CTkButton = CTkButton(master=self.main_screen_taskbar, text=f"претварач", text_color=text_color, height=20, width=295, corner_radius=5, fg_color=button_color, font=(f"Roboto Bold", 22), command=self.__convert__)
 		self.main_screen_converter_button.place(x=2, y=172)
 
-		self.main_screen_pdf_to_word_converter_button: customtkinter.CTkButton = customtkinter.CTkButton(master=self, text="из Pdf у docx", text_color=text_color, height=20, width=25, corner_radius=0, fg_color=button_color, command=self.__pdf_to_docx__)
+		self.main_screen_pdf_to_word_converter_button: CTkButton = CTkButton(master=self, text=f"из Pdf у docx", text_color=text_color, height=20, width=25, corner_radius=0, fg_color=button_color, command=self.__pdf_to_docx__)
 
-		self.main_screen_word_to_pdf_converter_button: customtkinter.CTkButton = customtkinter.CTkButton(master=self, text="из docx у Pdf", text_color=text_color, height=20, width=25, corner_radius=0, fg_color=button_color, command=self.__docx_to_pdf__)
+		self.main_screen_word_to_pdf_converter_button: CTkButton = CTkButton(master=self, text=f"из docx у Pdf", text_color=text_color, height=20, width=25, corner_radius=0, fg_color=button_color, command=self.__docx_to_pdf__)
 
-		self.main_screen_pdf_to_txt_converter_button: customtkinter.CTkButton = customtkinter.CTkButton(master=self, text="из Pdf у txt", text_color=text_color, height=20, width=25, corner_radius=0, fg_color=button_color, command=self.__pdf_to_txt__)
+		self.main_screen_pdf_to_txt_converter_button: CTkButton = CTkButton(master=self, text=f"из Pdf у txt", text_color=text_color, height=20, width=25, corner_radius=0, fg_color=button_color, command=self.__pdf_to_txt__)
 
-		self.main_screen_txt_to_pdf_converter_button: customtkinter.CTkButton = customtkinter.CTkButton(master=self, text="из txt у Pdf", text_color=text_color, height=20, width=25, corner_radius=0, fg_color=button_color, command=self.__txt_to_pdf__)
+		self.main_screen_txt_to_pdf_converter_button: CTkButton = CTkButton(master=self, text=f"из txt у Pdf", text_color=text_color, height=20, width=25, corner_radius=0, fg_color=button_color, command=self.__txt_to_pdf__)
 
-		self.main_screen_word_to_txt_converter_button: customtkinter.CTkButton = customtkinter.CTkButton(master=self, text="из docx y txt", text_color=text_color, height=20, width=25, corner_radius=0, fg_color=button_color, command=self.__docx_to_txt__)
+		self.main_screen_word_to_txt_converter_button: CTkButton = CTkButton(master=self, text=f"из docx y txt", text_color=text_color, height=20, width=25, corner_radius=0, fg_color=button_color, command=self.__docx_to_txt__)
 
-		self.main_screen_txt_to_word_converter_button: customtkinter.CTkButton = customtkinter.CTkButton(master=self, text="из txt у docx", text_color=text_color, height=20, width=25, corner_radius=0, fg_color=button_color, command=self.__txt_to_docx__)
+		self.main_screen_txt_to_word_converter_button: CTkButton = CTkButton(master=self, text=f"из txt у docx", text_color=text_color, height=20, width=25, corner_radius=0, fg_color=button_color, command=self.__txt_to_docx__)
 
-		self.main_screen_code_editor_button: customtkinter.CTkButton = customtkinter.CTkButton(master=self.main_screen_taskbar, text="редактор кода", text_color=text_color, height=20, width=295, corner_radius=5, fg_color=button_color, font=("Roboto Bold", 22), command=self.__code_editor__)
+		self.main_screen_code_editor_button: CTkButton = CTkButton(master=self.main_screen_taskbar, text=f"редактор кода", text_color=text_color, height=20, width=295, corner_radius=5, fg_color=button_color, font=(f"Roboto Bold", 22), command=self.__code_editor__)
 		self.main_screen_code_editor_button.place(x=2, y=207)
 
-		self.main_screen_open_powershell_button: customtkinter.CTkButton = customtkinter.CTkButton(master=self, text="отвори powershell", text_color=text_color, height=20, width=25, corner_radius=0, fg_color=button_color, command=self.__open_powershell__)
+		self.main_screen_open_powershell_button: CTkButton = CTkButton(master=self, text=f"отвори powershell", text_color=text_color, height=20, width=25, corner_radius=0, fg_color=button_color, command=self.__open_powershell__)
 
-		self.main_screen_open_terminal_button: customtkinter.CTkButton = customtkinter.CTkButton(master=self, text="отвори терминал", text_color=text_color, height=20, width=25, corner_radius=0, fg_color=button_color, command=self.__open_shell__)
+		self.main_screen_open_terminal_button: CTkButton = CTkButton(master=self, text=f"отвори терминал", text_color=text_color, height=20, width=25, corner_radius=0, fg_color=button_color, command=self.__open_shell__)
 
-		self.main_screen_save_code_as_button: customtkinter.CTkButton = customtkinter.CTkButton(master=self, text="сачувај код", text_color=text_color, height=20, width=25, corner_radius=0, fg_color=button_color)
+		self.main_screen_save_code_as_button: CTkButton = CTkButton(master=self, text=f"сачувај код", text_color=text_color, height=20, width=25, corner_radius=0, fg_color=button_color)
 
-		self.main_screen_save_code_as_button.bind("<Button-1>", self.__save_code_as__)
+		self.main_screen_save_code_as_button.bind(f"<Button-1>", self.__save_code__)
 
-		self.main_screen_open_code_button: customtkinter.CTkButton = customtkinter.CTkButton(master=self, text="отвори код", text_color=text_color, height=20, width=25, corner_radius=0, fg_color=button_color, command=self.__open_code__)
+		self.main_screen_open_code_button: CTkButton = CTkButton(master=self, text=f"отвори код", text_color=text_color, height=20, width=25, corner_radius=0, fg_color=button_color, command=self.__open_code__)
 
 		self.main_screen_right_click_menu: tkinter.Menu = tkinter.Menu(self, tearoff=0)
 
@@ -162,63 +170,63 @@ class Program(customtkinter.CTk, My_Diary_interface.My_Diary_interface):
 
 		self.main_screen_right_click_code_menu: tkinter.Menu = tkinter.Menu(self, tearoff=0)
 
-		self.main_screen_settings_button: customtkinter.CTkButton = customtkinter.CTkButton(master=self.main_screen_taskbar, text="подешавања", text_color=text_color, height=20, width=295, corner_radius=5, fg_color=button_color, font=("Roboto Bold", 22), command=self.__settings__)
+		self.main_screen_settings_button: CTkButton = CTkButton(master=self.main_screen_taskbar, text=f"подешавања", text_color=text_color, height=20, width=295, corner_radius=5, fg_color=button_color, font=(f"Roboto Bold", 22), command=self.__settings__)
 		self.main_screen_settings_button.place(x=2, y=242)
 
-		self.main_screen_settings_text: customtkinter.CTkLabel = customtkinter.CTkLabel(master=self, text="подешавања", text_color=text_color, font=("Roboto Bold", 72))
+		self.main_screen_settings_text: CTkLabel = CTkLabel(master=self, text=f"подешавања", text_color=text_color, font=(f"Roboto Bold", 72))
 
-		self.main_screen_settings_language_text: customtkinter.CTkLabel = customtkinter.CTkLabel(master=self, text="језици", text_color=text_color, font=("Roboto Bold", 36))
+		self.main_screen_settings_language_text: CTkLabel = CTkLabel(master=self, text=f"језици", text_color=text_color, font=(f"Roboto Bold", 36))
 
-		self.main_screen_settings_language_option: customtkinter.CTkSegmentedButton = customtkinter.CTkSegmentedButton(master=self, values=["Српски", "English", "Русский"], text_color=text_color, selected_color=button_color, command=self.__language_settings__)
+		self.main_screen_settings_language_option: CTkSegmentedButton = CTkSegmentedButton(master=self, values=[f"Српски", f"English", f"Русский"], text_color=text_color, selected_color=button_color, command=self.__language_settings__)
 
 		self.main_screen_settings_language_option.set(language_data)
 
-		self.main_screen_settings_autosave_text: customtkinter.CTkLabel = customtkinter.CTkLabel(master=self, text="ауточување", text_color=text_color, font=("Roboto Bold", 36))
+		self.main_screen_settings_autosave_text: CTkLabel = CTkLabel(master=self, text=f"ауточување", text_color=text_color, font=(f"Roboto Bold", 36))
 
 		self.main_screen_settings_autosave_value: tkinter.StringVar = tkinter.StringVar(value=new_autosaved_data)
 
-		self.main_screen_settings_autosave_switch: customtkinter.CTkSwitch = customtkinter.CTkSwitch(master=self, text="ауточување", text_color=text_color, variable=self.main_screen_settings_autosave_value, onvalue="on", offvalue="off", progress_color=button_color, command=lambda: self.__autosave_settings__(pickle))
+		self.main_screen_settings_autosave_switch: CTkSwitch = CTkSwitch(master=self, text=f"ауточување", text_color=text_color, variable=self.main_screen_settings_autosave_value, onvalue=f"on", offvalue=f"off", progress_color=button_color, command=lambda: self.__autosave_settings__(pickle))
 
 		self.main_screen_settings_autosave_switch_value: str = self.main_screen_settings_autosave_value.get()
 			
-		self.main_screen_settings_theme_mode_text: customtkinter.CTkLabel = customtkinter.CTkLabel(master=self, text="тема", text_color=text_color, font=("Roboto Bold", 36))
+		self.main_screen_settings_theme_mode_text: CTkLabel = CTkLabel(master=self, text=f"тема", text_color=text_color, font=(f"Roboto Bold", 36))
 
-		self.main_screen_settings_theme_mode_option: customtkinter.CTkSegmentedButton = customtkinter.CTkSegmentedButton(master=self, values=["system", "dark", "light"], text_color=text_color, selected_color=button_color, command=self.__theme_settings__)
+		self.main_screen_settings_theme_mode_option: CTkSegmentedButton = CTkSegmentedButton(master=self, values=[f"system", f"dark", f"light"], text_color=text_color, selected_color=button_color, command=self.__theme_settings__)
 
 		self.main_screen_settings_theme_mode_option.set(theme)
 
-		self.main_screen_settings_customatization_text: customtkinter.CTkLabel = customtkinter.CTkLabel(master=self, text="Спољни изглед", text_color=text_color, font=("Roboto Bold", 36))
+		self.main_screen_settings_customatization_text: CTkLabel = CTkLabel(master=self, text=f"Спољни изглед", text_color=text_color, font=(f"Roboto Bold", 36))
 
-		self.main_screen_settings_customatization_table: customtkinter.CTkTabview = customtkinter.CTkTabview(master=self, height=50, width=400, border_width=1, border_color=("black", "white"), segmented_button_selected_color=button_color, text_color="white")
+		self.main_screen_settings_customatization_table: CTkTabview = CTkTabview(master=self, height=50, width=400, border_width=1, border_color=(f"black", f"white"), segmented_button_selected_color=button_color, text_color=f"white")
 
-		self.main_screen_settings_customatization_table.add("1")
-		self.main_screen_settings_customatization_table.add("2")
-		self.main_screen_settings_customatization_table.add("3")
+		self.main_screen_settings_customatization_table.add(f"1")
+		self.main_screen_settings_customatization_table.add(f"2")
+		self.main_screen_settings_customatization_table.add(f"3")
 
-		self.main_screen_settings_customatization_text_color_text: customtkinter.CTkLabel = customtkinter.CTkLabel(master=self.main_screen_settings_customatization_table.tab("1"), text="Боја текста", text_color=text_color, font=("Roboto Bold", 36))
+		self.main_screen_settings_customatization_text_color_text: CTkLabel = CTkLabel(master=self.main_screen_settings_customatization_table.tab(f"1"), text=f"Боја текста", text_color=text_color, font=(f"Roboto Bold", 36))
 		self.main_screen_settings_customatization_text_color_text.grid(column=0, row=0)
 
-		self.main_screen_settings_customatization_text_color_option: customtkinter.CTkSegmentedButton = customtkinter.CTkSegmentedButton(master=self.main_screen_settings_customatization_table.tab("1"), text_color=text_color, values=["red", "blue", "green", "black", "white"], selected_color=button_color, command=self.__change_text_color__)
+		self.main_screen_settings_customatization_text_color_option: CTkSegmentedButton = CTkSegmentedButton(master=self.main_screen_settings_customatization_table.tab(f"1"), text_color=text_color, values=[f"red", f"blue", f"green", f"black", f"white"], selected_color=button_color, command=self.__change_text_color__)
 		self.main_screen_settings_customatization_text_color_option.grid(column=0, row=1)
 
 
-		self.main_screen_settings_customatization_text_field_color_text: customtkinter.CTkLabel = customtkinter.CTkLabel(master=self.main_screen_settings_customatization_table.tab("2"), text="Боја поља", text_color=text_color, font=("Roboto Bold", 36))
+		self.main_screen_settings_customatization_text_field_color_text: CTkLabel = CTkLabel(master=self.main_screen_settings_customatization_table.tab(f"2"), text=f"Боја поља", text_color=text_color, font=(f"Roboto Bold", 36))
 		self.main_screen_settings_customatization_text_field_color_text.grid(column=0, row=0)
 
-		self.main_screen_settings_customatization_text_field_color_option: customtkinter.CTkSegmentedButton = customtkinter.CTkSegmentedButton(master=self.main_screen_settings_customatization_table.tab("2"), values=["red", "blue", "green", "black", "white", "transparent"], text_color=text_color, selected_color=button_color, command=self.__change_text_field_color__)
+		self.main_screen_settings_customatization_text_field_color_option: CTkSegmentedButton = CTkSegmentedButton(master=self.main_screen_settings_customatization_table.tab(f"2"), values=[f"red", f"blue", f"green", f"black", f"white", f"transparent"], text_color=text_color, selected_color=button_color, command=self.__change_text_field_color__)
 		self.main_screen_settings_customatization_text_field_color_option.grid(column=0, row=1)
 
-		self.main_screen_settings_customatization_text_field_height_text: customtkinter.CTkLabel = customtkinter.CTkLabel(master=self.main_screen_settings_customatization_table.tab("2"), text="Висина текста поља", text_color=text_color, font=("Roboto Bold", 36))
+		self.main_screen_settings_customatization_text_field_height_text: CTkLabel = CTkLabel(master=self.main_screen_settings_customatization_table.tab(f"2"), text=f"Висина текста поља", text_color=text_color, font=(f"Roboto Bold", 36))
 		self.main_screen_settings_customatization_text_field_height_text.grid(column=0, row=2)
 
-		self.main_screen_settings_customatization_text_field_height_option: customtkinter.CTkSegmentedButton = customtkinter.CTkSegmentedButton(master=self.main_screen_settings_customatization_table.tab("2"), values=["14", "22", "28", "32"], text_color=text_color, selected_color=button_color, command=self.__change_text_field_text_height__)
+		self.main_screen_settings_customatization_text_field_height_option: CTkSegmentedButton = CTkSegmentedButton(master=self.main_screen_settings_customatization_table.tab(f"2"), values=[f"14", f"22", f"28", f"32"], text_color=text_color, selected_color=button_color, command=self.__change_text_field_text_height__)
 		self.main_screen_settings_customatization_text_field_height_option.grid(column=0, row=3)
 
 
-		self.main_screen_settings_customatization_button_color_text: customtkinter.CTkLabel = customtkinter.CTkLabel(master=self.main_screen_settings_customatization_table.tab("3"), text="Боја дугма", text_color=text_color, font=("Roboto Bold", 36))
+		self.main_screen_settings_customatization_button_color_text: CTkLabel = CTkLabel(master=self.main_screen_settings_customatization_table.tab(f"3"), text=f"Боја дугма", text_color=text_color, font=(f"Roboto Bold", 36))
 		self.main_screen_settings_customatization_button_color_text.grid(column=0, row=0)
 
-		self.main_screen_settings_customatization_button_color_option: customtkinter.CTkSegmentedButton = customtkinter.CTkSegmentedButton(master=self.main_screen_settings_customatization_table.tab("3"), values=["red", "blue", "green", "black", "orange", "yellow", "purple"], text_color=text_color, selected_color=button_color, command=self.__change_button_color__)
+		self.main_screen_settings_customatization_button_color_option: CTkSegmentedButton = CTkSegmentedButton(master=self.main_screen_settings_customatization_table.tab(f"3"), values=[f"red", f"blue", f"green", f"black", f"orange", f"yellow", f"purple"], text_color=text_color, selected_color=button_color, command=self.__change_button_color__)
 		self.main_screen_settings_customatization_button_color_option.grid(column=0, row=1)
 
 		self.main_screen_settings_customatization_text_color_option.set(text_color)
@@ -229,242 +237,220 @@ class Program(customtkinter.CTk, My_Diary_interface.My_Diary_interface):
 
 		self.main_screen_settings_customatization_button_color_option.set(button_color)
 
-		if language_data == "Српски":
-			self.main_screen_save_button.configure(text="сачувај текст")
-			self.main_screen_save_as_button.configure(text="сачувај као ...")
-			self.main_screen_save_as_docx_button.configure(text="сачувај као docx")
+		match language_data:
+			case "Српски":
+				self.main_screen_save_button.configure(text=f"сачувај текст")
 	
-			self.main_screen_clear_button.configure(text="обриши текст")
-			self.main_screen_edit_text_button.configure(text="уреди текст")
+				self.main_screen_clear_button.configure(text=f"обриши текст")
+				self.main_screen_edit_text_button.configure(text=f"уреди текст")
 			
-			self.main_screen_open_button.configure(text="отвори фајл")
-			self.main_screen_open_file_button.configure(text="отвори ... фајл")
-			self.main_screen_open_file_docx_button.configure(text="отвори docx фајл")
+				self.main_screen_open_button.configure(text=f"отвори фајл")
 
-			self.main_screen_converter_button.configure(text="претварач")
-			self.main_screen_pdf_to_word_converter_button.configure(text="из Pdf у docx")
-			self.main_screen_word_to_pdf_converter_button.configure(text="из docx у Pdf")
-			self.main_screen_pdf_to_txt_converter_button.configure(text="из Pdf у txt")
-			self.main_screen_txt_to_pdf_converter_button.configure(text="из txt у Pdf")
-			self.main_screen_word_to_txt_converter_button.configure(text="из docx у txt")
-			self.main_screen_txt_to_word_converter_button.configure(text="из txt у docx")
+				self.main_screen_converter_button.configure(text=f"претварач")
+				self.main_screen_pdf_to_word_converter_button.configure(text=f"из Pdf у docx")
+				self.main_screen_word_to_pdf_converter_button.configure(text=f"из docx у Pdf")
+				self.main_screen_pdf_to_txt_converter_button.configure(text=f"из Pdf у txt")
+				self.main_screen_txt_to_pdf_converter_button.configure(text=f"из txt у Pdf")
+				self.main_screen_word_to_txt_converter_button.configure(text=f"из docx у txt")
+				self.main_screen_txt_to_word_converter_button.configure(text=f"из txt у docx")
+				
+				self.main_screen_code_editor_button.configure(text="кодови редактор")
+				self.main_screen_open_powershell_button.configure(text="отвори powershell")
+				self.main_screen_open_terminal_button.configure(text="отвори терминал")
+				self.main_screen_save_code_as_button.configure(text="сачувај код као")
+				self.main_screen_open_code_button.configure(text="отвори код")
 
-			self.main_screen_settings_button.configure(text="подешавања")
-			self.main_screen_settings_text.configure(text="подешавања")
-			self.main_screen_settings_language_text.configure(text="језици")
-			self.main_screen_settings_autosave_text.configure(text="ауточување")
-			self.main_screen_settings_autosave_switch.configure(text="ауточување")
-			self.main_screen_settings_theme_mode_text.configure(text="теме")
-			self.main_screen_settings_customatization_text.configure(text="Спољни изглед")
-			self.main_screen_settings_customatization_text_color_text.configure(text="Боја текста")
-			self.main_screen_settings_customatization_text_field_color_text.configure(text="Боја поља")
-			self.main_screen_settings_customatization_text_field_height_text.configure(text="Висина текста поља")
-			self.main_screen_settings_customatization_button_color_text.configure(text="Боја дугма")
+				self.main_screen_settings_button.configure(text=f"подешавања")
+				self.main_screen_settings_text.configure(text=f"подешавања")
+				self.main_screen_settings_language_text.configure(text=f"језици")
+				self.main_screen_settings_autosave_text.configure(text=f"ауточување")
+				self.main_screen_settings_autosave_switch.configure(text=f"ауточување")
+				self.main_screen_settings_theme_mode_text.configure(text=f"теме")
+				self.main_screen_settings_customatization_text.configure(text=f"Спољни изглед")
+				self.main_screen_settings_customatization_text_color_text.configure(text=f"Боја текста")
+				self.main_screen_settings_customatization_text_field_color_text.configure(text=f"Боја поља")
+				self.main_screen_settings_customatization_text_field_height_text.configure(text=f"Висина текста поља")
+				self.main_screen_settings_customatization_button_color_text.configure(text=f"Боја дугма")
 
-			self.main_screen_code_editor_button.configure(text="кодови редактор")
-			self.main_screen_open_powershell_button.configure(text="отвори powershell")
-			self.main_screen_open_terminal_button.configure(text="отвори терминал")
-			self.main_screen_save_code_as_button.configure(text="сачувај код као")
-			self.main_screen_open_code_button.configure(text="отвори код")
+				self.main_screen_right_click_menu.add_command(label=f"сачувај као", font=(f"Roman", 16), background=button_color, foreground=text_color, command=self.__save_text__)
 
-			self.main_screen_right_click_menu.add_cascade(label="сачувај као", font=("Roman", 16), background=button_color, foreground=text_color, menu=self.main_screen_right_click_save_menu)
-			self.main_screen_right_click_save_menu.add_command(label="...", font=("Roman", 16), background=button_color, foreground=text_color, command=self.__save_text_as__)
-			self.main_screen_right_click_save_menu.add_command(label=".docx", font=("Roman", 16), background=button_color, foreground=text_color, command=self.__save_text_as_docx__)
+				self.main_screen_right_click_menu.add_command(label=f"отвори као", font=(f"Roman", 16), background=button_color, foreground=text_color, command=self.__open_file__)
 
-			self.main_screen_right_click_menu.add_cascade(label="отвори као", font=("Roman", 16), background=button_color, foreground=text_color, menu=self.main_screen_right_click_open_menu)
-			self.main_screen_right_click_open_menu.add_command(label="...", font=("Roman", 16), background=button_color, foreground=text_color, command=self.__open_file__)
-			self.main_screen_right_click_open_menu.add_command(label=".docx", font=("Roman", 16), background=button_color, foreground=text_color, command=self.__open_file_docx__)
+				self.main_screen_right_click_menu.add_cascade(label=f"конвертирај", font=(f"Roman", 16), background=button_color, foreground=text_color, menu=self.main_screen_right_click_convert_menu)
+				self.main_screen_right_click_convert_menu.add_command(label=f"из docx у pdf", font=(f"Roman", 16), background=button_color, foreground=text_color, command=self.__docx_to_pdf__)
+				self.main_screen_right_click_convert_menu.add_command(label=f"из pdf у docx", font=(f"Roman", 16), background=button_color, foreground=text_color, command=self.__pdf_to_docx__)
+				self.main_screen_right_click_convert_menu.add_command(label=f"из txt у pdf", font=(f"Roman", 16), background=button_color, foreground=text_color, command=self.__txt_to_pdf__)
+				self.main_screen_right_click_convert_menu.add_command(label=f"из pdf у txt", font=(f"Roman", 16), background=button_color, foreground=text_color, command=self.__pdf_to_txt__)
+				self.main_screen_right_click_convert_menu.add_command(label=f"из txt у docx", font=(f"Roman", 16), background=button_color, foreground=text_color, command=self.__txt_to_docx__)
+				self.main_screen_right_click_convert_menu.add_command(label=f"из docx у txt", font=(f"Roman", 16), background=button_color, foreground=text_color, command=self.__docx_to_txt__)
 
-			self.main_screen_right_click_menu.add_cascade(label="конвертирај", font=("Roman", 16), background=button_color, foreground=text_color, menu=self.main_screen_right_click_convert_menu)
-			self.main_screen_right_click_convert_menu.add_command(label="из docx у pdf", font=("Roman", 16), background=button_color, foreground=text_color, command=self.__docx_to_pdf__)
-			self.main_screen_right_click_convert_menu.add_command(label="из pdf у docx", font=("Roman", 16), background=button_color, foreground=text_color, command=self.__pdf_to_docx__)
-			self.main_screen_right_click_convert_menu.add_command(label="из txt у pdf", font=("Roman", 16), background=button_color, foreground=text_color, command=self.__txt_to_pdf__)
-			self.main_screen_right_click_convert_menu.add_command(label="из pdf у txt", font=("Roman", 16), background=button_color, foreground=text_color, command=self.__pdf_to_txt__)
-			self.main_screen_right_click_convert_menu.add_command(label="из txt у docx", font=("Roman", 16), background=button_color, foreground=text_color, command=self.__txt_to_docx__)
-			self.main_screen_right_click_convert_menu.add_command(label="из docx у txt", font=("Roman", 16), background=button_color, foreground=text_color, command=self.__docx_to_txt__)
+				self.main_screen_right_click_menu.add_cascade(label=f"кодирај", font=(f"Roman", 16), background=button_color, foreground=text_color, menu=self.main_screen_right_click_code_menu)
+				self.main_screen_right_click_code_menu.add_command(label=f"отвори powershell", font=(f"Roman", 16), background=button_color, foreground=text_color, command=self.__open_powershell__)
+				self.main_screen_right_click_code_menu.add_command(label=f"отвори терминал", font=(f"Roman", 16), background=button_color, foreground=text_color, command=self.__open_shell__)
+				self.main_screen_right_click_code_menu.add_command(label=f"сачувај код", font=(f"Roman", 16), background=button_color, foreground=text_color, command=self.__save_code__)
+				self.main_screen_right_click_code_menu.add_command(label=f"отвори код", font=(f"Roman", 16), background=button_color, foreground=text_color, command=self.__open_code__)
 
-			self.main_screen_right_click_menu.add_cascade(label="кодирај", font=("Roman", 16), background=button_color, foreground=text_color, menu=self.main_screen_right_click_code_menu)
-			self.main_screen_right_click_code_menu.add_command(label="отвори powershell", font=("Roman", 16), background=button_color, foreground=text_color, command=self.__open_powershell__)
-			self.main_screen_right_click_code_menu.add_command(label="отвори терминал", font=("Roman", 16), background=button_color, foreground=text_color, command=self.__open_shell__)
-			self.main_screen_right_click_code_menu.add_command(label="сачувај код као", font=("Roman", 16), background=button_color, foreground=text_color, command=self.__save_code_as__)
-			self.main_screen_right_click_code_menu.add_command(label="отвори код", font=("Roman", 16), background=button_color, foreground=text_color, command=self.__open_code__)
+				self.main_screen_right_click_menu.add_separator()
 
-			self.main_screen_right_click_menu.add_separator()
+				self.main_screen_right_click_menu.add_command(label=f"обриши текст", font=(f"Roman", 16), background=button_color, foreground=text_color, command=self.__clear_text__)
 
-			self.main_screen_right_click_menu.add_command(label="обриши текст", font=("Roman", 16), background=button_color, foreground=text_color, command=self.__clear_text__)
+				self.main_screen_right_click_menu.add_separator()
 
-			self.main_screen_right_click_menu.add_separator()
+				self.main_screen_right_click_menu.add_command(label=f"копирај", font=(f"Roman", 16), background=button_color, foreground=text_color, command=self.__copy__)
+				self.main_screen_right_click_menu.add_command(label=f"залепи", font=(f"Roman", 16), background=button_color, foreground=text_color, command=self.__paste__)
+				self.main_screen_right_click_menu.add_command(label=f"исеци", font=(f"Roman", 16), background=button_color, foreground=text_color, command=self.__cut__)
 
-			self.main_screen_right_click_menu.add_command(label="копирај", font=("Roman", 16), background=button_color, foreground=text_color, command=self.__copy__)
-			self.main_screen_right_click_menu.add_command(label="залепи", font=("Roman", 16), background=button_color, foreground=text_color, command=self.__paste__)
-			self.main_screen_right_click_menu.add_command(label="исеци", font=("Roman", 16), background=button_color, foreground=text_color, command=self.__cut__)
+				self.main_screen_right_click_menu.add_separator()
 
-			self.main_screen_right_click_menu.add_separator()
+				self.main_screen_right_click_menu.add_command(label=f"изаћи", font=(f"Roman", 16), background=button_color, foreground=text_color, command=self.__exit__)
 
-			self.main_screen_right_click_menu.add_command(label="изаћи", font=("Roman", 16), background=button_color, foreground=text_color, command=self.__exit__)
+			case "English":
+				self.main_screen_save_button.configure(text=f"save text")
 
-		elif language_data == "English":
-			self.main_screen_save_button.configure(text="save text")
-			self.main_screen_save_as_button.configure(text="save as ...")
-			self.main_screen_save_as_docx_button.configure(text="save as docx")
-
-			self.main_screen_clear_button.configure(text="clear text")
-			self.main_screen_edit_text_button.configure(text="edit text")
+				self.main_screen_clear_button.configure(text=f"clear text")
+				self.main_screen_edit_text_button.configure(text=f"edit text")
 			
-			self.main_screen_open_button.configure(text="open file")
-			self.main_screen_open_file_button.configure(text="open ... file")
-			self.main_screen_open_file_docx_button.configure(text="open docx file")
+				self.main_screen_open_button.configure(text=f"open file")
 
-			self.main_screen_converter_button.configure(text="converterer")
-			self.main_screen_pdf_to_word_converter_button.configure(text="from Pdf to docx")
-			self.main_screen_word_to_pdf_converter_button.configure(text="from docx to Pdf")
-			self.main_screen_pdf_to_txt_converter_button.configure(text="from Pdf to txt")
-			self.main_screen_txt_to_pdf_converter_button.configure(text="from txt to Pdf")
-			self.main_screen_word_to_txt_converter_button.configure(text="from docx to txt")
-			self.main_screen_txt_to_word_converter_button.configure(text="from txt to docx")
+				self.main_screen_converter_button.configure(text=f"converterer")
+				self.main_screen_pdf_to_word_converter_button.configure(text=f"from Pdf to docx")
+				self.main_screen_word_to_pdf_converter_button.configure(text=f"from docx to Pdf")
+				self.main_screen_pdf_to_txt_converter_button.configure(text=f"from Pdf to txt")
+				self.main_screen_txt_to_pdf_converter_button.configure(text=f"from txt to Pdf")
+				self.main_screen_word_to_txt_converter_button.configure(text=f"from docx to txt")
+				self.main_screen_txt_to_word_converter_button.configure(text=f"from txt to docx")
 
-			self.main_screen_code_editor_button.configure(text="code editor")
-			self.main_screen_open_powershell_button.configure(text="open powershell")
-			self.main_screen_open_terminal_button.configure(text="open terminal")
-			self.main_screen_save_code_as_button.configure(text="save code as")
-			self.main_screen_open_code_button.configure(text="open code")
+				self.main_screen_code_editor_button.configure(text=f"code editor")
+				self.main_screen_open_powershell_button.configure(text=f"open powershell")
+				self.main_screen_open_terminal_button.configure(text=f"open terminal")
+				self.main_screen_save_code_as_button.configure(text=f"save code as")
+				self.main_screen_open_code_button.configure(text=f"open code")
 
-			self.main_screen_settings_button.configure(text="settings")
-			self.main_screen_settings_text.configure(text="settings")
-			self.main_screen_settings_language_text.configure(text="languages")
-			self.main_screen_settings_autosave_text.configure(text="autosave")
-			self.main_screen_settings_autosave_switch.configure(text="autosave")
-			self.main_screen_settings_theme_mode_text.configure(text="theme")
-			self.main_screen_settings_customatization_text.configure(text="Customatization")
-			self.main_screen_settings_customatization_text_color_text.configure(text="Text color")
-			self.main_screen_settings_customatization_text_field_color_text.configure(text="Text field color")
-			self.main_screen_settings_customatization_text_field_height_text.configure(text="Text field text height")
-			self.main_screen_settings_customatization_button_color_text.configure(text="Button color")
+				self.main_screen_settings_button.configure(text=f"settings")
+				self.main_screen_settings_text.configure(text=f"settings")
+				self.main_screen_settings_language_text.configure(text=f"languages")
+				self.main_screen_settings_autosave_text.configure(text=f"autosave")
+				self.main_screen_settings_autosave_switch.configure(text=f"autosave")
+				self.main_screen_settings_theme_mode_text.configure(text=f"theme")
+				self.main_screen_settings_customatization_text.configure(text=f"Customatization")
+				self.main_screen_settings_customatization_text_color_text.configure(text=f"Text color")
+				self.main_screen_settings_customatization_text_field_color_text.configure(text=f"Text field color")
+				self.main_screen_settings_customatization_text_field_height_text.configure(text=f"Text field text height")
+				self.main_screen_settings_customatization_button_color_text.configure(text=f"Button color")
 
-			self.main_screen_right_click_menu.add_cascade(label="save as", font=("Roman", 16), background=button_color, foreground=text_color, menu=self.main_screen_right_click_save_menu)
-			self.main_screen_right_click_save_menu.add_command(label="...", font=("Roman", 16), background=button_color, foreground=text_color, command=self.__save_text_as__)
-			self.main_screen_right_click_save_menu.add_command(label=".docx", font=("Roman", 16), background=button_color, foreground=text_color, command=self.__save_text_as_docx__)
-
-			self.main_screen_right_click_menu.add_cascade(label="open as", font=("Roman", 16), background=button_color, foreground=text_color, menu=self.main_screen_right_click_open_menu)
-			self.main_screen_right_click_open_menu.add_command(label="...", font=("Roman", 16), background=button_color, foreground=text_color, command=self.__open_file__)
-			self.main_screen_right_click_open_menu.add_command(label=".docx", font=("Roman", 16), background=button_color, foreground=text_color, command=self.__open_file_docx__)
-
-			self.main_screen_right_click_menu.add_cascade(label="convert", font=("Roman", 16), background=button_color, foreground=text_color, menu=self.main_screen_right_click_convert_menu)
-			self.main_screen_right_click_convert_menu.add_command(label="from docx to pdf", font=("Roman", 16), background=button_color, foreground=text_color, command=self.__docx_to_pdf__)
-			self.main_screen_right_click_convert_menu.add_command(label="from pdf to docx", font=("Roman", 16), background=button_color, foreground=text_color, command=self.__pdf_to_docx__)
-			self.main_screen_right_click_convert_menu.add_command(label="from txt to pdf", font=("Roman", 16), background=button_color, foreground=text_color, command=self.__txt_to_pdf__)
-			self.main_screen_right_click_convert_menu.add_command(label="from pdf to txt", font=("Roman", 16), background=button_color, foreground=text_color, command=self.__pdf_to_txt__)
-			self.main_screen_right_click_convert_menu.add_command(label="from txt to docx", font=("Roman", 16), background=button_color, foreground=text_color, command=self.__txt_to_docx__)
-			self.main_screen_right_click_convert_menu.add_command(label="from docx to txt", font=("Roman", 16), background=button_color, foreground=text_color, command=self.__docx_to_txt__)
-
-			self.main_screen_right_click_menu.add_cascade(label="code", font=("Roman", 16), background=button_color, foreground=text_color, menu=self.main_screen_right_click_code_menu)
-			self.main_screen_right_click_code_menu.add_command(label="open powershell", font=("Roman", 16), background=button_color, foreground=text_color, command=self.__open_powershell__)
-			self.main_screen_right_click_code_menu.add_command(label="open terminal", font=("Roman", 16), background=button_color, foreground=text_color, command=self.__open_shell__)
-			self.main_screen_right_click_code_menu.add_command(label="save code as", font=("Roman", 16), background=button_color, foreground=text_color, command=self.__save_code_as__)
-			self.main_screen_right_click_code_menu.add_command(label="open code", font=("Roman", 16), background=button_color, foreground=text_color, command=self.__open_code__)
-
-			self.main_screen_right_click_menu.add_separator()
-
-			self.main_screen_right_click_menu.add_command(label="delete text", font=("Roman", 16), background=button_color, foreground=text_color, command=self.__clear_text__)
-
-			self.main_screen_right_click_menu.add_separator()
-
-			self.main_screen_right_click_menu.add_command(label="copy", font=("Roman", 16), background=button_color, foreground=text_color, command=self.__copy__)
-			self.main_screen_right_click_menu.add_command(label="paste", font=("Roman", 16), background=button_color, foreground=text_color, command=self.__paste__)
-			self.main_screen_right_click_menu.add_command(label="cut", font=("Roman", 16), background=button_color, foreground=text_color, command=self.__cut__)
-
-			self.main_screen_right_click_menu.add_separator()
-
-			self.main_screen_right_click_menu.add_command(label="exit", font=("Roman", 16), background=button_color, foreground=text_color, command=self.__exit__)
-
-		else:
-			self.main_screen_save_button.configure(text="сохранить текст")
-			self.main_screen_save_as_button.configure(text="сохранить как ...")
-			self.main_screen_save_as_docx_button.configure(text="сохранить как ворд")
-
-			self.main_screen_clear_button.configure(text="удалить текст")
-			self.main_screen_edit_text_button.configure(text="редактировать текст")
+				self.main_screen_right_click_menu.add_command(label=f"save as", font=(f"Roman", 16), background=button_color, foreground=text_color, command=self.__save_text__)
 			
-			self.main_screen_open_button.configure(text="открыть файл")
-			self.main_screen_open_file_button.configure(text="открыть ... файл")
-			self.main_screen_open_file_docx_button.configure(text="открыть ворд файл")
+				self.main_screen_right_click_menu.add_command(label=f"open as", font=(f"Roman", 16), background=button_color, foreground=text_color, command=self.__open_file__)
 
-			self.main_screen_converter_button.configure(text="конвертер")
-			self.main_screen_pdf_to_word_converter_button.configure(text="из Пдф в ворд")
-			self.main_screen_word_to_pdf_converter_button.configure(text="из ворд в Пдф")
-			self.main_screen_pdf_to_txt_converter_button.configure(text="из Пдф в текстовый файл")
-			self.main_screen_txt_to_pdf_converter_button.configure(text="из текстового файла в Пдф")
-			self.main_screen_word_to_txt_converter_button.configure(text="из ворд в текстовый файл")
-			self.main_screen_txt_to_word_converter_button.configure(text="из текстового файла в ворд")
+				self.main_screen_right_click_menu.add_cascade(label=f"convert", font=(f"Roman", 16), background=button_color, foreground=text_color, menu=self.main_screen_right_click_convert_menu)
+				self.main_screen_right_click_convert_menu.add_command(label=f"from docx to pdf", font=(f"Roman", 16), background=button_color, foreground=text_color, command=self.__docx_to_pdf__)
+				self.main_screen_right_click_convert_menu.add_command(label=f"from pdf to docx", font=(f"Roman", 16), background=button_color, foreground=text_color, command=self.__pdf_to_docx__)
+				self.main_screen_right_click_convert_menu.add_command(label=f"from txt to pdf", font=(f"Roman", 16), background=button_color, foreground=text_color, command=self.__txt_to_pdf__)
+				self.main_screen_right_click_convert_menu.add_command(label=f"from pdf to txt", font=(f"Roman", 16), background=button_color, foreground=text_color, command=self.__pdf_to_txt__)
+				self.main_screen_right_click_convert_menu.add_command(label=f"from txt to docx", font=(f"Roman", 16), background=button_color, foreground=text_color, command=self.__txt_to_docx__)
+				self.main_screen_right_click_convert_menu.add_command(label=f"from docx to txt", font=(f"Roman", 16), background=button_color, foreground=text_color, command=self.__docx_to_txt__)
 
-			self.main_screen_code_editor_button.configure(text="кодовый редактор")
-			self.main_screen_open_powershell_button.configure(text="открыть powershell")
-			self.main_screen_open_terminal_button.configure(text="открыть терминал")
-			self.main_screen_save_code_as_button.configure(text="сохранить код как")
-			self.main_screen_open_code_button.configure(text="открыть код")
+				self.main_screen_right_click_menu.add_cascade(label=f"code", font=(f"Roman", 16), background=button_color, foreground=text_color, menu=self.main_screen_right_click_code_menu)
+				self.main_screen_right_click_code_menu.add_command(label=f"open powershell", font=(f"Roman", 16), background=button_color, foreground=text_color, command=self.__open_powershell__)
+				self.main_screen_right_click_code_menu.add_command(label=f"open terminal", font=(f"Roman", 16), background=button_color, foreground=text_color, command=self.__open_shell__)
+				self.main_screen_right_click_code_menu.add_command(label=f"save code", font=(f"Roman", 16), background=button_color, foreground=text_color, command=self.__save_code__)
+				self.main_screen_right_click_code_menu.add_command(label=f"open code", font=(f"Roman", 16), background=button_color, foreground=text_color, command=self.__open_code__)
 
-			self.main_screen_settings_button.configure(text="настройки")
-			self.main_screen_settings_text.configure(text="настройки")
-			self.main_screen_settings_language_text.configure(text="языки")
-			self.main_screen_settings_autosave_text.configure(text="автосохранение")
-			self.main_screen_settings_autosave_switch.configure(text="автосохранение")
-			self.main_screen_settings_theme_mode_text.configure(text="темы")
-			self.main_screen_settings_customatization_text.configure(text="Внешний вид")
-			self.main_screen_settings_customatization_text_color_text.configure(text="Цвет текста")
-			self.main_screen_settings_customatization_text_field_color_text.configure(text="Цвет поля")
-			self.main_screen_settings_customatization_text_field_height_text.configure(text="Высота текста поля")
-			self.main_screen_settings_customatization_button_color_text.configure(text="Цвет кнопки")
+				self.main_screen_right_click_menu.add_separator()
 
-			self.main_screen_right_click_menu.add_cascade(label="сохранить как", font=("Roman", 16), background=button_color, foreground=text_color, menu=self.main_screen_right_click_save_menu)
-			self.main_screen_right_click_save_menu.add_command(label="...", font=("Roman", 16), background=button_color, foreground=text_color, command=self.__save_text_as__)
-			self.main_screen_right_click_save_menu.add_command(label="ворд", font=("Roman", 16), background=button_color, foreground=text_color, command=self.__save_text_as_docx__)
+				self.main_screen_right_click_menu.add_command(label=f"delete text", font=(f"Roman", 16), background=button_color, foreground=text_color, command=self.__clear_text__)
+
+				self.main_screen_right_click_menu.add_separator()
+
+				self.main_screen_right_click_menu.add_command(label=f"copy", font=(f"Roman", 16), background=button_color, foreground=text_color, command=self.__copy__)
+				self.main_screen_right_click_menu.add_command(label=f"paste", font=(f"Roman", 16), background=button_color, foreground=text_color, command=self.__paste__)
+				self.main_screen_right_click_menu.add_command(label=f"cut", font=(f"Roman", 16), background=button_color, foreground=text_color, command=self.__cut__)
+
+				self.main_screen_right_click_menu.add_separator()
+
+				self.main_screen_right_click_menu.add_command(label=f"exit", font=(f"Roman", 16), background=button_color, foreground=text_color, command=self.__exit__)
+
+			case _:
+				self.main_screen_save_button.configure(text=f"сохранить текст")
+
+				self.main_screen_clear_button.configure(text=f"удалить текст")
+				self.main_screen_edit_text_button.configure(text=f"редактировать текст")
 			
-			self.main_screen_right_click_menu.add_cascade(label="открыть как", font=("Roman", 16), background=button_color, foreground=text_color, menu=self.main_screen_right_click_open_menu)
-			self.main_screen_right_click_open_menu.add_command(label="...", font=("Roman", 16), background=button_color, foreground=text_color, command=self.__open_file__)
-			self.main_screen_right_click_open_menu.add_command(label="ворд", font=("Roman", 16), background=button_color, foreground=text_color, command=self.__open_file_docx__)
+				self.main_screen_open_button.configure(text=f"открыть файл")
+		
+				self.main_screen_converter_button.configure(text=f"конвертер")
+				self.main_screen_pdf_to_word_converter_button.configure(text=f"из Пдф в ворд")
+				self.main_screen_word_to_pdf_converter_button.configure(text=f"из ворд в Пдф")
+				self.main_screen_pdf_to_txt_converter_button.configure(text=f"из Пдф в текстовый файл")
+				self.main_screen_txt_to_pdf_converter_button.configure(text=f"из текстового файла в Пдф")
+				self.main_screen_word_to_txt_converter_button.configure(text=f"из ворд в текстовый файл")
+				self.main_screen_txt_to_word_converter_button.configure(text=f"из текстового файла в ворд")
 
-			self.main_screen_right_click_menu.add_cascade(label="конвертировать", font=("Roman", 16), background=button_color, foreground=text_color, menu=self.main_screen_right_click_convert_menu)
-			self.main_screen_right_click_convert_menu.add_command(label="из ворд в Пдф", font=("Roman", 16), background=button_color, foreground=text_color, command=self.__docx_to_pdf__)
-			self.main_screen_right_click_convert_menu.add_command(label="из Пдф в ворд", font=("Roman", 16), background=button_color, foreground=text_color, command=self.__pdf_to_docx__)
-			self.main_screen_right_click_convert_menu.add_command(label="из текста в Пдф", font=("Roman", 16), background=button_color, foreground=text_color, command=self.__txt_to_pdf__)
-			self.main_screen_right_click_convert_menu.add_command(label="из Пдф в текст", font=("Roman", 16), background=button_color, foreground=text_color, command=self.__pdf_to_txt__)
-			self.main_screen_right_click_convert_menu.add_command(label="из текста в ворд", font=("Roman", 16), background=button_color, foreground=text_color, command=self.__txt_to_docx__)
-			self.main_screen_right_click_convert_menu.add_command(label="из ворда в текст", font=("Roman", 16), background=button_color, foreground=text_color, command=self.__docx_to_txt__)
+				self.main_screen_code_editor_button.configure(text=f"кодовый редактор")
+				self.main_screen_open_powershell_button.configure(text=f"открыть powershell")
+				self.main_screen_open_terminal_button.configure(text=f"открыть терминал")
+				self.main_screen_save_code_as_button.configure(text=f"сохранить код как")
+				self.main_screen_open_code_button.configure(text=f"открыть код")
 
-			self.main_screen_right_click_menu.add_cascade(label="кодирование", font=("Roman", 16), background=button_color, foreground=text_color, menu=self.main_screen_right_click_code_menu)
-			self.main_screen_right_click_code_menu.add_command(label="открыть терминал", font=("Roman", 16), background=button_color, foreground=text_color, command=self.__open_powershell__)
-			self.main_screen_right_click_code_menu.add_command(label="открыть терминал", font=("Roman", 16), background=button_color, foreground=text_color, command=self.__open_shell__)
-			self.main_screen_right_click_code_menu.add_command(label="сохранить код как", font=("Roman", 16), background=button_color, foreground=text_color, command=self.__save_code_as__)
-			self.main_screen_right_click_code_menu.add_command(label="открыть код", font=("Roman", 16), background=button_color, foreground=text_color, command=self.__open_code__)
+				self.main_screen_settings_button.configure(text=f"настройки")
+				self.main_screen_settings_text.configure(text=f"настройки")
+				self.main_screen_settings_language_text.configure(text=f"языки")
+				self.main_screen_settings_autosave_text.configure(text=f"автосохранение")
+				self.main_screen_settings_autosave_switch.configure(text=f"автосохранение")
+				self.main_screen_settings_theme_mode_text.configure(text=f"темы")
+				self.main_screen_settings_customatization_text.configure(text=f"Внешний вид")
+				self.main_screen_settings_customatization_text_color_text.configure(text=f"Цвет текста")
+				self.main_screen_settings_customatization_text_field_color_text.configure(text=f"Цвет поля")
+				self.main_screen_settings_customatization_text_field_height_text.configure(text=f"Высота текста поля")
+				self.main_screen_settings_customatization_button_color_text.configure(text=f"Цвет кнопки")
 
-			self.main_screen_right_click_menu.add_separator()
+				self.main_screen_right_click_menu.add_command(label=f"сохранить как", font=(f"Roman", 16), background=button_color, foreground=text_color, command=self.__save_text__)
+			
+				self.main_screen_right_click_menu.add_command(label=f"открыть как", font=(f"Roman", 16), background=button_color, foreground=text_color, command=self.__open_file__)
 
-			self.main_screen_right_click_menu.add_command(label="удалить текст", font=("Roman", 16), background=button_color, foreground=text_color, command=self.__clear_text__)
+				self.main_screen_right_click_menu.add_cascade(label=f"конвертировать", font=(f"Roman", 16), background=button_color, foreground=text_color, menu=self.main_screen_right_click_convert_menu)
+				self.main_screen_right_click_convert_menu.add_command(label=f"из ворд в Пдф", font=(f"Roman", 16), background=button_color, foreground=text_color, command=self.__docx_to_pdf__)
+				self.main_screen_right_click_convert_menu.add_command(label=f"из Пдф в ворд", font=(f"Roman", 16), background=button_color, foreground=text_color, command=self.__pdf_to_docx__)
+				self.main_screen_right_click_convert_menu.add_command(label=f"из текста в Пдф", font=(f"Roman", 16), background=button_color, foreground=text_color, command=self.__txt_to_pdf__)
+				self.main_screen_right_click_convert_menu.add_command(label=f"из Пдф в текст", font=(f"Roman", 16), background=button_color, foreground=text_color, command=self.__pdf_to_txt__)
+				self.main_screen_right_click_convert_menu.add_command(label=f"из текста в ворд", font=(f"Roman", 16), background=button_color, foreground=text_color, command=self.__txt_to_docx__)
+				self.main_screen_right_click_convert_menu.add_command(label=f"из ворда в текст", font=(f"Roman", 16), background=button_color, foreground=text_color, command=self.__docx_to_txt__)
 
-			self.main_screen_right_click_menu.add_separator()
+				self.main_screen_right_click_menu.add_cascade(label=f"кодирование", font=(f"Roman", 16), background=button_color, foreground=text_color, menu=self.main_screen_right_click_code_menu)
+				self.main_screen_right_click_code_menu.add_command(label=f"открыть терминал", font=(f"Roman", 16), background=button_color, foreground=text_color, command=self.__open_powershell__)
+				self.main_screen_right_click_code_menu.add_command(label=f"открыть терминал", font=(f"Roman", 16), background=button_color, foreground=text_color, command=self.__open_shell__)
+				self.main_screen_right_click_code_menu.add_command(label=f"сохранить код", font=(f"Roman", 16), background=button_color, foreground=text_color, command=self.__save_code__)
+				self.main_screen_right_click_code_menu.add_command(label=f"открыть код", font=(f"Roman", 16), background=button_color, foreground=text_color, command=self.__open_code__)
 
-			self.main_screen_right_click_menu.add_command(label="копировать", font=("Roman", 16), background=button_color, foreground=text_color, command=self.__copy__)
-			self.main_screen_right_click_menu.add_command(label="вставить", font=("Roman", 16), background=button_color, foreground=text_color, command=self.__paste__)
-			self.main_screen_right_click_menu.add_command(label="вырезать", font=("Roman", 16), background=button_color, foreground=text_color, command=self.__cut__)
+				self.main_screen_right_click_menu.add_separator()
 
-			self.main_screen_right_click_menu.add_separator()
+				self.main_screen_right_click_menu.add_command(label=f"удалить текст", font=(f"Roman", 16), background=button_color, foreground=text_color, command=self.__clear_text__)
 
-			self.main_screen_right_click_menu.add_command(label="выход", font=("Roman", 16), background=button_color, foreground=text_color, command=self.__exit__)
+				self.main_screen_right_click_menu.add_separator()
+
+				self.main_screen_right_click_menu.add_command(label=f"копировать", font=(f"Roman", 16), background=button_color, foreground=text_color, command=self.__copy__)
+				self.main_screen_right_click_menu.add_command(label=f"вставить", font=(f"Roman", 16), background=button_color, foreground=text_color, command=self.__paste__)
+				self.main_screen_right_click_menu.add_command(label=f"вырезать", font=(f"Roman", 16), background=button_color, foreground=text_color, command=self.__cut__)
+
+				self.main_screen_right_click_menu.add_separator()
+
+				self.main_screen_right_click_menu.add_command(label=f"выход", font=(f"Roman", 16), background=button_color, foreground=text_color, command=self.__exit__)
 
 
-		if new_autosaved_data == "on":
-			self.main_screen_frame_textbox.insert("1.0", autosaved_text)
+		match new_autosaved_data:
+			case "on":
+				self.main_screen_frame_textbox.insert(f"1.0", autosaved_text)
 
-			self.bind("<Return>", self.__text_autosave__)
+				self.bind(f"<Return>", self.__text_autosave__)
 
-		else:
-			self.unbind("<Return>")
+			case _: self.unbind(f"<Return>")
+
 
 		self.main_screen_word_counter_variable: int = 0
 
 		self.main_screen_word_counter_data_variable: tkinter.IntVar = tkinter.IntVar(value=self.main_screen_word_counter_variable)
 
-		self.main_screen_word_counter: customtkinter.CTkLabel = customtkinter.CTkLabel(master=self, width=25, height=20, corner_radius=0, textvariable=self.main_screen_word_counter_data_variable)
+		self.main_screen_word_counter: CTkLabel = CTkLabel(master=self, width=25, height=20, corner_radius=0, textvariable=self.main_screen_word_counter_data_variable)
 		self.main_screen_word_counter.place(x=1500, y=0)
 				 
 	def __frame_resize__(self, event: str) -> None:
@@ -485,15 +471,12 @@ class Program(customtkinter.CTk, My_Diary_interface.My_Diary_interface):
 		self.main_screen_taskbar.grid_forget()
 
 	def __quit_operation__(self) -> None:
-		self.main_screen_taskbar_button.configure(text="☰", command=self.__open_taskbar__)
+		self.main_screen_taskbar_button.configure(text=f"☰", command=self.__open_taskbar__)
 
 		self.main_screen_undo_button.grid(column=1, row=0)
 		self.main_screen_redo_button.grid(column=2, row=0)
 		self.main_screen_frame.place(x=0, y=22.35)
 		self.main_screen_word_counter.place(x=1500, y=0)
-
-		self.main_screen_save_as_button.grid_forget()
-		self.main_screen_save_as_docx_button.grid_forget()
 
 		self.main_screen_edit_font_button.grid_forget()
 		self.main_screen_edit_size_button.grid_forget()
@@ -502,9 +485,6 @@ class Program(customtkinter.CTk, My_Diary_interface.My_Diary_interface):
 		self.main_screen_edit_weight_button.grid_forget()
 		self.main_screen_edit_underline_button.grid_forget()
 		self.main_screen_edit_overstrike_button.grid_forget()
-
-		self.main_screen_open_file_button.grid_forget()
-		self.main_screen_open_file_docx_button.grid_forget()
 
 		self.main_screen_pdf_to_word_converter_button.grid_forget()
 		self.main_screen_word_to_pdf_converter_button.grid_forget()
@@ -529,109 +509,85 @@ class Program(customtkinter.CTk, My_Diary_interface.My_Diary_interface):
 		self.main_screen_settings_customatization_table.place_forget()
 
 	def __undo__(self) -> None:
-		try:
-			self.main_screen_frame_textbox.edit_undo()
+		try: self.main_screen_frame_textbox.edit_undo()
 
-		except tkinter.TclError:
-			pass
+		except tkinter.TclError: pass
 
 	def __redo__(self) -> None:
-		try:
-			self.main_screen_frame_textbox.edit_redo()
+		try: self.main_screen_frame_textbox.edit_redo()
 
-		except tkinter.TclError:
-			pass
+		except tkinter.TclError: pass
 
-	def __save__(self) -> None:
-		self.main_screen_taskbar_button.grid(column=0, row=0)
-		self.main_screen_save_as_button.grid(column=1, row=0)
-		self.main_screen_save_as_docx_button.grid(column=2, row=0)
+	@memorise
+	def __save_text__(self, event) -> None:
+		self.file_name: tkinter.filedialog.asksaveasfilename = tkinter.filedialog.asksaveasfilename(filetypes=[(f"All Files (*.*)", f"*.*"), (f"Text file (*.txt)", f"*.txt"), (f"Docx file (*.docx)", f"*.docx"), (f"Python file (*.py)", f"*.py"), (f"Java file (*.java)", f"*.java"), (f"C# file (*.cs)", f"*.cs"), (f"HTML file (*.html)", f"*.html"), (f"CSS file (*.css)", f"*.css"), (f"JavaScript file (*.js)", f"*.js"), (f"C++ file (*.cpp)", f"*.cpp")], defaultextension=[(f"All Files (*.*)", f"*.*"), (f"Text file (*.txt)", f"*.txt"), (f"Docx file (*.docx)", f"*.docx"), (f"Python file (*.py)", f"*.py"), (f"Java file (*.java)", f"*.java"), (f"C# file (*.cs)", f"*.cs"), (f"HTML file (*.html)", f"*.html"), (f"CSS file (*.css)", f"*.css"), (f"JavaScript file (*.js)", f"*.js"), (f"C++ file (*.cpp)", f"*.cpp")])
+		match os.path.splitext(self.file_name)[1]:
+			case ".docx":
+				try:
+					self.file: docx.Document = docx.Document()
+					self.file_data: str = self.main_screen_frame_textbox.get(f"1.0", tkinter.END)
+					self.file_run: docx.Document = self.file.add_paragraph().add_run(self.file_data)
+					self.font: docx.Document = self.file_run.font
+					self.font.name: str = self.main_screen_edit_font_button_data
+					self.font.size: docx.shared.Pt = docx.shared.Pt(int(self.main_screen_edit_size_button_data))
+					match self.main_screen_edit_color_button_data:
+						case "black": self.font.color.rgb: docx.shared.RGBColor = docx.shared.RGBColor(0, 0, 0)
 
-		self.main_screen_taskbar_button.configure(text="↵", command=self.__quit_operation__)
+						case "white": self.font.color.rgb: docx.shared.RGBColor = docx.shared.RGBColor(255, 255, 255)
 
-		self.main_screen_taskbar.grid_forget()
+						case "red": self.font.color.rgb: docx.shared.RGBColor = docx.shared.RGBColor(250, 0, 0)
 
-		self.main_screen_undo_button.grid_forget()
-		self.main_screen_redo_button.grid_forget()
-		self.main_screen_word_counter.place_forget()
+						case "green": self.font.color.rgb: docx.shared.RGBColor = docx.shared.RGBColor(0, 255, 0)
 
-	def __save_text_as__(self, event: str) -> None:
-		try:
-			with open(tkinter.filedialog.asksaveasfilename(filetypes=[("All Files (*.*)", "*.*"), ("Text file (*.txt)", "*.txt"), ("Python file (*.py)", "*.py"), ("Java file (*.java)", "*.java"), ("C# file (*.cs)", "*.cs"), ("HTML file (*.html)", "*.html"), ("CSS file (*.css)", "*.css"), ("JavaScript file (*.js)", "*.js"), ("C++ file (*.cpp)", "*.cpp")], defaultextension=[("All Files (*.*)", "*.*"), ("Text file (*.txt)", "*.txt"), ("Python file (*.py)", "*.py"), ("Java file (*.java)", "*.java"), ("C# file (*.cs)", "*.cs"), ("HTML file (*.html)", "*.html"), ("CSS file (*.css)", "*.css"), ("JavaScript file (*.js)", "*.js"), ("C++ file (*.cpp)", "*.cpp")]), "w+", encoding="UTF-8") as self.file:
-				self.file_data: str = self.main_screen_frame_textbox.get("1.0", tkinter.END)
-				self.file.write(self.file_data)
-
-		except FileNotFoundError:
-			pass
-		
-	def __save_text_as_docx__(self) -> None:
-		try:
-			self.file: docx.Document = docx.Document()
-			self.file_data: str = self.main_screen_frame_textbox.get("1.0", tkinter.END)
-			self.file_run: docx.Document = self.file.add_paragraph().add_run(self.file_data)
-			self.font: docx.Document = self.file_run.font
-			self.font.name: str = self.main_screen_edit_font_button_data
-			self.font.size: docx.shared.Pt = docx.shared.Pt(int(self.main_screen_edit_size_button_data))
-			if self.main_screen_edit_color_button_data == "black":
-				self.font.color.rgb: docx.shared.RGBColor = docx.shared.RGBColor(0, 0, 0)
-
-			elif self.main_screen_edit_color_button_data == "white":
-				self.font.color.rgb: docx.shared.RGBColor = docx.shared.RGBColor(255, 255, 255)
-
-			elif self.main_screen_edit_color_button_data == "red":
-				self.font.color.rgb: docx.shared.RGBColor = docx.shared.RGBColor(250, 0, 0)
-
-			elif self.main_screen_edit_color_button_data == "green":
-				self.font.color.rgb: docx.shared.RGBColor = docx.shared.RGBColor(0, 255, 0)
-
-			else:
-				self.font.color.rgb: docx.shared.RGBColor = docx.shared.RGBColor(0, 0, 255)
-
-						
-			if self.main_screen_edit_slant_button_data == "italic":
-				self.file_run.italic: bool = True
-
-			else:
-				self.file_run.italic: bool = False
+						case _: self.font.color.rgb: docx.shared.RGBColor = docx.shared.RGBColor(0, 0, 255)
 
 
-			if self.main_screen_edit_weight_button_data == "bold":
-				self.file_run.bold: bool = True
+					match self.main_screen_edit_slant_button_data:
+						case "italic": self.file_run.italic: bool = True
 
-			else:
-				self.file_run.bold: bool = False
-
-
-			if self.main_screen_edit_underline_button_data == "underlined":
-				self.file_run.underline: bool = True
-
-			else:
-				self.file_run.underline: bool = False
+						case _: self.file_run.italic: bool = False
 
 
-			if self.main_screen_edit_overstrike_button_data == "overstriked":
-				self.font.strike: bool = True
+					match self.main_screen_edit_weight_button_data:
+						case "bold": self.file_run.bold: bool = True
 
-			else:
-				self.font.strike: bool = False
+						case _: self.file_run.bold: bool = False
 
-			self.file.save(tkinter.filedialog.asksaveasfilename(filetypes=[("Word file (*.docx)", "*.docx")], defaultextension=[("Word file (*.docx)", "*.docx")]))
 
-		except FileNotFoundError:
-			pass
+					match self.main_screen_edit_underline_button_data: 
+						case "underlined": self.file_run.underline: bool = True
 
-		except AttributeError:
-			if language_data == "Српски":
-				tkinter.messagebox.showwarning(title="Пажња", message="Заборавили сте да отредактирате текст")
+						case _: self.file_run.underline: bool = False
 
-			elif language_data == "English":
-				tkinter.messagebox.showwarning(title="Warning", message="You forgot to edit your text")
 
-			else:
-				tkinter.messagebox.showwarning(title="Внимание", message="Вы забыли отредактировать свой текст") 
+					match self.main_screen_edit_overstrike_button_data:
+						case "overstriked": self.font.strike: bool = True
+
+						case _: self.font.strike: bool = False
+
+					self.file.save(self.file_name)
+
+				except FileNotFoundError: pass
+
+				except AttributeError:
+					match language_data:
+						case "Српски": tkinter.messagebox.showwarning(title=f"Пажња", message=f"Заборавили сте да отредактирате текст")
+
+						case "English": tkinter.messagebox.showwarning(title=f"Warning", message=f"You forgot to edit your text")
+
+						case _: tkinter.messagebox.showwarning(title=f"Внимание", message=f"Вы забыли отредактировать свой текст")
+
+			case _:
+				with open(self.file_name, f"w+", encoding=f"UTF-8") as self.file:
+					try:
+						self.file_data: str = self.main_screen_frame_textbox.get("1.0", tkinter.END)
+						self.file.write(self.file_data)
+					
+					except FileNotFoundError:
+						pass
 			
 	def __clear_text__(self) -> None:
-		self.main_screen_frame_textbox.delete("1.0", tkinter.END)
+		self.main_screen_frame_textbox.delete(f"1.0", tkinter.END)
 
 	def __edit_text__(self) -> None:
 		self.main_screen_taskbar_button.grid(column=0, row=0)
@@ -643,7 +599,7 @@ class Program(customtkinter.CTk, My_Diary_interface.My_Diary_interface):
 		self.main_screen_edit_underline_button.grid(column=6, row=0)
 		self.main_screen_edit_overstrike_button.grid(column=7, row=0)
 
-		self.main_screen_taskbar_button.configure(text="↵", command=self.__quit_operation__)
+		self.main_screen_taskbar_button.configure(text=f"↵", command=self.__quit_operation__)
 
 		self.main_screen_taskbar.grid_forget()
 		
@@ -663,50 +619,36 @@ class Program(customtkinter.CTk, My_Diary_interface.My_Diary_interface):
 		self.main_screen_frame_texbox_font.configure(family=self.main_screen_edit_font_button_data, size=int(self.main_screen_edit_size_button_data), slant=self.main_screen_edit_slant_button_data, weight=self.main_screen_edit_weight_button_data)
 		self.main_screen_frame_textbox.configure(text_color=self.main_screen_edit_color_button_data)
 
-		if self.main_screen_edit_underline_button_data == "not underlined":		
-			self.main_screen_frame_texbox_font.configure(underline=False)			
+		match self.main_screen_edit_underline_button_data:
+			case "not underlined": self.main_screen_frame_texbox_font.configure(underline=False)			
 
-		else:		
-			self.main_screen_frame_texbox_font.configure(underline=True)
+			case _:	self.main_screen_frame_texbox_font.configure(underline=True)
 		
-		if self.main_screen_edit_overstrike_button_data == "not overstriked":
-			self.main_screen_frame_texbox_font.configure(overstrike=False)
+		match self.main_screen_edit_overstrike_button_data:
+			case "not overstriked": self.main_screen_frame_texbox_font.configure(overstrike=False)
 
-		else:		
-			self.main_screen_frame_texbox_font.configure(overstrike=True)
+			case _:	self.main_screen_frame_texbox_font.configure(overstrike=True)
 
-	def __open__(self) -> None:
-		self.main_screen_taskbar_button.grid(column=0, row=0)
-		self.main_screen_open_file_button.grid(column=1, row=0)
-		self.main_screen_open_file_docx_button.grid(column=2, row=0)
+	@memorise
+	def __open_file__(self, event) -> None:
+		self.opened_name_file: tkinter.filedialog = tkinter.filedialog.askopenfilename(title=f"open file", filetypes=[(f"All Files (*.*)", f"*.*"), (f"Word file (*.docx)", f"*.docx"), (f"Text file (*.txt)", f"*.txt"), (f"Python file (*.py)", f"*.py"), (f"Java file (*.java)", f"*.java"), (f"C# file (*.cs)", f"*.cs"), (f"HTML file (*.html)", f"*.html"), (f"CSS file (*.css)", f"*.css"), (f"JavaScript file (*.js)", f"*.js"), (f"C++ file (*.cpp)", f"*.cpp")], defaultextension=[(f"All Files (*.*)", f"*.*"), (f"Text file (*.txt)", f"*.txt"), (f"Word file (*.docx)", f"*.docx"), (f"Python file (*.py)", f"*.py"), (f"Java file (*.java)", f"*.java"), (f"C# file (*.cs)", f"*.cs"), (f"HTML file (*.html)", f"*.html"), (f"CSS file (*.css)", f"*.css"), (f"JavaScript file (*.js)", f"*.js"), (f"C++ file (*.cpp)", f"*.cpp")])
+		match os.path.splitext(self.opened_name_file)[1]:
+			case ".docx":
+				try:
+					self.openned_file: docx.Document = docx.Document(self.opened_name_file)
+					self.openned_file_data: list[str] = []
+					for self.paragraphs in self.openned_file.paragraphs: self.openned_file_data.append(self.paragraphs.text)
 
-		self.main_screen_taskbar_button.configure(text="↵", command=self.__quit_operation__)
+					self.main_screen_frame_textbox.insert(f"1.0", f"\n".join(self.openned_file_data))
 
-		self.main_screen_taskbar.grid_forget()
+				except docx.opc.exceptions.PackageNotFoundError: pass
+			
+			case _:
+				try:
+					with open(self.opened_name_file, f"r+", encoding=f"UTF-8") as self.openned_file:
+						self.main_screen_frame_textbox.insert(f"1.0", self.openned_file.read())
 
-		self.main_screen_undo_button.grid_forget()
-		self.main_screen_redo_button.grid_forget()
-		self.main_screen_word_counter.place_forget()
-
-	def __open_file__(self, event: str) -> None:
-		try:
-			with open(tkinter.filedialog.askopenfilename(title="open file", filetypes=[("All Files (*.*)", "*.*"), ("Text file (*.txt)", "*.txt"), ("Python file (*.py)", "*.py"), ("Java file (*.java)", "*.java"), ("C# file (*.cs)", "*.cs"), ("HTML file (*.html)", "*.html"), ("CSS file (*.css)", "*.css"), ("JavaScript file (*.js)", "*.js"), ("C++ file (*.cpp)", "*.cpp")], defaultextension=[("All Files (*.*)", "*.*"), ("Text file (*.txt)", "*.txt"), ("Python file (*.py)", "*.py"), ("Java file (*.java)", "*.java"), ("C# file (*.cs)", "*.cs"), ("HTML file (*.html)", "*.html"), ("CSS file (*.css)", "*.css"), ("JavaScript file (*.js)", "*.js"), ("C++ file (*.cpp)", "*.cpp")]), "r+", encoding="UTF-8") as self.openned_file:
-				self.main_screen_frame_textbox.insert("1.0", self.openned_file.read())
-
-		except FileNotFoundError:
-			pass
-
-	def __open_file_docx__(self) -> None:
-		try:
-			self.openned_file: docx.Document = docx.Document(tkinter.filedialog.askopenfilename(title="open docx file", filetypes=[("Word file (*.docx)", "*.docx")], defaultextension=[("Word file (*.docx)", "*.docx")]))
-			self.openned_file_data: list = []
-			for self.paragraphs in self.openned_file.paragraphs:
-				self.openned_file_data.append(self.paragraphs.text)
-
-			self.main_screen_frame_textbox.insert("1.0", "\n".join(self.openned_file_data))
-
-		except docx.opc.exceptions.PackageNotFoundError:
-			pass
+				except FileNotFoundError: pass
 
 	def __convert__(self) -> None:
 		self.main_screen_taskbar_button.grid(column=0, row=0)
@@ -717,7 +659,7 @@ class Program(customtkinter.CTk, My_Diary_interface.My_Diary_interface):
 		self.main_screen_word_to_txt_converter_button.grid(column=5, row=0)
 		self.main_screen_txt_to_word_converter_button.grid(column=6, row=0)
 
-		self.main_screen_taskbar_button.configure(text="↵", command=self.__quit_operation__)
+		self.main_screen_taskbar_button.configure(text=f"↵", command=self.__quit_operation__)
 
 		self.main_screen_taskbar.grid_forget()
 
@@ -725,59 +667,59 @@ class Program(customtkinter.CTk, My_Diary_interface.My_Diary_interface):
 		self.main_screen_redo_button.grid_forget()
 		self.main_screen_word_counter.place_forget()
 
+	@memorise
 	def __pdf_to_docx__(self) -> None:
 		try:
-			self.file: str = tkinter.messagebox.filedialog.askopenfilename(title="convert pdf file", filetypes=[("Pdf file (*.pdf)", "*.pdf")], defaultextension=[("Pdf file (*.pdf)", "*.pdf")])
+			self.file: str = tkinter.filedialog.askopenfilename(title=f"convert pdf file", filetypes=[(f"Pdf file (*.pdf)", f"*.pdf")], defaultextension=[(f"Pdf file (*.pdf)", f"*.pdf")])
 			self.converted_file: aspose.words.Document = aspose.words.Document(self.file)
-			self.converted_file.save(self.file + ".docx")
+			self.converted_file.save(f"{self.file}.docx")
 
-		except RuntimeError:
-			pass
-		
+		except RuntimeError: pass
+
+	@memorise	
 	def __docx_to_pdf__(self) -> None:
 		try:
-			self.file: str = tkinter.filedialog.askopenfilename(title="convert docx file", filetypes=[("Word file (*.docx)", "*.docx")], defaultextension=[("Word file (*.docx)", "*.docx")])
+			self.file: str = tkinter.filedialog.askopenfilename(title=f"convert docx file", filetypes=[(f"Word file (*.docx)", f"*.docx")], defaultextension=[(f"Word file (*.docx)", f"*.docx")])
 			self.converted_file: aspose.words.Document = aspose.words.Document(self.file)
-			self.converted_file.save(self.file + ".pdf")
+			self.converted_file.save(f"{self.file}.pdf")
 
-		except RuntimeError:
-			pass
+		except RuntimeError: pass
 
+	@memorise
 	def __pdf_to_txt__(self) -> None:
 		try:
-			self.file: str = tkinter.filedialog.askopenfilename(title="convert pdf file", filetypes=[("Pdf file (*.pdf)", "*.pdf")], defaultextension=[("Pdf file (*.pdf)", "*.pdf")])
+			self.file: str = tkinter.filedialog.askopenfilename(title=f"convert pdf file", filetypes=[(f"Pdf file (*.pdf)", f"*.pdf")], defaultextension=[(f"Pdf file (*.pdf)", f"*.pdf")])
 			self.converted_file: aspose.words.Document = aspose.words.Document(self.file)
-			self.converted_file.save(self.file + ".txt")
+			self.converted_file.save(f"{self.file}.txt")
 
-		except RuntimeError:
-			pass
-		
+		except RuntimeError: pass
+	
+	@memorise	
 	def __txt_to_pdf__(self) -> None:
 		try:
-			self.file: str = tkinter.filedialog.askopenfilename(title="convert txt file", filetypes=[("Text file (*.txt)", "*.txt")], defaultextension=[("Text file (*.txt)", "*.txt")])
+			self.file: str = tkinter.filedialog.askopenfilename(title=f"convert txt file", filetypes=[(f"Text file (*.txt)", f"*.txt")], defaultextension=[(f"Text file (*.txt)", f"*.txt")])
 			self.converted_file: aspose.words.Document = aspose.words.Document(self.file)
-			self.converted_file.save(self.file + ".pdf")
+			self.converted_file.save(f"{self.file}.pdf")
 
-		except RuntimeError:
-			pass
-
+		except RuntimeError: pass
+	
+	@memorise
 	def __docx_to_txt__(self) -> None:
 		try:
-			self.file: str = tkinter.filedialog.askopenfilename(title="convert docx file", filetypes=[("Word file (*.docx)", "*.docx")], defaultextension=[("Word file (*.docx)", "*.docx")])
+			self.file: str = tkinter.filedialog.askopenfilename(title=f"convert docx file", filetypes=[(f"Word file (*.docx)", f"*.docx")], defaultextension=[(f"Word file (*.docx)", f"*.docx")])
 			self.converted_file: aspose.words.Document = aspose.words.Document(self.file)
-			self.converted_file.save(self.file + ".txt")
+			self.converted_file.save(f"{self.file}.txt")
 		
-		except RuntimeError:
-			pass
+		except RuntimeError: pass
 
+	@memorise
 	def __txt_to_docx__(self) -> None:
 		try:
-			self.file: str = tkinter.filedialog.askopenfilename(title="convert txt file", filetypes=[("Text file (*.txt)", "*.txt")], defaultextension=[("Text file (*.txt)", "*.txt")])
+			self.file: str = tkinter.filedialog.askopenfilename(title=f"convert txt file", filetypes=[(f"Text file (*.txt)", "*.txt")], defaultextension=[(f"Text file (*.txt)", f"*.txt")])
 			self.converted_file: aspose.words.Document = aspose.words.Document(self.file)
-			self.converted_file.save(self.file + ".docx")
+			self.converted_file.save(f"{self.file}.docx")
 
-		except RuntimeError:
-			pass
+		except RuntimeError: pass
 
 	def __code_editor__(self) -> None:
 		self.main_screen_taskbar_button.grid(column=0, row=0)
@@ -786,34 +728,34 @@ class Program(customtkinter.CTk, My_Diary_interface.My_Diary_interface):
 		self.main_screen_save_code_as_button.grid(column=5, row=0)
 		self.main_screen_open_code_button.grid(column=6, row=0)
 
-		self.main_screen_taskbar_button.configure(text="↵", command=self.__quit_operation__)
+		self.main_screen_taskbar_button.configure(text=f"↵", command=self.__quit_operation__)
 
 		self.main_screen_taskbar.grid_forget()
 		self.main_screen_word_counter.place_forget()
 
 	def __open_powershell__(self) -> None:
-		subprocess.run(["powershell.exe"])
+		subprocess.run([f"powershell.exe"])
 
 	def __open_shell__(self) -> None:
-		subprocess.run(["cmd.exe"])
+		subprocess.run([f"cmd.exe"])
 
-	def __save_code_as__(self, event: str) -> None:
+	@memorise
+	def __save_code__(self, event: str) -> None:
 		try:
-			with open(tkinter.filedialog.asksaveasfilename(filetypes=[("Python file (*.py)", "*.py")], defaultextension=[("Python file (*.py)", "*.py")]), "w+", encoding="UTF-8") as self.script_file:
-				self.script_file_data: str = self.main_screen_frame_textbox.get("1.0", tkinter.END)
+			with open(tkinter.filedialog.asksaveasfilename(filetypes=[(f"Python file (*.py)", f"*.py")], defaultextension=[(f"Python file (*.py)", f"*.py")]), f"w+", encoding=f"UTF-8") as self.script_file:
+				self.script_file_data: str = self.main_screen_frame_textbox.get(f"1.0", tkinter.END)
 				self.script_file.write(self.script_file_data)
 				
 		
-		except FileNotFoundError:
-			pass
+		except FileNotFoundError: pass
 
+	@memorise
 	def __open_code__(self) -> None:
 		try:
-			with open(tkinter.filedialog.askopenfilename(title="open script file", filetypes=[("Python file (*.py)", "*.py")], defaultextension=[("Python file (*.py)", "*.py")]), "r+", encoding="UTF-8") as self.openned_script_file:
-				self.main_screen_frame_textbox.insert("1.0", self.openned_script_file.read())
+			with open(tkinter.filedialog.askopenfilename(title=f"open script file", filetypes=[(f"Python file (*.py)", f"*.py")], defaultextension=[(f"Python file (*.py)", f"*.py")]), f"r+", encoding=f"UTF-8") as self.openned_script_file:
+				self.main_screen_frame_textbox.insert(f"1.0", self.openned_script_file.read())
 
-		except FileNotFoundError:
-			pass
+		except FileNotFoundError: pass
 		
 	def __settings__(self) -> None:
 		self.main_screen_taskbar_button.grid(column=0, row=0)
@@ -827,7 +769,7 @@ class Program(customtkinter.CTk, My_Diary_interface.My_Diary_interface):
 		self.main_screen_settings_customatization_text.place(x=18, y=342)
 		self.main_screen_settings_customatization_table.place(x=3, y=382)
 
-		self.main_screen_taskbar_button.configure(text="↵", command=self.__quit_operation__)
+		self.main_screen_taskbar_button.configure(text=f"↵", command=self.__quit_operation__)
 
 		self.main_screen_taskbar.grid_forget()
 
@@ -838,121 +780,127 @@ class Program(customtkinter.CTk, My_Diary_interface.My_Diary_interface):
 
 	def __language_settings__(self, pickle_serialization: pickle) -> None:
 		self.main_screen_settings_language_option_variable: str = self.main_screen_settings_language_option.get()
-		with open("my_diary_settings.pickle", "wb+") as self.data:
+		with open(f"my_diary_settings.pickle", f"wb+") as self.data:
 			pickle.dump(self.main_screen_settings_language_option_variable, self.data)
 
-		if self.main_screen_settings_language_option_variable == "Српски":
-			tkinter.messagebox.showwarning(title="Пажња", message="Рестартуј програм")
+		match self.main_screen_settings_language_option_variable: 
+			case "Српски": tkinter.messagebox.showwarning(title=f"Пажња", message=f"Рестартуј програм")
 
-		elif self.main_screen_settings_language_option_variable == "English":
-			tkinter.messagebox.showwarning(title="Warning", message="Restart program")
+			case "English": tkinter.messagebox.showwarning(title=f"Warning", message=f"Restart program")
 
-		else:
-			tkinter.messagebox.showwarning(title="Внимание", message="Перезагрузите программу")
+			case _: tkinter.messagebox.showwarning(title=f"Внимание", message=f"Перезагрузите программу")
 
 	def __autosave_settings__(self, pickle_serialization: pickle) -> None:
 		self.main_screen_settings_autosave_switch_value: str = self.main_screen_settings_autosave_value.get()
-		with open("my_diary_autosave_settings.pickle", "wb+") as self.autosave_data:
+		with open(f"my_diary_autosave_settings.pickle", f"wb+") as self.autosave_data:
 			pickle.dump(self.main_screen_settings_autosave_switch_value, self.autosave_data)
 
-		if language_data == "Српски":
-			tkinter.messagebox.showwarning(title="Пажња", message="Рестартуј програм")
+		match language_data: 
+			case "Српски": tkinter.messagebox.showwarning(title=f"Пажња", message=f"Рестартуј програм")
 
-		elif language_data == "English":
-			tkinter.messagebox.showwarning(title="Warning", message="Restart program")
+			case "English": tkinter.messagebox.showwarning(title=f"Warning", message=f"Restart program")
 
-		else:
-			tkinter.messagebox.showwarning(title="Внимание", message="Перезагрузите программу")
+			case _: tkinter.messagebox.showwarning(title=f"Внимание", message=f"Перезагрузите программу")
 
 	def __text_autosave__(self, event: str) -> None:
 		self.main_screen_frame_textbox_text_data: str = self.main_screen_frame_textbox.get("1.0", tkinter.END)
-		with open('my_diary_saved_text.pickle', 'wb+') as self.text_data:
+		with open(f"settings\my_diary_saved_text.pickle", f"wb+") as self.text_data:
 			pickle.dump(self.main_screen_frame_textbox_text_data, self.text_data)
 
 	def __theme_settings__(self, pickle_serialization: pickle) -> None:
 		self.main_screen_settings_theme_mode_option_data: str = self.main_screen_settings_theme_mode_option.get()
-		with open("my_diary_theme_settings.pickle", "wb+") as self.theme_data:
+		with open(f"my_diary_theme_settings.pickle", f"wb+") as self.theme_data:
 			pickle.dump(self.main_screen_settings_theme_mode_option_data, self.theme_data)
 
-		if language_data == "Српски":
-			tkinter.messagebox.showwarning(title="Пажња", message="Рестартуј програм")
+		match language_data: 
+			case "Српски": tkinter.messagebox.showwarning(title=f"Пажња", message=f"Рестартуј програм")
 
-		elif language_data == "English":
-			tkinter.messagebox.showwarning(title="Warning", message="Restart program")
+			case "English": tkinter.messagebox.showwarning(title=f"Warning", message=f"Restart program")
 
-		else:
-			tkinter.messagebox.showwarning(title="Внимание", message="Перезагрузите программу")
+			case _: tkinter.messagebox.showwarning(title=f"Внимание", message=f"Перезагрузите программу")
 
 	def __change_text_color__(self, pickle_serialization: pickle) -> None:
 		self.main_screen_settings_customatization_text_color_option_data: str = self.main_screen_settings_customatization_text_color_option.get()
-		with open("my_diary_text_color.pickle", "wb+") as self.text_color_data:
+		with open(f"my_diary_text_color.pickle", f"wb+") as self.text_color_data:
 			pickle.dump(self.main_screen_settings_customatization_text_color_option_data, self.text_color_data)
 
-		if language_data == "Српски":
-			tkinter.messagebox.showwarning(title="Пажња", message="Рестартуј програм")
+		match language_data: 
+			case "Српски": tkinter.messagebox.showwarning(title=f"Пажња", message=f"Рестартуј програм")
 
-		elif language_data == "English":
-			tkinter.messagebox.showwarning(title="Warning", message="Restart program")
+			case "English": tkinter.messagebox.showwarning(title=f"Warning", message=f"Restart program")
 
-		else:
-			tkinter.messagebox.showwarning(title="Внимание", message="Перезагрузите программу")
+			case _: tkinter.messagebox.showwarning(title=f"Внимание", message=f"Перезагрузите программу")
 
 	def __change_text_field_color__(self, pickle_serialization: pickle) -> None:
 		self.main_screen_settings_customatization_text_field_color_option_data: str = self.main_screen_settings_customatization_text_field_color_option.get()
-		with open("my_diary_text_field_color.pickle", "wb+") as self.text_field_color_data:
+		with open(f"my_diary_text_field_color.pickle", f"wb+") as self.text_field_color_data:
 			pickle.dump(self.main_screen_settings_customatization_text_field_color_option_data, self.text_field_color_data)
 
-		if language_data == "Српски":
-			tkinter.messagebox.showwarning(title="Пажња", message="Рестартуј програм")
+		match language_data: 
+			case "Српски": tkinter.messagebox.showwarning(title=f"Пажња", message=f"Рестартуј програм")
 
-		elif language_data == "English":
-			tkinter.messagebox.showwarning(title="Warning", message="Restart program")
+			case "English": tkinter.messagebox.showwarning(title=f"Warning", message=f"Restart program")
 
-		else:
-			tkinter.messagebox.showwarning(title="Внимание", message="Перезагрузите программу")
+			case _: tkinter.messagebox.showwarning(title=f"Внимание", message=f"Перезагрузите программу")
 
 	def __change_text_field_text_height__(self, pickle_serialization: pickle) -> None:
 		self.main_screen_settings_customatization_text_field_height_option_data: str = self.main_screen_settings_customatization_text_field_height_option.get()
-		with open("my_diary_text_field_text_height.pickle", "wb+") as self.text_field_text_height_data:
+		with open(f"my_diary_text_field_text_height.pickle", f"wb+") as self.text_field_text_height_data:
 			pickle.dump(self.main_screen_settings_customatization_text_field_height_option_data, self.text_field_text_height_data)
 
-		if language_data == "Српски":
-			tkinter.messagebox.showwarning(title="Пажња", message="Рестартуј програм")
+		match language_data: 
+			case "Српски": tkinter.messagebox.showwarning(title=f"Пажња", message=f"Рестартуј програм")
 
-		elif language_data == "English":
-			tkinter.messagebox.showwarning(title="Warning", message="Restart program")
+			case "English": tkinter.messagebox.showwarning(title=f"Warning", message=f"Restart program")
 
-		else:
-			tkinter.messagebox.showwarning(title="Внимание", message="Перезагрузите программу")
+			case _: tkinter.messagebox.showwarning(title=f"Внимание", message=f"Перезагрузите программу")
 
 	def __change_button_color__(self, pickle_serialization: pickle) -> None:
 		self.main_screen_settings_customatization_button_color_option_data: str = self.main_screen_settings_customatization_button_color_option.get()
-		with open("my_diary_button_color.pickle", "wb+") as self.button_color_data:
+		with open(f"my_diary_button_color.pickle", f"wb+") as self.button_color_data:
 			pickle.dump(self.main_screen_settings_customatization_button_color_option_data, self.button_color_data)
 
-		if language_data == "Српски":
-			tkinter.messagebox.showwarning(title="Пажња", message="Рестартуј програм")
+		match language_data: 
+			case "Српски": tkinter.messagebox.showwarning(title=f"Пажња", message=f"Рестартуј програм")
 
-		elif language_data == "English":
-			tkinter.messagebox.showwarning(title="Warning", message="Restart program")
+			case "English": tkinter.messagebox.showwarning(title=f"Warning", message=f"Restart program")
 
-		else:
-			tkinter.messagebox.showwarning(title="Внимание", message="Перезагрузите программу")
+			case _: tkinter.messagebox.showwarning(title=f"Внимание", message=f"Перезагрузите программу")
 
 	def __word_count__(self, event: str) -> None:
-		self.main_screen_frame_textbox_data: str = self.main_screen_frame_textbox.get("0.0", tkinter.END)
+		self.main_screen_frame_textbox_data: str = self.main_screen_frame_textbox.get(f"0.0", tkinter.END)
 		self.main_screen_word_counter_data_variable.set(value=len(self.main_screen_frame_textbox_data.split()))
+		
+	def __drop_file_into_textbox__(self, event: str) -> None:
+		self.main_screen_frame_textbox.delete(f"1.0", tkinter.END)
+		if event.data.endswith(f".docx"):
+			try:
+				self.openned_file: docx.Document = docx.Document(event.data)
+				self.openned_file_data: list[str] = []
+				for self.paragraphs in self.openned_file.paragraphs: self.openned_file_data.append(self.paragraphs.text)
+
+				self.main_screen_frame_textbox.insert(f"1.0", f"\n".join(self.openned_file_data))
+
+			except docx.opc.exceptions.PackageNotFoundError: pass
+
+		else:
+			try:
+				with open(event.data, f"r+", encoding=f"UTF-8") as self.openned_file:
+					self.main_screen_frame_textbox.insert(f"1.0", self.openned_file.read())
+
+			except FileNotFoundError: pass
+				
 
 	def __fullscreen__(self, event: str) -> None:
 		self.main_screen_fullscreen_numbers += 1
 		if self.main_screen_fullscreen_numbers % 2 == 0:
-			self.attributes("-fullscreen", True)
+			self.attributes(f"-fullscreen", True)
 			
 			self.main_screen_frame.configure(height=840.55)
 			self.main_screen_frame_textbox.configure(height=839)
 		
 		else:
-			self.attributes("-fullscreen", False)
+			self.attributes(f"-fullscreen", False)
 
 			self.main_screen_frame.configure(height=769)
 			self.main_screen_frame_textbox.configure(height=767.5)
@@ -965,65 +913,58 @@ class Program(customtkinter.CTk, My_Diary_interface.My_Diary_interface):
 			self.terminal_frame: My_Diary_command_prompt.Terminal = My_Diary_command_prompt.Terminal()
 		
 		except ImportError:
-			if language_data == "Српски":
-				tkinter.messagebox.showerror(title="Грешка", message="Нема те фајл са терминалом")
+			match language_data: 
+				case "Српски": tkinter.messagebox.showerror(title=f"Грешка", message=f"Нема те фајл са терминалом")
 
-			elif language_data == "English":
-				tkinter.messagebox.showerror(title="Error", message="You don't have terminal file")
+				case "English": tkinter.messagebox.showerror(title=f"Error", message=f"You don't have terminal file")
 
-			else:
-				tkinter.messagebox.showerror(title="Ошибка", message="У вас нет файла с терминалом")
+				case _: tkinter.messagebox.showerror(title=f"Ошибка", message=f"У вас нет файла с терминалом")
 
 	def __html_script__(self, event: str) -> None:
-		self.main_screen_frame_textbox.insert("0.0", f"<!DOCTYPE html> \n  \n  <html lang='en'> \n <head> \n <meta charset='utf-8' /> \n <title></title> \n </head> \n <body> \n \n </body> \n </html>")
+		self.main_screen_frame_textbox.insert(f"0.0", f"<!DOCTYPE html> \n  \n  <html lang='en'> \n <head> \n <meta charset='utf-8' /> \n <title></title> \n </head> \n <body> \n \n </body> \n </html>")
 
 	def __right_click_menu__(self, event: str)-> None:
-		try:
-			self.main_screen_right_click_menu.tk_popup(event.x_root, event.y_root)
+		try: self.main_screen_right_click_menu.tk_popup(event.x_root, event.y_root)
 
-		finally:
-			self.main_screen_right_click_menu.grab_release()
+		finally: self.main_screen_right_click_menu.grab_release()
 
 	def __copy__(self) -> str:
 		self.main_screen_frame_textbox_text_data: str = self.main_screen_frame_textbox.selection_get()
 		return self.main_screen_frame_textbox_text_data
 
 	def __paste__(self) -> None:
-		self.main_screen_frame_textbox.insert(self.main_screen_frame_textbox.index("insert"), str(self.main_screen_frame_textbox_text_data))
+		self.main_screen_frame_textbox.insert(self.main_screen_frame_textbox.index(f"insert"), str(self.main_screen_frame_textbox_text_data))
 
 	def __cut__(self) -> None:
-		self.main_screen_frame_textbox.delete(self.main_screen_frame_textbox.index("sel.first"), self.main_screen_frame_textbox.index("sel.last"))	  																																			   
+		self.main_screen_frame_textbox.delete(self.main_screen_frame_textbox.index(f"sel.first"), self.main_screen_frame_textbox.index(f"sel.last"))	  																																			   
 
 	def __exit__(self) -> None:
-		if language_data == "Српски":
-			self.main_screen_exit: tkinter.messagebox.askyesno = tkinter.messagebox.askyesno(title="излаз", message="желите да изађете?")
-			if self.main_screen_exit: 
-				sys.exit()
+		match language_data: 
+			case "Српски":
+				self.main_screen_exit: tkinter.messagebox.askyesno = tkinter.messagebox.askyesno(title=f"излаз", message=f"желите да изађете?")
+				if self.main_screen_exit: sys.exit()
+				else: pass
 
-		elif language_data == "English":
-			self.main_screen_exit: tkinter.messagebox.askyesno = tkinter.messagebox.askyesno(title="exit", message="would you like to exit?")
-			if self.main_screen_exit: 
-				sys.exit()
+			case "English":
+				self.main_screen_exit: tkinter.messagebox.askyesno = tkinter.messagebox.askyesno(title=f"exit", message=f"would you like to exit?")
+				if self.main_screen_exit: sys.exit()
+				else: pass
 
-		else:
-			self.main_screen_exit: tkinter.messagebox.askyesno = tkinter.messagebox.askyesno(title="выход", message="желайте выйти?")
-			if self.main_screen_exit: 
-				sys.exit()
+			case _:
+				self.main_screen_exit: tkinter.messagebox.askyesno = tkinter.messagebox.askyesno(title=f"выход", message=f"желайте выйти?")
+				if self.main_screen_exit: sys.exit()
+				else: pass
 			
 	@functools.cache
 	def __run__(self) -> None:
-		self.mainloop()
-		
-if __name__ == "__main__":
-	try:
-		program: Program = Program()
-		program.__run__()
+		try: self.mainloop()
 															 
-	except FileNotFoundError:
-		tkinter.messagebox.showerror(title="file not found error", message=f"срб: грешка: није нађен фајл \n eng: error: missing data file \nрус: ошибка: не найден файл")
+		except FileNotFoundError: tkinter.messagebox.showerror(title=f"file not found error", message=f"срб: грешка: није нађен фајл \n eng: error: missing data file \nрус: ошибка: не найден файл")
 
-	except tkinter.TclError:
-		tkinter.messagebox.showerror(title="icon file not found error", message=f"срб: грешка: није нађен фајл иконица \neng: error: missing icon file \nрус: ошибка: не найден файл с иконкой")
+		except tkinter.TclError: tkinter.messagebox.showerror(title=f"icon file not found error", message=f"срб: грешка: није нађен фајл иконица \neng: error: missing icon file \nрус: ошибка: не найден файл с иконкой")
 
-	except EOFError:
-		tkinter.messagebox.showerror(title="corrupted file error", message=f"срб: грешка: повређен фајл \n eng: error: corrupted data file \nрус: ошибка: повреждён файл")
+		except EOFError: tkinter.messagebox.showerror(title=f"corrupted file error", message=f"срб: грешка: повређен фајл \n eng: error: corrupted data file \nрус: ошибка: повреждён файл")
+
+if __name__ == f"__main__":
+    program: Program = Program()
+    program.__run__()
