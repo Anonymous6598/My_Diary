@@ -670,7 +670,7 @@ class Program(Tk, My_Diary_interface.My_Diary_interface):
 	@memorise
 	def __pdf_to_docx__(self) -> None:
 		try:
-			self.file: str = tkinter.filedialog.askopenfilename(title=f"convert pdf file", filetypes=[(f"Pdf file (*.pdf)", f"*.pdf")], defaultextension=[(f"Pdf file (*.pdf)", f"*.pdf")])
+			self.file: tkinter.filedialog.askopenfilename = tkinter.filedialog.askopenfilename(title=f"convert pdf file", filetypes=[(f"Pdf file (*.pdf)", f"*.pdf")], defaultextension=[(f"Pdf file (*.pdf)", f"*.pdf")])
 			self.converted_file: aspose.words.Document = aspose.words.Document(self.file)
 			self.converted_file.save(f"{self.file}.docx")
 
@@ -679,7 +679,7 @@ class Program(Tk, My_Diary_interface.My_Diary_interface):
 	@memorise	
 	def __docx_to_pdf__(self) -> None:
 		try:
-			self.file: str = tkinter.filedialog.askopenfilename(title=f"convert docx file", filetypes=[(f"Word file (*.docx)", f"*.docx")], defaultextension=[(f"Word file (*.docx)", f"*.docx")])
+			self.file: tkinter.filedialog.askopenfilename = tkinter.filedialog.askopenfilename(title=f"convert docx file", filetypes=[(f"Word file (*.docx)", f"*.docx")], defaultextension=[(f"Word file (*.docx)", f"*.docx")])
 			self.converted_file: aspose.words.Document = aspose.words.Document(self.file)
 			self.converted_file.save(f"{self.file}.pdf")
 
@@ -688,7 +688,7 @@ class Program(Tk, My_Diary_interface.My_Diary_interface):
 	@memorise
 	def __pdf_to_txt__(self) -> None:
 		try:
-			self.file: str = tkinter.filedialog.askopenfilename(title=f"convert pdf file", filetypes=[(f"Pdf file (*.pdf)", f"*.pdf")], defaultextension=[(f"Pdf file (*.pdf)", f"*.pdf")])
+			self.file: tkinter.filedialog.askopenfilename = tkinter.filedialog.askopenfilename(title=f"convert pdf file", filetypes=[(f"Pdf file (*.pdf)", f"*.pdf")], defaultextension=[(f"Pdf file (*.pdf)", f"*.pdf")])
 			self.converted_file: aspose.words.Document = aspose.words.Document(self.file)
 			self.converted_file.save(f"{self.file}.txt")
 
@@ -697,7 +697,7 @@ class Program(Tk, My_Diary_interface.My_Diary_interface):
 	@memorise	
 	def __txt_to_pdf__(self) -> None:
 		try:
-			self.file: str = tkinter.filedialog.askopenfilename(title=f"convert txt file", filetypes=[(f"Text file (*.txt)", f"*.txt")], defaultextension=[(f"Text file (*.txt)", f"*.txt")])
+			self.file: tkinter.filedialog.askopenfilename = tkinter.filedialog.askopenfilename(title=f"convert txt file", filetypes=[(f"Text file (*.txt)", f"*.txt")], defaultextension=[(f"Text file (*.txt)", f"*.txt")])
 			self.converted_file: aspose.words.Document = aspose.words.Document(self.file)
 			self.converted_file.save(f"{self.file}.pdf")
 
@@ -706,7 +706,7 @@ class Program(Tk, My_Diary_interface.My_Diary_interface):
 	@memorise
 	def __docx_to_txt__(self) -> None:
 		try:
-			self.file: str = tkinter.filedialog.askopenfilename(title=f"convert docx file", filetypes=[(f"Word file (*.docx)", f"*.docx")], defaultextension=[(f"Word file (*.docx)", f"*.docx")])
+			self.file: tkinter.filedialog.askopenfilename = tkinter.filedialog.askopenfilename(title=f"convert docx file", filetypes=[(f"Word file (*.docx)", f"*.docx")], defaultextension=[(f"Word file (*.docx)", f"*.docx")])
 			self.converted_file: aspose.words.Document = aspose.words.Document(self.file)
 			self.converted_file.save(f"{self.file}.txt")
 		
@@ -715,7 +715,7 @@ class Program(Tk, My_Diary_interface.My_Diary_interface):
 	@memorise
 	def __txt_to_docx__(self) -> None:
 		try:
-			self.file: str = tkinter.filedialog.askopenfilename(title=f"convert txt file", filetypes=[(f"Text file (*.txt)", "*.txt")], defaultextension=[(f"Text file (*.txt)", f"*.txt")])
+			self.file: tkinter.filedialog.askopenfilename = tkinter.filedialog.askopenfilename(title=f"convert txt file", filetypes=[(f"Text file (*.txt)", "*.txt")], defaultextension=[(f"Text file (*.txt)", f"*.txt")])
 			self.converted_file: aspose.words.Document = aspose.words.Document(self.file)
 			self.converted_file.save(f"{self.file}.docx")
 
