@@ -35,7 +35,7 @@ def memorise(function_param: str) -> str:
 
 
 class Tk(CTk, TkinterDnD.DnDWrapper):
-    def __init__(self, *args, **kwargs):
+    def __init__(self: typing.Self, *args, **kwargs):
         CTk.__init__(self, *args, **kwargs)
         self.TkdndVersion = TkinterDnD._require(self)
 
@@ -46,7 +46,7 @@ class Program(Tk, My_Diary_interface.My_Diary_interface):
 	COLOR_THEME: typing.Final[str] = f"dark-blue"
 	WIDGET_SCALING: typing.Final[float] = 1.251
 
-	def __init__(self, *args, **kwargs) -> None:
+	def __init__(self: typing.Self, *args, **kwargs) -> None:
 		Tk.__init__(self, *args, **kwargs)
 
 		set_widget_scaling(self.WIDGET_SCALING)
@@ -272,9 +272,9 @@ class Program(Tk, My_Diary_interface.My_Diary_interface):
 				self.main_screen_settings_customatization_text_field_height_text.configure(text=f"Висина текста поља")
 				self.main_screen_settings_customatization_button_color_text.configure(text=f"Боја дугма")
 
-				self.main_screen_right_click_menu.add_command(label=f"сачувај као", font=(f"Roman", 16), background=button_color, foreground=text_color, command=self.__save_text__)
+				self.main_screen_right_click_menu.add_command(label=f"сачувај као", font=(f"Roman", 16), background=button_color, foreground=text_color, command=lambda: self.__save_text__(None))
 
-				self.main_screen_right_click_menu.add_command(label=f"отвори као", font=(f"Roman", 16), background=button_color, foreground=text_color, command=self.__open_file__)
+				self.main_screen_right_click_menu.add_command(label=f"отвори као", font=(f"Roman", 16), background=button_color, foreground=text_color, command=lambda: self.__open_file__(None))
 
 				self.main_screen_right_click_menu.add_cascade(label=f"конвертирај", font=(f"Roman", 16), background=button_color, foreground=text_color, menu=self.main_screen_right_click_convert_menu)
 				self.main_screen_right_click_convert_menu.add_command(label=f"из docx у pdf", font=(f"Roman", 16), background=button_color, foreground=text_color, command=self.__docx_to_pdf__)
@@ -287,7 +287,7 @@ class Program(Tk, My_Diary_interface.My_Diary_interface):
 				self.main_screen_right_click_menu.add_cascade(label=f"кодирај", font=(f"Roman", 16), background=button_color, foreground=text_color, menu=self.main_screen_right_click_code_menu)
 				self.main_screen_right_click_code_menu.add_command(label=f"отвори powershell", font=(f"Roman", 16), background=button_color, foreground=text_color, command=self.__open_powershell__)
 				self.main_screen_right_click_code_menu.add_command(label=f"отвори терминал", font=(f"Roman", 16), background=button_color, foreground=text_color, command=self.__open_shell__)
-				self.main_screen_right_click_code_menu.add_command(label=f"сачувај код", font=(f"Roman", 16), background=button_color, foreground=text_color, command=self.__save_code__)
+				self.main_screen_right_click_code_menu.add_command(label=f"сачувај код", font=(f"Roman", 16), background=button_color, foreground=text_color, command=lambda: self.__save_code__(None))
 				self.main_screen_right_click_code_menu.add_command(label=f"отвори код", font=(f"Roman", 16), background=button_color, foreground=text_color, command=self.__open_code__)
 
 				self.main_screen_right_click_menu.add_separator()
@@ -338,9 +338,9 @@ class Program(Tk, My_Diary_interface.My_Diary_interface):
 				self.main_screen_settings_customatization_text_field_height_text.configure(text=f"Text field text height")
 				self.main_screen_settings_customatization_button_color_text.configure(text=f"Button color")
 
-				self.main_screen_right_click_menu.add_command(label=f"save as", font=(f"Roman", 16), background=button_color, foreground=text_color, command=self.__save_text__)
+				self.main_screen_right_click_menu.add_command(label=f"save as", font=(f"Roman", 16), background=button_color, foreground=text_color, command=lambda: self.__save_text__(None))
 			
-				self.main_screen_right_click_menu.add_command(label=f"open as", font=(f"Roman", 16), background=button_color, foreground=text_color, command=self.__open_file__)
+				self.main_screen_right_click_menu.add_command(label=f"open as", font=(f"Roman", 16), background=button_color, foreground=text_color, command=lambda: self.__open_file__(None))
 
 				self.main_screen_right_click_menu.add_cascade(label=f"convert", font=(f"Roman", 16), background=button_color, foreground=text_color, menu=self.main_screen_right_click_convert_menu)
 				self.main_screen_right_click_convert_menu.add_command(label=f"from docx to pdf", font=(f"Roman", 16), background=button_color, foreground=text_color, command=self.__docx_to_pdf__)
@@ -353,7 +353,7 @@ class Program(Tk, My_Diary_interface.My_Diary_interface):
 				self.main_screen_right_click_menu.add_cascade(label=f"code", font=(f"Roman", 16), background=button_color, foreground=text_color, menu=self.main_screen_right_click_code_menu)
 				self.main_screen_right_click_code_menu.add_command(label=f"open powershell", font=(f"Roman", 16), background=button_color, foreground=text_color, command=self.__open_powershell__)
 				self.main_screen_right_click_code_menu.add_command(label=f"open terminal", font=(f"Roman", 16), background=button_color, foreground=text_color, command=self.__open_shell__)
-				self.main_screen_right_click_code_menu.add_command(label=f"save code", font=(f"Roman", 16), background=button_color, foreground=text_color, command=self.__save_code__)
+				self.main_screen_right_click_code_menu.add_command(label=f"save code", font=(f"Roman", 16), background=button_color, foreground=text_color, command=lambda: self.__save_code__(None))
 				self.main_screen_right_click_code_menu.add_command(label=f"open code", font=(f"Roman", 16), background=button_color, foreground=text_color, command=self.__open_code__)
 
 				self.main_screen_right_click_menu.add_separator()
@@ -404,9 +404,9 @@ class Program(Tk, My_Diary_interface.My_Diary_interface):
 				self.main_screen_settings_customatization_text_field_height_text.configure(text=f"Высота текста поля")
 				self.main_screen_settings_customatization_button_color_text.configure(text=f"Цвет кнопки")
 
-				self.main_screen_right_click_menu.add_command(label=f"сохранить как", font=(f"Roman", 16), background=button_color, foreground=text_color, command=self.__save_text__)
+				self.main_screen_right_click_menu.add_command(label=f"сохранить как", font=(f"Roman", 16), background=button_color, foreground=text_color, command=lambda: self.__save_text__(None))
 			
-				self.main_screen_right_click_menu.add_command(label=f"открыть как", font=(f"Roman", 16), background=button_color, foreground=text_color, command=self.__open_file__)
+				self.main_screen_right_click_menu.add_command(label=f"открыть как", font=(f"Roman", 16), background=button_color, foreground=text_color, command=lambda: self.__open_file__(None))
 
 				self.main_screen_right_click_menu.add_cascade(label=f"конвертировать", font=(f"Roman", 16), background=button_color, foreground=text_color, menu=self.main_screen_right_click_convert_menu)
 				self.main_screen_right_click_convert_menu.add_command(label=f"из ворд в Пдф", font=(f"Roman", 16), background=button_color, foreground=text_color, command=self.__docx_to_pdf__)
@@ -419,7 +419,7 @@ class Program(Tk, My_Diary_interface.My_Diary_interface):
 				self.main_screen_right_click_menu.add_cascade(label=f"кодирование", font=(f"Roman", 16), background=button_color, foreground=text_color, menu=self.main_screen_right_click_code_menu)
 				self.main_screen_right_click_code_menu.add_command(label=f"открыть терминал", font=(f"Roman", 16), background=button_color, foreground=text_color, command=self.__open_powershell__)
 				self.main_screen_right_click_code_menu.add_command(label=f"открыть терминал", font=(f"Roman", 16), background=button_color, foreground=text_color, command=self.__open_shell__)
-				self.main_screen_right_click_code_menu.add_command(label=f"сохранить код", font=(f"Roman", 16), background=button_color, foreground=text_color, command=self.__save_code__)
+				self.main_screen_right_click_code_menu.add_command(label=f"сохранить код", font=(f"Roman", 16), background=button_color, foreground=text_color, command=lambda: self.__save_code__(None))
 				self.main_screen_right_click_code_menu.add_command(label=f"открыть код", font=(f"Roman", 16), background=button_color, foreground=text_color, command=self.__open_code__)
 
 				self.main_screen_right_click_menu.add_separator()
@@ -453,7 +453,7 @@ class Program(Tk, My_Diary_interface.My_Diary_interface):
 		self.main_screen_word_counter: CTkLabel = CTkLabel(master=self, width=25, height=20, corner_radius=0, textvariable=self.main_screen_word_counter_data_variable)
 		self.main_screen_word_counter.place(x=1500, y=0)
 				 
-	def __frame_resize__(self, event: str) -> None:
+	def __frame_resize__(self: typing.Self, event: str | None = None) -> None:
 		if self.winfo_width() <= 958:
 			self.main_screen_frame.configure(width=1535 / 2 - 2)
 			self.main_screen_frame_textbox.configure(width=1535 / 2 - 5)
@@ -462,15 +462,15 @@ class Program(Tk, My_Diary_interface.My_Diary_interface):
 			self.main_screen_frame.configure(width=1535)
 			self.main_screen_frame_textbox.configure(width=1533.57)
 
-	def __open_taskbar__(self) -> None:
+	def __open_taskbar__(self: typing.Self) -> None:
 		self.main_screen_taskbar.grid(column=0, row=0)
 		self.main_screen_taskbar_button.grid_forget()
 
-	def __close_taskbar__(self, event: str) -> None:
+	def __close_taskbar__(self: typing.Self, event: str | None = None) -> None:
 		self.main_screen_taskbar_button.grid(column=0, row=0)
 		self.main_screen_taskbar.grid_forget()
 
-	def __quit_operation__(self) -> None:
+	def __quit_operation__(self: typing.Self) -> None:
 		self.main_screen_taskbar_button.configure(text=f"☰", command=self.__open_taskbar__)
 
 		self.main_screen_undo_button.grid(column=1, row=0)
@@ -508,18 +508,18 @@ class Program(Tk, My_Diary_interface.My_Diary_interface):
 		self.main_screen_settings_customatization_text.place_forget()
 		self.main_screen_settings_customatization_table.place_forget()
 
-	def __undo__(self) -> None:
+	def __undo__(self: typing.Self) -> None:
 		try: self.main_screen_frame_textbox.edit_undo()
 
 		except tkinter.TclError: pass
 
-	def __redo__(self) -> None:
+	def __redo__(self: typing.Self) -> None:
 		try: self.main_screen_frame_textbox.edit_redo()
 
 		except tkinter.TclError: pass
 
 	@memorise
-	def __save_text__(self, event) -> None:
+	def __save_text__(self: typing.Self, event: str | None = None) -> None:
 		self.file_name: tkinter.filedialog.asksaveasfilename = tkinter.filedialog.asksaveasfilename(filetypes=[(f"All Files (*.*)", f"*.*"), (f"Text file (*.txt)", f"*.txt"), (f"Docx file (*.docx)", f"*.docx"), (f"Python file (*.py)", f"*.py"), (f"Java file (*.java)", f"*.java"), (f"C# file (*.cs)", f"*.cs"), (f"HTML file (*.html)", f"*.html"), (f"CSS file (*.css)", f"*.css"), (f"JavaScript file (*.js)", f"*.js"), (f"C++ file (*.cpp)", f"*.cpp")], defaultextension=[(f"All Files (*.*)", f"*.*"), (f"Text file (*.txt)", f"*.txt"), (f"Docx file (*.docx)", f"*.docx"), (f"Python file (*.py)", f"*.py"), (f"Java file (*.java)", f"*.java"), (f"C# file (*.cs)", f"*.cs"), (f"HTML file (*.html)", f"*.html"), (f"CSS file (*.css)", f"*.css"), (f"JavaScript file (*.js)", f"*.js"), (f"C++ file (*.cpp)", f"*.cpp")])
 		match os.path.splitext(self.file_name)[1]:
 			case ".docx":
@@ -586,10 +586,10 @@ class Program(Tk, My_Diary_interface.My_Diary_interface):
 					except FileNotFoundError:
 						pass
 			
-	def __clear_text__(self) -> None:
+	def __clear_text__(self: typing.Self) -> None:
 		self.main_screen_frame_textbox.delete(f"1.0", tkinter.END)
 
-	def __edit_text__(self) -> None:
+	def __edit_text__(self: typing.Self) -> None:
 		self.main_screen_taskbar_button.grid(column=0, row=0)
 		self.main_screen_edit_font_button.grid(column=1, row=0)
 		self.main_screen_edit_size_button.grid(column=2, row=0)
@@ -607,7 +607,7 @@ class Program(Tk, My_Diary_interface.My_Diary_interface):
 		self.main_screen_redo_button.grid_forget()
 		self.main_screen_word_counter.place_forget()
 
-	def __edit_text_font__(self, configure: str) -> None:
+	def __edit_text_font__(self: typing.Self, configure: str | None = None) -> None:
 		self.main_screen_edit_font_button_data: str = self.main_screen_edit_font_button.get()															 
 		self.main_screen_edit_size_button_data: str = self.main_screen_edit_size_button.get()
 		self.main_screen_edit_color_button_data: str = self.main_screen_edit_color_button.get()
@@ -630,7 +630,7 @@ class Program(Tk, My_Diary_interface.My_Diary_interface):
 			case _:	self.main_screen_frame_texbox_font.configure(overstrike=True)
 
 	@memorise
-	def __open_file__(self, event) -> None:
+	def __open_file__(self: typing.Self, event: str | None = None) -> None:
 		self.opened_name_file: tkinter.filedialog = tkinter.filedialog.askopenfilename(title=f"open file", filetypes=[(f"All Files (*.*)", f"*.*"), (f"Word file (*.docx)", f"*.docx"), (f"Text file (*.txt)", f"*.txt"), (f"Python file (*.py)", f"*.py"), (f"Java file (*.java)", f"*.java"), (f"C# file (*.cs)", f"*.cs"), (f"HTML file (*.html)", f"*.html"), (f"CSS file (*.css)", f"*.css"), (f"JavaScript file (*.js)", f"*.js"), (f"C++ file (*.cpp)", f"*.cpp")], defaultextension=[(f"All Files (*.*)", f"*.*"), (f"Text file (*.txt)", f"*.txt"), (f"Word file (*.docx)", f"*.docx"), (f"Python file (*.py)", f"*.py"), (f"Java file (*.java)", f"*.java"), (f"C# file (*.cs)", f"*.cs"), (f"HTML file (*.html)", f"*.html"), (f"CSS file (*.css)", f"*.css"), (f"JavaScript file (*.js)", f"*.js"), (f"C++ file (*.cpp)", f"*.cpp")])
 		match os.path.splitext(self.opened_name_file)[1]:
 			case ".docx":
@@ -650,7 +650,7 @@ class Program(Tk, My_Diary_interface.My_Diary_interface):
 
 				except FileNotFoundError: pass
 
-	def __convert__(self) -> None:
+	def __convert__(self: typing.Self) -> None:
 		self.main_screen_taskbar_button.grid(column=0, row=0)
 		self.main_screen_pdf_to_word_converter_button.grid(column=1, row=0)
 		self.main_screen_word_to_pdf_converter_button.grid(column=2, row=0)
@@ -668,7 +668,7 @@ class Program(Tk, My_Diary_interface.My_Diary_interface):
 		self.main_screen_word_counter.place_forget()
 
 	@memorise
-	def __pdf_to_docx__(self) -> None:
+	def __pdf_to_docx__(self: typing.Self) -> None:
 		try:
 			self.file: tkinter.filedialog.askopenfilename = tkinter.filedialog.askopenfilename(title=f"convert pdf file", filetypes=[(f"Pdf file (*.pdf)", f"*.pdf")], defaultextension=[(f"Pdf file (*.pdf)", f"*.pdf")])
 			self.converted_file: aspose.words.Document = aspose.words.Document(self.file)
@@ -677,7 +677,7 @@ class Program(Tk, My_Diary_interface.My_Diary_interface):
 		except RuntimeError: pass
 
 	@memorise	
-	def __docx_to_pdf__(self) -> None:
+	def __docx_to_pdf__(self: typing.Self) -> None:
 		try:
 			self.file: tkinter.filedialog.askopenfilename = tkinter.filedialog.askopenfilename(title=f"convert docx file", filetypes=[(f"Word file (*.docx)", f"*.docx")], defaultextension=[(f"Word file (*.docx)", f"*.docx")])
 			self.converted_file: aspose.words.Document = aspose.words.Document(self.file)
@@ -686,7 +686,7 @@ class Program(Tk, My_Diary_interface.My_Diary_interface):
 		except RuntimeError: pass
 
 	@memorise
-	def __pdf_to_txt__(self) -> None:
+	def __pdf_to_txt__(self: typing.Self) -> None:
 		try:
 			self.file: tkinter.filedialog.askopenfilename = tkinter.filedialog.askopenfilename(title=f"convert pdf file", filetypes=[(f"Pdf file (*.pdf)", f"*.pdf")], defaultextension=[(f"Pdf file (*.pdf)", f"*.pdf")])
 			self.converted_file: aspose.words.Document = aspose.words.Document(self.file)
@@ -695,7 +695,7 @@ class Program(Tk, My_Diary_interface.My_Diary_interface):
 		except RuntimeError: pass
 	
 	@memorise	
-	def __txt_to_pdf__(self) -> None:
+	def __txt_to_pdf__(self: typing.Self) -> None:
 		try:
 			self.file: tkinter.filedialog.askopenfilename = tkinter.filedialog.askopenfilename(title=f"convert txt file", filetypes=[(f"Text file (*.txt)", f"*.txt")], defaultextension=[(f"Text file (*.txt)", f"*.txt")])
 			self.converted_file: aspose.words.Document = aspose.words.Document(self.file)
@@ -704,7 +704,7 @@ class Program(Tk, My_Diary_interface.My_Diary_interface):
 		except RuntimeError: pass
 	
 	@memorise
-	def __docx_to_txt__(self) -> None:
+	def __docx_to_txt__(self: typing.Self) -> None:
 		try:
 			self.file: tkinter.filedialog.askopenfilename = tkinter.filedialog.askopenfilename(title=f"convert docx file", filetypes=[(f"Word file (*.docx)", f"*.docx")], defaultextension=[(f"Word file (*.docx)", f"*.docx")])
 			self.converted_file: aspose.words.Document = aspose.words.Document(self.file)
@@ -713,7 +713,7 @@ class Program(Tk, My_Diary_interface.My_Diary_interface):
 		except RuntimeError: pass
 
 	@memorise
-	def __txt_to_docx__(self) -> None:
+	def __txt_to_docx__(self: typing.Self) -> None:
 		try:
 			self.file: tkinter.filedialog.askopenfilename = tkinter.filedialog.askopenfilename(title=f"convert txt file", filetypes=[(f"Text file (*.txt)", "*.txt")], defaultextension=[(f"Text file (*.txt)", f"*.txt")])
 			self.converted_file: aspose.words.Document = aspose.words.Document(self.file)
@@ -721,7 +721,7 @@ class Program(Tk, My_Diary_interface.My_Diary_interface):
 
 		except RuntimeError: pass
 
-	def __code_editor__(self) -> None:
+	def __code_editor__(self: typing.Self) -> None:
 		self.main_screen_taskbar_button.grid(column=0, row=0)
 		self.main_screen_open_powershell_button.grid(column=3, row=0)
 		self.main_screen_open_terminal_button.grid(column=4, row=0)
@@ -733,14 +733,14 @@ class Program(Tk, My_Diary_interface.My_Diary_interface):
 		self.main_screen_taskbar.grid_forget()
 		self.main_screen_word_counter.place_forget()
 
-	def __open_powershell__(self) -> None:
+	def __open_powershell__(self: typing.Self) -> None:
 		subprocess.run([f"powershell.exe"])
 
-	def __open_shell__(self) -> None:
+	def __open_shell__(self: typing.Self) -> None:
 		subprocess.run([f"cmd.exe"])
 
 	@memorise
-	def __save_code__(self, event: str) -> None:
+	def __save_code__(self: typing.Self, event: str | None = None) -> None:
 		try:
 			with open(tkinter.filedialog.asksaveasfilename(filetypes=[(f"Python file (*.py)", f"*.py")], defaultextension=[(f"Python file (*.py)", f"*.py")]), f"w+", encoding=f"UTF-8") as self.script_file:
 				self.script_file_data: str = self.main_screen_frame_textbox.get(f"1.0", tkinter.END)
@@ -750,14 +750,14 @@ class Program(Tk, My_Diary_interface.My_Diary_interface):
 		except FileNotFoundError: pass
 
 	@memorise
-	def __open_code__(self) -> None:
+	def __open_code__(self: typing.Self) -> None:
 		try:
 			with open(tkinter.filedialog.askopenfilename(title=f"open script file", filetypes=[(f"Python file (*.py)", f"*.py")], defaultextension=[(f"Python file (*.py)", f"*.py")]), f"r+", encoding=f"UTF-8") as self.openned_script_file:
 				self.main_screen_frame_textbox.insert(f"1.0", self.openned_script_file.read())
 
 		except FileNotFoundError: pass
 		
-	def __settings__(self) -> None:
+	def __settings__(self: typing.Self) -> None:
 		self.main_screen_taskbar_button.grid(column=0, row=0)
 		self.main_screen_settings_text.place(x=3, y=21)
 		self.main_screen_settings_language_text.place(x=3, y=102)
@@ -778,7 +778,7 @@ class Program(Tk, My_Diary_interface.My_Diary_interface):
 		self.main_screen_word_counter.place_forget()
 		self.main_screen_frame.place_forget()
 
-	def __language_settings__(self, pickle_serialization: pickle) -> None:
+	def __language_settings__(self: typing.Self, pickle_serialization: pickle) -> None:
 		self.main_screen_settings_language_option_variable: str = self.main_screen_settings_language_option.get()
 		with open(f"my_diary_settings.pickle", f"wb+") as self.data:
 			pickle.dump(self.main_screen_settings_language_option_variable, self.data)
@@ -790,7 +790,7 @@ class Program(Tk, My_Diary_interface.My_Diary_interface):
 
 			case _: tkinter.messagebox.showwarning(title=f"Внимание", message=f"Перезагрузите программу")
 
-	def __autosave_settings__(self, pickle_serialization: pickle) -> None:
+	def __autosave_settings__(self: typing.Self, pickle_serialization: pickle) -> None:
 		self.main_screen_settings_autosave_switch_value: str = self.main_screen_settings_autosave_value.get()
 		with open(f"my_diary_autosave_settings.pickle", f"wb+") as self.autosave_data:
 			pickle.dump(self.main_screen_settings_autosave_switch_value, self.autosave_data)
@@ -802,12 +802,12 @@ class Program(Tk, My_Diary_interface.My_Diary_interface):
 
 			case _: tkinter.messagebox.showwarning(title=f"Внимание", message=f"Перезагрузите программу")
 
-	def __text_autosave__(self, event: str) -> None:
+	def __text_autosave__(self: typing.Self, pickle_serialization: pickle) -> None:
 		self.main_screen_frame_textbox_text_data: str = self.main_screen_frame_textbox.get("1.0", tkinter.END)
 		with open(f"settings\my_diary_saved_text.pickle", f"wb+") as self.text_data:
 			pickle.dump(self.main_screen_frame_textbox_text_data, self.text_data)
 
-	def __theme_settings__(self, pickle_serialization: pickle) -> None:
+	def __theme_settings__(self: typing.Self, pickle_serialization: pickle) -> None:
 		self.main_screen_settings_theme_mode_option_data: str = self.main_screen_settings_theme_mode_option.get()
 		with open(f"my_diary_theme_settings.pickle", f"wb+") as self.theme_data:
 			pickle.dump(self.main_screen_settings_theme_mode_option_data, self.theme_data)
@@ -819,7 +819,7 @@ class Program(Tk, My_Diary_interface.My_Diary_interface):
 
 			case _: tkinter.messagebox.showwarning(title=f"Внимание", message=f"Перезагрузите программу")
 
-	def __change_text_color__(self, pickle_serialization: pickle) -> None:
+	def __change_text_color__(self: typing.Self, pickle_serialization: pickle) -> None:
 		self.main_screen_settings_customatization_text_color_option_data: str = self.main_screen_settings_customatization_text_color_option.get()
 		with open(f"my_diary_text_color.pickle", f"wb+") as self.text_color_data:
 			pickle.dump(self.main_screen_settings_customatization_text_color_option_data, self.text_color_data)
@@ -831,7 +831,7 @@ class Program(Tk, My_Diary_interface.My_Diary_interface):
 
 			case _: tkinter.messagebox.showwarning(title=f"Внимание", message=f"Перезагрузите программу")
 
-	def __change_text_field_color__(self, pickle_serialization: pickle) -> None:
+	def __change_text_field_color__(self: typing.Self, pickle_serialization: pickle) -> None:
 		self.main_screen_settings_customatization_text_field_color_option_data: str = self.main_screen_settings_customatization_text_field_color_option.get()
 		with open(f"my_diary_text_field_color.pickle", f"wb+") as self.text_field_color_data:
 			pickle.dump(self.main_screen_settings_customatization_text_field_color_option_data, self.text_field_color_data)
@@ -843,7 +843,7 @@ class Program(Tk, My_Diary_interface.My_Diary_interface):
 
 			case _: tkinter.messagebox.showwarning(title=f"Внимание", message=f"Перезагрузите программу")
 
-	def __change_text_field_text_height__(self, pickle_serialization: pickle) -> None:
+	def __change_text_field_text_height__(self: typing.Self, pickle_serialization: pickle) -> None:
 		self.main_screen_settings_customatization_text_field_height_option_data: str = self.main_screen_settings_customatization_text_field_height_option.get()
 		with open(f"my_diary_text_field_text_height.pickle", f"wb+") as self.text_field_text_height_data:
 			pickle.dump(self.main_screen_settings_customatization_text_field_height_option_data, self.text_field_text_height_data)
@@ -855,7 +855,7 @@ class Program(Tk, My_Diary_interface.My_Diary_interface):
 
 			case _: tkinter.messagebox.showwarning(title=f"Внимание", message=f"Перезагрузите программу")
 
-	def __change_button_color__(self, pickle_serialization: pickle) -> None:
+	def __change_button_color__(self: typing.Self, pickle_serialization: pickle) -> None:
 		self.main_screen_settings_customatization_button_color_option_data: str = self.main_screen_settings_customatization_button_color_option.get()
 		with open(f"my_diary_button_color.pickle", f"wb+") as self.button_color_data:
 			pickle.dump(self.main_screen_settings_customatization_button_color_option_data, self.button_color_data)
@@ -867,11 +867,11 @@ class Program(Tk, My_Diary_interface.My_Diary_interface):
 
 			case _: tkinter.messagebox.showwarning(title=f"Внимание", message=f"Перезагрузите программу")
 
-	def __word_count__(self, event: str) -> None:
+	def __word_count__(self: typing.Self, event: str | None = None) -> None:
 		self.main_screen_frame_textbox_data: str = self.main_screen_frame_textbox.get(f"0.0", tkinter.END)
 		self.main_screen_word_counter_data_variable.set(value=len(self.main_screen_frame_textbox_data.split()))
 		
-	def __drop_file_into_textbox__(self, event: str) -> None:
+	def __drop_file_into_textbox__(self: typing.Self, event: str | None = None) -> None:
 		self.main_screen_frame_textbox.delete(f"1.0", tkinter.END)
 		if event.data.endswith(f".docx"):
 			try:
@@ -891,7 +891,7 @@ class Program(Tk, My_Diary_interface.My_Diary_interface):
 			except FileNotFoundError: pass
 				
 
-	def __fullscreen__(self, event: str) -> None:
+	def __fullscreen__(self: typing.Self, event: str | None = None) -> None:
 		self.main_screen_fullscreen_numbers += 1
 		if self.main_screen_fullscreen_numbers % 2 == 0:
 			self.attributes(f"-fullscreen", True)
@@ -905,8 +905,7 @@ class Program(Tk, My_Diary_interface.My_Diary_interface):
 			self.main_screen_frame.configure(height=769)
 			self.main_screen_frame_textbox.configure(height=767.5)
 
-	@functools.cache
-	def __open_terminal__(self, event: str) -> None:
+	def __open_terminal__(self: typing.Self, event: str | None = None) -> None:
 		try:
 			import My_Diary_command_prompt
 		
@@ -920,25 +919,25 @@ class Program(Tk, My_Diary_interface.My_Diary_interface):
 
 				case _: tkinter.messagebox.showerror(title=f"Ошибка", message=f"У вас нет файла с терминалом")
 
-	def __html_script__(self, event: str) -> None:
+	def __html_script__(self: typing.Self, event: str | None = None) -> None:
 		self.main_screen_frame_textbox.insert(f"0.0", f"<!DOCTYPE html> \n  \n  <html lang='en'> \n <head> \n <meta charset='utf-8' /> \n <title></title> \n </head> \n <body> \n \n </body> \n </html>")
 
-	def __right_click_menu__(self, event: str)-> None:
+	def __right_click_menu__(self: typing.Self, event: str | None = None)-> None:
 		try: self.main_screen_right_click_menu.tk_popup(event.x_root, event.y_root)
 
 		finally: self.main_screen_right_click_menu.grab_release()
 
-	def __copy__(self) -> str:
+	def __copy__(self: typing.Self) -> str:
 		self.main_screen_frame_textbox_text_data: str = self.main_screen_frame_textbox.selection_get()
 		return self.main_screen_frame_textbox_text_data
 
-	def __paste__(self) -> None:
+	def __paste__(self: typing.Self) -> None:
 		self.main_screen_frame_textbox.insert(self.main_screen_frame_textbox.index(f"insert"), str(self.main_screen_frame_textbox_text_data))
 
-	def __cut__(self) -> None:
+	def __cut__(self: typing.Self) -> None:
 		self.main_screen_frame_textbox.delete(self.main_screen_frame_textbox.index(f"sel.first"), self.main_screen_frame_textbox.index(f"sel.last"))	  																																			   
 
-	def __exit__(self) -> None:
+	def __exit__(self: typing.Self) -> None:
 		match language_data: 
 			case "Српски":
 				self.main_screen_exit: tkinter.messagebox.askyesno = tkinter.messagebox.askyesno(title=f"излаз", message=f"желите да изађете?")
@@ -955,8 +954,7 @@ class Program(Tk, My_Diary_interface.My_Diary_interface):
 				if self.main_screen_exit: sys.exit()
 				else: pass
 			
-	@functools.cache
-	def __run__(self) -> None:
+	def __run__(self: typing.Self) -> None:
 		try: self.mainloop()
 															 
 		except FileNotFoundError: tkinter.messagebox.showerror(title=f"file not found error", message=f"срб: грешка: није нађен фајл \n eng: error: missing data file \nрус: ошибка: не найден файл")

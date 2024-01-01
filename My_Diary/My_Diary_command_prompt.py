@@ -7,7 +7,7 @@ class Terminal(customtkinter.CTkToplevel, My_Diary_command_prompt_interface.My_D
 	WINDOW: typing.Final[str] = f"-toolwindow"
 	TITLE: typing.Final[str] = f"My Diary command prompt"
 
-	def __init__(self, *args, **kwargs) -> None:
+	def __init__(self: typing.Self, *args, **kwargs) -> None:
 		customtkinter.CTkToplevel.__init__(self, *args, **kwargs)
 
 		self.geometry(f"{self.WIDTH}x{self.HEIGHT}")
@@ -29,7 +29,7 @@ class Terminal(customtkinter.CTkToplevel, My_Diary_command_prompt_interface.My_D
 
 		self.terminal_entry.bind(f"<Return>", self.__terminal_action__)
 
-	def __terminal_action__(self, event: str) -> None:
+	def __terminal_action__(self: typing.Self, event: str | None = None) -> None:
 		self.terminal_entry_data = self.terminal_entry.get()
 
 		self.terminal_textbox.configure(state=f"normal")
