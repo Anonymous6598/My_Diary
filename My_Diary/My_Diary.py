@@ -35,7 +35,7 @@ def memorise(function_param: str) -> str:
 
 
 class Tk(CTk, TkinterDnD.DnDWrapper):
-    def __init__(self: typing.Self, *args, **kwargs):
+    def __init__(self: typing.Self, *args, **kwargs) -> None:
         CTk.__init__(self, *args, **kwargs)
         self.TkdndVersion = TkinterDnD._require(self)
 
