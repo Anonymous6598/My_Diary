@@ -430,7 +430,7 @@ class Program(My_Diary_window.Tk, My_Diary_interface.My_Diary_interface):
 			
 		else:
 			self.main_screen_exit: CTkMessagebox.CTkMessagebox = CTkMessagebox.CTkMessagebox(title=f"exit", message=f"would you like to exit?", icon=f"question", option_2=f"yes", option_1=f"no")
-			if self.main_screen_exit.get() == f"да": sys.exit()
+			if self.main_screen_exit.get() == f"yes": sys.exit()
 			else: pass
 			
 	def __run__(self: typing.Self) -> None:
