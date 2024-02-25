@@ -1,4 +1,4 @@
-import tkinter, tkinter.filedialog, pickle, os, sys, docx, docx.shared, aspose.words, typing, My_Diary_interface, My_Diary_window, CTkMenuBar, pywinstyles, CTkPDFViewer, locale, CTkMessagebox
+import tkinter, tkinter.filedialog, pickle, os, sys, docx, docx.shared, aspose.words, typing, My_Diary_interface, My_Diary_window, CTkMenuBar, CTkPDFViewer, locale, CTkMessagebox, tempfile
 from tkinterdnd2 import *
 from customtkinter import *
 
@@ -7,7 +7,6 @@ with open(f"my_diary_saved_text.pickle", f"rb+") as text_data: autosaved_text: s
 class Program(My_Diary_window.Tk, My_Diary_interface.My_Diary_interface):
 
 	TITLE: typing.Final[str] = f"My Diary"
-	ICON: typing.Final[str] = f"my diary icon.ico"
 	COLOR_THEME: typing.Final[str] = f"dark-blue"
 	WIDGET_SCALING: typing.Final[float] = 1.251
 	THEME: typing.Final[str] = f"system"
@@ -20,8 +19,13 @@ class Program(My_Diary_window.Tk, My_Diary_interface.My_Diary_interface):
 		set_appearance_mode(self.THEME)
 		deactivate_automatic_dpi_awareness()
 
+		self.icon = (b"\x00\x00\x01\x00\x01\x00\x10\x10\x00\x00\x01\x00\x08\x00h\x05\x00\x00"b"\x16\x00\x00\x00(\x00\x00\x00\x10\x00\x00\x00 \x00\x00\x00\x01\x00"b"\x08\x00\x00\x00\x00\x00@\x05\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"b"\x00\x01\x00\x00\x00\x01") + b"\x00"*1282 + b"\xff"*64
+
+		_, self.icon_path = tempfile.mkstemp()
+		with open(self.icon_path, f"wb+") as icon_file: icon_file.write(self.icon)
+
 		self.title(self.TITLE)
-		self.iconbitmap(self.ICON)
+		self.iconbitmap(self.icon_path)
   
 		self.bind(f"<Alt_L>" + f"<F4>", self.__exit__)
 		self.bind(f"<Control_L>" + f"<s>", self.__save_text__)
@@ -51,24 +55,25 @@ class Program(My_Diary_window.Tk, My_Diary_interface.My_Diary_interface):
 		
 		self.main_screen_edit_text_window.protocol(f"WM_DELETE_WINDOW", lambda: self.main_screen_edit_text_window.withdraw())
 		self.main_screen_edit_text_window.title(f"My Diary edit text font window")
-		self.main_screen_edit_text_window.after(250, lambda: self.main_screen_edit_text_window.iconbitmap(f"my diary icon.ico"))
+		self.main_screen_edit_text_window.after(250, lambda: self.main_screen_edit_text_window.iconbitmap(self.icon_path))
 		self.main_screen_edit_text_window.resizable(False, False)
 		
 		self.main_screen_edit_text_window.withdraw()
 		
-		self.main_screen_edit_font_button: CTkComboBox = CTkComboBox(master=self.main_screen_edit_text_window, height=20, width=75, corner_radius=0, values=[f"System", f"Terminal", f"Ubuntu", f"Script", f"Roman", f"Modern", f"MS Serif"], command=self.__edit_text_font__)
+		self.main_screen_edit_font_button: CTkComboBox = CTkComboBox(master=self.main_screen_edit_text_window, height=20, width=75, corner_radius=0, values=[f"System", f"Terminal", f"Ubuntu", f"Script", f"Roman", f"Modern", f"MS Serif"], fg_color=f"green", border_color=f"green", button_color=f"green", button_hover_color=f"green", dropdown_fg_color=f"green", command=self.__edit_text_font__)
 
-		self.main_screen_edit_size_button: CTkComboBox = CTkComboBox(master=self.main_screen_edit_text_window, height=20, width=75, corner_radius=0, values=[f"1", f"2", f"4", f"5", f"6", f"8", f"11", f"12", f"13", f"14", f"16", f"18", f"20", f"22", f"24", f"26", f"28", f"30", f"32", f"34", f"36", f"38", f"40", f"42", f"44", f"46", f"48", f"50", f"60", f"70", f"80", f"90", f"100"], command=self.__edit_text_font__)
+		self.main_screen_edit_size_button: CTkComboBox = CTkComboBox(master=self.main_screen_edit_text_window, height=20, width=75, corner_radius=0, values=[f"1", f"2", f"4", f"5", f"6", f"8", f"11", f"12", f"13", f"14", f"16", f"18", f"20", f"22", f"24", f"26", f"28", f"30", f"32", f"34", f"36", f"38", f"40", f"42", f"44", f"46", f"48", f"50", f"60", f"70", f"80", f"90", f"100"], fg_color=f"green", border_color=f"green", button_color=f"green", button_hover_color=f"green", dropdown_fg_color=f"green", command=self.__edit_text_font__)
 
-		self.main_screen_edit_color_button: CTkComboBox = CTkComboBox(master=self.main_screen_edit_text_window, height=20, width=75, corner_radius=0, values=[f"black", f"white", f"red", f"green", f"blue"],  command=self.__edit_text_font__)
+		self.main_screen_edit_color_button: CTkComboBox = CTkComboBox(master=self.main_screen_edit_text_window, height=20, width=75, corner_radius=0, values=[f"black", f"white", f"red", f"green", f"blue"], fg_color=f"green", border_color=f"green", button_color=f"green", button_hover_color=f"green", dropdown_fg_color=f"green", command=self.__edit_text_font__)
 
-		self.main_screen_edit_slant_button: CTkComboBox = CTkComboBox(master=self.main_screen_edit_text_window, height=20, width=75, corner_radius=0, values=[f"roman", f"italic"], command=self.__edit_text_font__)
+		self.main_screen_edit_slant_button: CTkComboBox = CTkComboBox(master=self.main_screen_edit_text_window, height=20, width=75, corner_radius=0, values=[f"roman", f"italic"], fg_color=f"green", border_color=f"green", button_color=f"green", button_hover_color=f"green", dropdown_fg_color=f"green", command=self.__edit_text_font__)
 
-		self.main_screen_edit_weight_button: CTkComboBox = CTkComboBox(master=self.main_screen_edit_text_window, height=20, width=75, corner_radius=0, values=[f"normal", f"bold"], command=self.__edit_text_font__)
+		self.main_screen_edit_weight_button: CTkComboBox = CTkComboBox(master=self.main_screen_edit_text_window, height=20, width=75, corner_radius=0, values=[f"normal", f"bold"], fg_color=f"green", border_color=f"green", button_color=f"green", button_hover_color=f"green", dropdown_fg_color=f"green", command=self.__edit_text_font__)
 
-		self.main_screen_edit_underline_button: CTkComboBox = CTkComboBox(master=self.main_screen_edit_text_window, height=20, width=75, corner_radius=0, values=[f"not underlined", f"underlined"], command=self.__edit_text_font__)
+		self.main_screen_edit_underline_button: CTkComboBox = CTkComboBox(master=self.main_screen_edit_text_window, height=20, width=75, corner_radius=0, values=[f"not underlined", f"underlined"], fg_color=f"green", border_color=f"green", button_color=f"green", button_hover_color=f"green", dropdown_fg_color=f"green", command=self.__edit_text_font__)
 
-		self.main_screen_edit_overstrike_button: CTkComboBox = CTkComboBox(master=self.main_screen_edit_text_window, height=20, width=75, corner_radius=0, values=[f"not overstriked", f"overstriked"], command=self.__edit_text_font__)
+		self.main_screen_edit_overstrike_button: CTkComboBox = CTkComboBox(master=self.main_screen_edit_text_window, height=20, width=75, corner_radius=0, values=[f"not overstriked", f"overstriked"], fg_color=f"green", border_color=f"green", button_color=f"green", button_hover_color=f"green", dropdown_fg_color=f"green", command=self.__edit_text_font__)
+
 
 		if locale.getdefaultlocale()[0] == f"sr_RS":
 			self.main_screen_title_menu_submenu: CTkMenuBar.CustomDropdownMenu = CTkMenuBar.CustomDropdownMenu(widget=self.main_screen_tiltle_menu_menu_button, fg_color=f"transparent")
@@ -302,7 +307,7 @@ class Program(My_Diary_window.Tk, My_Diary_interface.My_Diary_interface):
 			case ".pdf":
 				self.main_screen_pdf_view: CTkToplevel = CTkToplevel()
 				self.main_screen_pdf_view.title(f"My Diary PDF reader (beta)")
-				self.main_screen_pdf_view.after(250, lambda: self.main_screen_pdf_view.iconbitmap(f"my diary icon.ico"))
+				self.main_screen_pdf_view.after(250, lambda: self.main_screen_pdf_view.iconbitmap(self.icon_path))
 
 				self.pdf_frame: CTkPDFViewer.CTkPDFViewer = CTkPDFViewer.CTkPDFViewer(self.main_screen_pdf_view, file=self.opened_name_file)
 				self.pdf_frame.pack(fill="both", expand=True)
@@ -374,13 +379,13 @@ class Program(My_Diary_window.Tk, My_Diary_interface.My_Diary_interface):
 		
 	def __word_count_show__(self: typing.Self) -> None:
 		if locale.getdefaultlocale()[0] == f"sr_RS":
-			CTkMessagebox.CTkMessagebox(icon=f"info", title=f"речи", message=f"речи: {len(self.main_screen_frame_textbox.get(f'1.0', tkinter.END).split())}")
+			CTkMessagebox.CTkMessagebox(icon=f"info", title=f"речи", message=f"речи: {len(self.main_screen_frame_textbox.get(f'1.0', tkinter.END).split())}", button_color=f"green")
 			
 		elif locale.getdefaultlocale()[0] == f"ru_RU":
-			CTkMessagebox.CTkMessagebox(icon=f"info", title=f"слова", message=f"слов: {len(self.main_screen_frame_textbox.get(f'1.0', tkinter.END).split())}")
+			CTkMessagebox.CTkMessagebox(icon=f"info", title=f"слова", message=f"слов: {len(self.main_screen_frame_textbox.get(f'1.0', tkinter.END).split())}", button_color=f"green")
 			
 		else:
-			CTkMessagebox.CTkMessagebox(icon=f"info", title=f"words", message=f"words: {len(self.main_screen_frame_textbox.get(f'1.0', tkinter.END).split())}")
+			CTkMessagebox.CTkMessagebox(icon=f"info", title=f"words", message=f"words: {len(self.main_screen_frame_textbox.get(f'1.0', tkinter.END).split())}", button_color=f"green")
 		
 	def __drop_file_into_textbox__(self: typing.Self, event: str | None = None) -> None:
 		self.main_screen_frame_textbox.delete(f"1.0", tkinter.END)
@@ -403,7 +408,7 @@ class Program(My_Diary_window.Tk, My_Diary_interface.My_Diary_interface):
 		elif event.data.endswith(".pdf"):
 			self.main_screen_pdf_view: CTkToplevel = CTkToplevel()
 			self.main_screen_pdf_view.title(f"My Diary PDF reader (beta)")
-			self.main_screen_pdf_view.after(250, lambda: self.main_screen_pdf_view.iconbitmap(f"my diary icon.ico"))
+			self.main_screen_pdf_view.after(250, lambda: self.main_screen_pdf_view.iconbitmap(self.icon_path))
 				
 			pdf_frame: CTkPDFViewer.CTkPDFViewer = CTkPDFViewer.CTkPDFViewer(self.main_screen_pdf_view, file=event.data)
 			pdf_frame.pack(fill="both", expand=True)
@@ -419,29 +424,19 @@ class Program(My_Diary_window.Tk, My_Diary_interface.My_Diary_interface):
 
 	def __exit__(self: typing.Self) -> None:
 		if locale.getdefaultlocale()[0] == f"sr_RS":
-			self.main_screen_exit: CTkMessagebox.CTkMessagebox = CTkMessagebox.CTkMessagebox(title=f"излаз", message=f"желите да изађете?", icon=f"question", option_2=f"да", option_1=f"не")
+			self.main_screen_exit: CTkMessagebox.CTkMessagebox = CTkMessagebox.CTkMessagebox(title=f"излаз", message=f"желите да изађете?", icon=f"question", option_2=f"да", option_1=f"не", button_color=f"green")
 			if self.main_screen_exit.get() == f"да": sys.exit()
 			else: pass
 
 		elif locale.getdefaultlocale()[0] == f"ru_Ru":
-			self.main_screen_exit: CTkMessagebox.CTkMessagebox = CTkMessagebox.CTkMessagebox(title=f"выход", message=f"желайте выйти?", icon=f"question", option_2=f"да", option_1=f"нет")
+			self.main_screen_exit: CTkMessagebox.CTkMessagebox = CTkMessagebox.CTkMessagebox(title=f"выход", message=f"желайте выйти?", icon=f"question", option_2=f"да", option_1=f"нет", button_color=f"green")
 			if self.main_screen_exit.get() == f"да": sys.exit()
 			else: pass
 			
 		else:
-			self.main_screen_exit: CTkMessagebox.CTkMessagebox = CTkMessagebox.CTkMessagebox(title=f"exit", message=f"would you like to exit?", icon=f"question", option_2=f"yes", option_1=f"no")
+			self.main_screen_exit: CTkMessagebox.CTkMessagebox = CTkMessagebox.CTkMessagebox(title=f"exit", message=f"would you like to exit?", icon=f"question", option_2=f"yes", option_1=f"no", button_color=f"green")
 			if self.main_screen_exit.get() == f"yes": sys.exit()
 			else: pass
-			
-	def __run__(self: typing.Self) -> None:
-		try: self.mainloop()
-															 
-		except FileNotFoundError: CTkMessagebox.CTkMessagebox(title=f"file not found error", message=f"срб: грешка: није нађен фајл \n eng: error: missing data file \nрус: ошибка: не найден файл", icon=f"cancel")
-
-		except tkinter.TclError: CTkMessagebox.CTkMessagebox(title=f"icon file not found error", message=f"срб: грешка: није нађен фајл иконица \neng: error: missing icon file \nрус: ошибка: не найден файл с иконкой", icon=f"cancel")
-
-		except EOFError: CTkMessagebox.CTkMessagebox(title=f"corrupted file error", message=f"срб: грешка: повређен фајл \n eng: error: corrupted data file \nрус: ошибка: повреждён файл", icon=f"cancel")
 
 if __name__ == f"__main__":
-    program: Program = Program()
-    program.__run__()
+    program: Program = Program().mainloop()
