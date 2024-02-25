@@ -428,7 +428,7 @@ class Program(My_Diary_window.Tk, My_Diary_interface.My_Diary_interface):
 			if self.main_screen_exit.get() == f"да": sys.exit()
 			else: pass
 
-		elif locale.getdefaultlocale()[0] == f"ru_Ru":
+		elif locale.getdefaultlocale()[0] == f"ru_RU":
 			self.main_screen_exit: CTkMessagebox.CTkMessagebox = CTkMessagebox.CTkMessagebox(title=f"выход", message=f"желайте выйти?", icon=f"question", option_2=f"да", option_1=f"нет", button_color=f"green")
 			if self.main_screen_exit.get() == f"да": sys.exit()
 			else: pass
