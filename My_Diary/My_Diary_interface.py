@@ -27,29 +27,5 @@ class My_Diary_interface(abc.ABC):
         pass
     
     @abc.abstractmethod
-    def __pdf_to_docx__(self: typing.Self) -> None:
-        pass
-    
-    @abc.abstractmethod
-    def __docx_to_pdf__(self: typing.Self) -> None:
-        pass
-    
-    @abc.abstractmethod
-    def __pdf_to_txt__(self: typing.Self) -> None:
-        pass
-    
-    @abc.abstractmethod
-    def __txt_to_pdf__(self: typing.Self) -> None:
-        pass
-    
-    @abc.abstractmethod
-    def __txt_to_docx__(self: typing.Self) -> None:
-        pass
-
-    @abc.abstractmethod
-    def __docx_to_txt__(self: typing.Self) -> None:
-        pass
-    
-    @abc.abstractmethod
     def __text_autosave__(self: typing.Self, event: str | None = None) -> None:
         pass

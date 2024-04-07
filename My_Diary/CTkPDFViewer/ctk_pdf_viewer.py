@@ -45,7 +45,7 @@ class CTkPDFViewer(customtkinter.CTkScrollableFrame):
 
     def start_process(self):
         Thread(target=self.add_pages).start()
-     
+        
     def add_pages(self):
         """ add images and labels """
         self.percentage_bar = 0
@@ -81,7 +81,7 @@ class CTkPDFViewer(customtkinter.CTkScrollableFrame):
             for i in self.labels:
                 i.destroy()
             self.labels = []
-            self.after(250, self.start_pack)
+            self.after(250, self.start_process)
             
         if "page_width" in kwargs:
             self.page_width = kwargs.pop("page_width")
