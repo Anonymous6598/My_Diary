@@ -1,4 +1,4 @@
-import tkinter, tkinter.filedialog, pickle, os, sys, docx, typing, My_Diary_interface, My_Diary_window, CTkMenuBar, CTkPDFViewer, locale, CTkMessagebox, tempfile, My_Diary_converterer, My_Diary_AI, pywinstyles, tkterminal
+import tkinter, tkinter.filedialog, tkinter.messagebox, pickle, os, sys, docx, typing, My_Diary_interface, My_Diary_window, CTkMenuBar, locale, CTkMessagebox, My_Diary_converterer, My_Diary_AI, tkterminal, My_Diary_PDF_viewer, asyncio
 from tkinterdnd2 import *
 from customtkinter import *
 
@@ -6,10 +6,11 @@ with open(f"my_diary_saved_text.pickle", f"rb+") as text_data: autosaved_text: s
 
 class Program(My_Diary_window.Tk, My_Diary_interface.My_Diary_interface):
 
-	TITLE: typing.Final[str] = f""
+	TITLE: typing.Final[str] = f"My Diary"
 	COLOR_THEME: typing.Final[str] = f"dark-blue"
 	WIDGET_SCALING: typing.Final[float] = 1.251
 	THEME: typing.Final[str] = f"system"
+	ICON: typing.Final[str] = f"my_diary_icon.ico"
 
 	def __init__(self: typing.Self, *args, **kwargs) -> None:
 		My_Diary_window.Tk.__init__(self, *args, **kwargs)
@@ -19,13 +20,8 @@ class Program(My_Diary_window.Tk, My_Diary_interface.My_Diary_interface):
 		set_appearance_mode(self.THEME)
 		deactivate_automatic_dpi_awareness()
 
-		self.icon = (b"\x00\x00\x01\x00\x01\x00\x10\x10\x00\x00\x01\x00\x08\x00h\x05\x00\x00"b"\x16\x00\x00\x00(\x00\x00\x00\x10\x00\x00\x00 \x00\x00\x00\x01\x00"b"\x08\x00\x00\x00\x00\x00@\x05\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"b"\x00\x01\x00\x00\x00\x01") + b"\x00"*1282 + b"\xff"*64
-
-		_, self.icon_path = tempfile.mkstemp()
-		with open(self.icon_path, f"wb+") as icon_file: icon_file.write(self.icon)
-
 		self.title(self.TITLE)
-		self.iconbitmap(self.icon_path)
+		self.iconbitmap(self.ICON)
   
 		self.bind(f"<Alt_L>" + f"<F4>", self.__exit__)
 		self.bind(f"<Control_L>" + f"<s>", self.__save_text__)
@@ -60,8 +56,8 @@ class Program(My_Diary_window.Tk, My_Diary_interface.My_Diary_interface):
 		self.main_screen_edit_text_window: CTkToplevel = CTkToplevel()
 		
 		self.main_screen_edit_text_window.protocol(f"WM_DELETE_WINDOW", lambda: self.main_screen_edit_text_window.withdraw())
-		self.main_screen_edit_text_window.title(f"")
-		self.main_screen_edit_text_window.after(250, lambda: self.main_screen_edit_text_window.iconbitmap(self.icon_path))
+		self.main_screen_edit_text_window.title(f"My Diary font chooser window")
+		self.main_screen_edit_text_window.after(250, lambda: self.main_screen_edit_text_window.iconbitmap(self.ICON))
 		self.main_screen_edit_text_window.resizable(False, False)
 		
 		self.main_screen_edit_text_window.withdraw()
@@ -310,13 +306,10 @@ class Program(My_Diary_window.Tk, My_Diary_interface.My_Diary_interface):
 				except FileNotFoundError: pass
 				
 			case ".pdf":
-				self.main_screen_pdf_view: CTkToplevel = CTkToplevel()
-				self.main_screen_pdf_view.title(f"")
-				self.main_screen_pdf_view.after(250, lambda: self.main_screen_pdf_view.iconbitmap(self.icon_path))
+				try: self.my_diary_pdf_view: My_Diary_PDF_viewer.My_Diary_PDF_viewer = My_Diary_PDF_viewer.My_Diary_PDF_viewer().__show_pdf__(self.opened_name_file)
 
-				self.pdf_frame: CTkPDFViewer.CTkPDFViewer = CTkPDFViewer.CTkPDFViewer(self.main_screen_pdf_view, file=self.opened_name_file)
-				self.pdf_frame.pack(fill="both", expand=True)
-
+				except FileNotFoundError: pass
+			
 			case _:
 				try:
 					with open(self.opened_name_file, f"r+", encoding=f"UTF-8") as self.openned_file:
@@ -337,13 +330,13 @@ class Program(My_Diary_window.Tk, My_Diary_interface.My_Diary_interface):
 		
 	def __word_count_show__(self: typing.Self) -> None:
 		if locale.getdefaultlocale()[0] == f"sr_RS":
-			CTkMessagebox.CTkMessagebox(icon=f"info", title=f"", message=f"речи: {len(self.main_screen_frame_textbox.get(f'1.0', tkinter.END).split())}", button_color=f"black")
+			tkinter.messagebox.showinfo(title=f"речи", message=f"речи: {len(self.main_screen_frame_textbox.get(f'1.0', tkinter.END).split())}")
 			
 		elif locale.getdefaultlocale()[0] == f"ru_RU":
-			CTkMessagebox.CTkMessagebox(icon=f"info", title=f"", message=f"слов: {len(self.main_screen_frame_textbox.get(f'1.0', tkinter.END).split())}", button_color=f"black")
+			tkinter.messagebox.showinfo(title=f"слов", message=f"слов: {len(self.main_screen_frame_textbox.get(f'1.0', tkinter.END).split())}")
 			
 		else:
-			CTkMessagebox.CTkMessagebox(icon=f"info", title=f"", message=f"words: {len(self.main_screen_frame_textbox.get(f'1.0', tkinter.END).split())}", button_color=f"black")
+			tkinter.messagebox.showinfo(title=f"words", message=f"words: {len(self.main_screen_frame_textbox.get(f'1.0', tkinter.END).split())}")
 		
 	def __drop_file_into_textbox__(self: typing.Self, event: str | None = None) -> None:
 		self.main_screen_frame_textbox.delete(f"1.0", tkinter.END)
@@ -364,12 +357,9 @@ class Program(My_Diary_window.Tk, My_Diary_interface.My_Diary_interface):
 			except FileNotFoundError: pass
 			
 		elif event.data.endswith(".pdf"):
-			self.main_screen_pdf_view: CTkToplevel = CTkToplevel()
-			self.main_screen_pdf_view.title(f"")
-			self.main_screen_pdf_view.after(250, lambda: self.main_screen_pdf_view.iconbitmap(self.icon_path))
-				
-			pdf_frame: CTkPDFViewer.CTkPDFViewer = CTkPDFViewer.CTkPDFViewer(self.main_screen_pdf_view, file=event.data)
-			pdf_frame.pack(fill="both", expand=True)
+			try: self.my_diary_pdf_view: My_Diary_PDF_viewer.My_Diary_PDF_viewer = My_Diary_PDF_viewer.My_Diary_PDF_viewer().__show_pdf__(event.data)
+
+			except FileNotFoundError: pass
 
 		else:
 			try:
@@ -382,25 +372,26 @@ class Program(My_Diary_window.Tk, My_Diary_interface.My_Diary_interface):
 
 	def __exit__(self: typing.Self) -> None:
 		if locale.getdefaultlocale()[0] == f"sr_RS":
-			self.main_screen_exit: CTkMessagebox.CTkMessagebox = CTkMessagebox.CTkMessagebox(title=f"", message=f"желите да изађете?", icon=f"question", option_2=f"да", option_1=f"не", button_color=f"black")
-			if self.main_screen_exit.get() == f"да": sys.exit()
+			self.main_screen_exit: tkinter.messagebox = tkinter.messagebox.askyesno(title=f"излаз", message=f"желите да изађете?")
+			if self.main_screen_exit: sys.exit()
 			else: pass
 
 		elif locale.getdefaultlocale()[0] == f"ru_RU":
-			self.main_screen_exit: CTkMessagebox.CTkMessagebox = CTkMessagebox.CTkMessagebox(title=f"", message=f"желайте выйти?", icon=f"question", option_2=f"да", option_1=f"нет", button_color=f"black")
-			if self.main_screen_exit.get() == f"да": sys.exit()
+			self.main_screen_exit: CTkMessagebox.CTkMessagebox = CTkMessagebox.CTkMessagebox(title=f"выход", message=f"желайте выйти?")
+			if self.main_screen_exit: sys.exit()
 			else: pass
 			
 		else:
-			self.main_screen_exit: CTkMessagebox.CTkMessagebox = CTkMessagebox.CTkMessagebox(title=f"", message=f"would you like to exit?", icon=f"question", option_2=f"yes", option_1=f"no", button_color=f"black")
-			if self.main_screen_exit.get() == f"yes": sys.exit()
+			self.main_screen_exit: CTkMessagebox.CTkMessagebox = CTkMessagebox.CTkMessagebox(title=f"exit", message=f"would you like to exit?")
+			if self.main_screen_exit: sys.exit()
 			else: pass
 
 class Terminal(CTkToplevel):
 
 	HEIGHT: typing.Final[int] = 375
 	WIDTH: typing.Final[int] = 650
-	TITLE: typing.Final[str] = f""
+	TITLE: typing.Final[str] = f"My Diary action terminal"
+	ICON: typing.Final[str] = f"my_diary_icon.ico"
 
 	def __init__(self: typing.Self, *args, **kwargs) -> None:
 		CTkToplevel.__init__(self, *args, **kwargs)
@@ -408,13 +399,7 @@ class Terminal(CTkToplevel):
 		self.geometry(f"{self.WIDTH}x{self.HEIGHT}")
 		self.resizable(False, False)
 		self.title(self.TITLE)
-
-		self.icon = (b"\x00\x00\x01\x00\x01\x00\x10\x10\x00\x00\x01\x00\x08\x00h\x05\x00\x00"b"\x16\x00\x00\x00(\x00\x00\x00\x10\x00\x00\x00 \x00\x00\x00\x01\x00"b"\x08\x00\x00\x00\x00\x00@\x05\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"b"\x00\x01\x00\x00\x00\x01") + b"\x00"*1282 + b"\xff"*64
-
-		_, self.icon_path = tempfile.mkstemp()
-		with open(self.icon_path, f"wb+") as icon_file: icon_file.write(self.icon)
-
-		self.after(250, lambda: self.iconbitmap(self.icon_path))
+		self.after(250, lambda: self.iconbitmap(self.ICON))
 
 		self.terminal_frame: CTkFrame = CTkFrame(master=self, height=300, width=520, fg_color=f"black", border_width=0)
 		self.terminal_frame.place(x=0, y=0)
@@ -612,9 +597,10 @@ class Terminal(CTkToplevel):
 
 class AI_Window(CTkToplevel):
 
-	TITLE: typing.Final[str] = f""
+	TITLE: typing.Final[str] = f"My Diary AI assistant"
 	HEIGHT: typing.Final[int] = 375
 	WIDTH: typing.Final[int] = 655
+	ICON: typing.Final[str] = f"my_diary_icon.ico"
 
 	def __init__(self: typing.Self, *args, **kwargs) -> None:
 		CTkToplevel.__init__(self, *args, **kwargs)
@@ -622,47 +608,37 @@ class AI_Window(CTkToplevel):
 		self.title(self.TITLE)
 		self.geometry(f"{self.WIDTH}x{self.HEIGHT}")
 		self.resizable(False, False)
+		self.after(250, lambda: self.iconbitmap(self.ICON))
 
-		self.icon = (b"\x00\x00\x01\x00\x01\x00\x10\x10\x00\x00\x01\x00\x08\x00h\x05\x00\x00"b"\x16\x00\x00\x00(\x00\x00\x00\x10\x00\x00\x00 \x00\x00\x00\x01\x00"b"\x08\x00\x00\x00\x00\x00@\x05\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"b"\x00\x01\x00\x00\x00\x01") + b"\x00"*1282 + b"\xff"*64
+		self.ai_window_textbox: CTkTextbox = CTkTextbox(master=self, height=265, width=524, corner_radius=0, fg_color=f"transparent", text_color=(f"black", f"white"))
+		self.ai_window_textbox.place(x=0, y=0)
 
-		_, self.icon_path = tempfile.mkstemp()
-		with open(self.icon_path, f"wb+") as icon_file: icon_file.write(self.icon)
+		self.ai_window_textbox.configure(state=f"disabled")
 
-		self.after(250, lambda: self.iconbitmap(self.icon_path))
+		self.ai_window_entry: CTkEntry = CTkEntry(master=self, height=30, width=524, border_width=0, fg_color=f"transparent", placeholder_text=f"...")
+		self.ai_window_entry.place(x=0, y=269)
 
-		self.AI_window_textbox: CTkTextbox = CTkTextbox(master=self, height=265, width=524, corner_radius=0, fg_color=f"transparent", text_color=(f"black", f"white"))
-		self.AI_window_textbox.place(x=0, y=0)
-
-		self.AI_window_textbox.configure(state=f"disabled")
-
-		self.AI_window_entry: CTkEntry = CTkEntry(master=self, height=30, width=524, border_width=0, fg_color=f"transparent", placeholder_text=f"...")
-		self.AI_window_entry.place(x=0, y=269)
-
-		self.AI_window_entry.bind(f"<Return>", self.__response__)
+		self.ai_window_entry.bind(f"<Return>", self.__response__)
 
 	def __response__(self: typing.Self, configure: str | None = None) -> None:
-		self.AI_window_entry_data: str = self.AI_window_entry.get()
+		self.ai_window_entry_data: str = self.ai_window_entry.get()
 
-		self.AI_window_textbox.configure(state=f"normal")
-		self.query: str = My_Diary_AI.My_Diary_AI.response(self.AI_window_entry_data)
+		self.ai_window_textbox.configure(state=f"normal")
+		self.query: str = asyncio.run(My_Diary_AI.My_Diary_LM().__response__(self.ai_window_entry_data))
 
-		self.AI_window_textbox.insert(tkinter.END, f"{self.query}\n", f"-1.0")
-		self.AI_window_textbox.configure(state=f"disabled")
-		self.AI_window_entry.delete(f"-1", tkinter.END)
+		self.ai_window_textbox.insert(tkinter.END, f"{self.query}\n", f"-1.0")
+		self.ai_window_textbox.configure(state=f"disabled")
+		self.ai_window_entry.delete(f"-1", tkinter.END)
 
 class Bash(CTkToplevel):
 	
-	TITLE: typing.Final[str] = f""
+	TITLE: typing.Final[str] = f"My Diary Bash window"
+	ICON: typing.Final[str] = f"my_diary_icon.ico"
 	
 	def __init__(self: typing.Self, *args, **kwargs):
 		CTkToplevel.__init__(self, *args, **kwargs)
-
-		self.icon = (b"\x00\x00\x01\x00\x01\x00\x10\x10\x00\x00\x01\x00\x08\x00h\x05\x00\x00"b"\x16\x00\x00\x00(\x00\x00\x00\x10\x00\x00\x00 \x00\x00\x00\x01\x00"b"\x08\x00\x00\x00\x00\x00@\x05\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"b"\x00\x01\x00\x00\x00\x01") + b"\x00"*1282 + b"\xff"*64
-
-		_, self.icon_path = tempfile.mkstemp()
-		with open(self.icon_path, f"wb+") as icon_file: icon_file.write(self.icon)
-
-		self.after(250, lambda: self.iconbitmap(self.icon_path))
+		
+		self.after(250, lambda: self.iconbitmap(self.ICON))
 		self.title(self.TITLE)
 
 		self.bash_terminal: tkterminal.Terminal = tkterminal.Terminal(master=self, pady=5, padx=5, background=f"black", foreground=f"white", font=(f"System", 14))
@@ -670,5 +646,9 @@ class Bash(CTkToplevel):
 		self.bash_terminal.pack(expand=True, fill=f"both")
 
 if __name__ == f"__main__":
-    program: Program = Program()
-    program.mainloop()
+	try:
+		program: Program = Program()
+		program.mainloop()
+		
+	except Exception as exception:
+		tkinter.messagebox.showerror(f"error", message=f"{exception}")
