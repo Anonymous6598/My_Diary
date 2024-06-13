@@ -1,4 +1,4 @@
-import tkinter, tkinter.filedialog, tkinter.messagebox, pickle, os, sys, docx, typing, My_Diary_interface, My_Diary_window, CTkMenuBar, locale, CTkMessagebox, My_Diary_converterer, My_Diary_AI, tkterminal, My_Diary_PDF_viewer, asyncio
+import tkinter, tkinter.filedialog, tkinter.messagebox, pickle, os, sys, docx, typing, My_Diary_interface, My_Diary_window, CTkMenuBar, locale, My_Diary_converterer, My_Diary_AI, tkterminal, My_Diary_PDF_viewer, asyncio
 from tkinterdnd2 import *
 from customtkinter import *
 
