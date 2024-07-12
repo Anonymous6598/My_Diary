@@ -8,6 +8,7 @@ class My_Diary_LM(My_Diary_AI_interface.My_Diary_AI_interface):
     def __init__(self: typing.Self) -> None:
         self.my_diary_ai_client: g4f.local.LocalClient = g4f.local.LocalClient()
 
+    @typing.override
     async def __response__(self: typing.Self, prompt: str) -> str:
         self.response = self.my_diary_ai_client.chat.completions.create(model=self.LM, messages=[{f"role": f"user", f"content": prompt}])
         

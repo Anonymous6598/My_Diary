@@ -1,4 +1,4 @@
-import tkinter, tkinter.filedialog, tkinter.messagebox, pickle, os, sys, docx, typing, My_Diary_interface, My_Diary_window, CTkMenuBar, locale, My_Diary_converterer, My_Diary_AI, tkterminal, My_Diary_PDF_viewer, asyncio
+import tkinter, tkinter.filedialog, tkinter.messagebox, pickle, os, sys, docx, typing, My_Diary_interface, My_Diary_window, CTkMenuBar, locale, CTkMessagebox, My_Diary_converterer, My_Diary_AI, tkterminal, My_Diary_PDF_viewer, asyncio
 from tkinterdnd2 import *
 from customtkinter import *
 
@@ -160,16 +160,19 @@ class Program(My_Diary_window.Tk, My_Diary_interface.My_Diary_interface):
 
 		self.main_screen_tiltle_menu_word_count: CTkButton = self.main_screen_title_menu.add_cascade(textvariable=self.main_screen_word_counter_data_variable, command=self.__word_count_show__)
 	
+	@typing.override
 	def __undo__(self: typing.Self) -> None:
 		try: self.main_screen_frame_textbox.edit_undo()
 
 		except tkinter.TclError: pass
-		
+
+	@typing.override		
 	def __redo__(self: typing.Self) -> None:
 		try: self.main_screen_frame_textbox.edit_redo()
 
 		except tkinter.TclError: pass
 
+	@typing.override
 	def __save_text__(self: typing.Self, event: str | None = None) -> None:
 		self.file_name: tkinter.filedialog.asksaveasfilename = tkinter.filedialog.asksaveasfilename(filetypes=[(f"All Files (*.*)", f"*.*"), (f"Text file (*.txt)", f"*.txt"), (f"Docx file (*.docx)", f"*.docx"), (f"Python file (*.py)", f"*.py"), (f"Java file (*.java)", f"*.java"), (f"C# file (*.cs)", f"*.cs"), (f"HTML file (*.html)", f"*.html"), (f"CSS file (*.css)", f"*.css"), (f"JavaScript file (*.js)", f"*.js"), (f"C++ file (*.cpp)", f"*.cpp"), (f"Pickle file (*.pickle)", f"*.pickle")], defaultextension=[(f"All Files (*.*)", f"*.*"), (f"Text file (*.txt)", f"*.txt"), (f"Docx file (*.docx)", f"*.docx"), (f"Python file (*.py)", f"*.py"), (f"Java file (*.java)", f"*.java"), (f"C# file (*.cs)", f"*.cs"), (f"HTML file (*.html)", f"*.html"), (f"CSS file (*.css)", f"*.css"), (f"JavaScript file (*.js)", f"*.js"), (f"C++ file (*.cpp)", f"*.cpp"), (f"Pickle file (*.pickle)", f"*.pickle")])
 		match os.path.splitext(self.file_name)[1]:
@@ -252,6 +255,7 @@ class Program(My_Diary_window.Tk, My_Diary_interface.My_Diary_interface):
 	def __clear_text__(self: typing.Self) -> None:
 		self.main_screen_frame_textbox.delete(f"1.0", tkinter.END)
 	
+	@typing.override
 	def __edit_text__(self: typing.Self) -> None:
 		self.main_screen_edit_text_window.deiconify()
 
@@ -263,6 +267,7 @@ class Program(My_Diary_window.Tk, My_Diary_interface.My_Diary_interface):
 		self.main_screen_edit_underline_button.grid(column=6, row=0)
 		self.main_screen_edit_overstrike_button.grid(column=7, row=0)
 
+	@typing.override
 	def __edit_text_font__(self: typing.Self, configure: str | None = None) -> None:
 		self.main_screen_edit_font_button_data: str = self.main_screen_edit_font_button.get()															 
 		self.main_screen_edit_size_button_data: str = self.main_screen_edit_size_button.get()
@@ -285,6 +290,7 @@ class Program(My_Diary_window.Tk, My_Diary_interface.My_Diary_interface):
 
 			case _:	self.main_screen_frame_texbox_font.configure(overstrike=True)
 
+	@typing.override
 	def __open_file__(self: typing.Self, event: str | None = None) -> None:
 		self.opened_name_file: tkinter.filedialog = tkinter.filedialog.askopenfilename(title=f"open file", filetypes=[(f"All Files (*.*)", f"*.*"), (f"Word file (*.docx)", f"*.docx"), (f"Text file (*.txt)", f"*.txt"), (f"PDF file (*.pdf)", f"*.pdf"), (f"Python file (*.py)", f"*.py"), (f"Java file (*.java)", f"*.java"), (f"C# file (*.cs)", f"*.cs"), (f"HTML file (*.html)", f"*.html"), (f"CSS file (*.css)", f"*.css"), (f"JavaScript file (*.js)", f"*.js"), (f"C++ file (*.cpp)", f"*.cpp"), (f"Pickle file (*.pickle)", f"*.pickle")], defaultextension=[(f"All Files (*.*)", f"*.*"), (f"Text file (*.txt)", f"*.txt"), (f"Word file (*.docx)", f"*.docx"), (f"PDF file (*.pdf)", f"*.pdf"), (f"Python file (*.py)", f"*.py"), (f"Java file (*.java)", f"*.java"), (f"C# file (*.cs)", f"*.cs"), (f"HTML file (*.html)", f"*.html"), (f"CSS file (*.css)", f"*.css"), (f"JavaScript file (*.js)", f"*.js"), (f"C++ file (*.cpp)", f"*.cpp"), (f"Pickle file (*.pickle)", f"*.pickle")])
 		match os.path.splitext(self.opened_name_file)[1]:
@@ -317,7 +323,8 @@ class Program(My_Diary_window.Tk, My_Diary_interface.My_Diary_interface):
 
 				except FileNotFoundError: pass
 
-			
+	
+	@typing.override		
 	def __text_autosave__(self: typing.Self, event: str | None = None) -> None: 
 		with open(f"my_diary_saved_text.pickle", f"wb+") as self.text_data: pickle.dump(self.main_screen_frame_textbox.get(f"1.0", tkinter.END), self.text_data)
 		
