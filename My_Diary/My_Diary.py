@@ -30,11 +30,11 @@ class Program(My_Diary_window.Tk, My_Diary_interface.My_Diary_interface):
 
 		self.main_screen_title_menu: CTkMenuBar.CTkTitleMenu = CTkMenuBar.CTkTitleMenu(master=self, title_bar_color=f"default")
 
-		self.main_screen_tiltle_menu_menu_button: CTkButton = self.main_screen_title_menu.add_cascade(text=f"☰")
+		self.main_screen_title_menu_menu_button: CTkButton = self.main_screen_title_menu.add_cascade(text=f"☰")
 
-		self.main_screen_tiltle_menu_undo_button: CTkButton = self.main_screen_title_menu.add_cascade(text=f"⟲", command=self.__undo__)
+		self.main_screen_title_menu_undo_button: CTkButton = self.main_screen_title_menu.add_cascade(text=f"⟲", command=self.__undo__)
 
-		self.main_screen_tiltle_menu_redo_button: CTkButton = self.main_screen_title_menu.add_cascade(text=f"⟳", command=self.__redo__)
+		self.main_screen_title_menu_redo_button: CTkButton = self.main_screen_title_menu.add_cascade(text=f"⟳", command=self.__redo__)
 
 		self.main_screen_title_menu_ai_button: CTkButton = self.main_screen_title_menu.add_cascade(text=f"AI", command=lambda: AI_Window())
 
@@ -158,7 +158,7 @@ class Program(My_Diary_window.Tk, My_Diary_interface.My_Diary_interface):
 
 		self.main_screen_word_counter_data_variable: tkinter.IntVar = tkinter.IntVar(value=self.main_screen_word_counter_variable)
 
-		self.main_screen_tiltle_menu_word_count: CTkButton = self.main_screen_title_menu.add_cascade(textvariable=self.main_screen_word_counter_data_variable, command=self.__word_count_show__)
+		self.main_screen_title_menu_word_count: CTkButton = self.main_screen_title_menu.add_cascade(textvariable=self.main_screen_word_counter_data_variable, command=self.__word_count_show__)
 	
 	@typing.override
 	def __undo__(self: typing.Self) -> None:
