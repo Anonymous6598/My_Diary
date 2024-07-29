@@ -384,12 +384,12 @@ class Program(My_Diary_window.Tk, My_Diary_interface.My_Diary_interface):
 			else: pass
 
 		elif locale.getdefaultlocale()[0] == f"ru_RU":
-			self.main_screen_exit: CTkMessagebox.CTkMessagebox = CTkMessagebox.CTkMessagebox(title=f"выход", message=f"желайте выйти?")
+			self.main_screen_exit: tkinter.messagebox = tkinter.messagebox.askyesno(title=f"выход", message=f"желайте выйти?")
 			if self.main_screen_exit: sys.exit()
 			else: pass
 			
 		else:
-			self.main_screen_exit: CTkMessagebox.CTkMessagebox = CTkMessagebox.CTkMessagebox(title=f"exit", message=f"would you like to exit?")
+			self.main_screen_exit: tkinter.messagebox = tkinter.messagebox.askyesno(title=f"exit", message=f"would you like to exit?")
 			if self.main_screen_exit: sys.exit()
 			else: pass
 
