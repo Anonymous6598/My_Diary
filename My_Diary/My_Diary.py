@@ -44,7 +44,7 @@ class Program(My_Diary_window.Tk, My_Diary_interface.My_Diary_interface):
 
 		self.main_screen_frame_texbox_font: CTkFont = CTkFont(family=f"Ubuntu", size=22, weight=f"normal", slant=f"roman", underline=False, overstrike=False)
 
-		self.main_screen_frame_textbox: CTkTextbox = CTkTextbox(master=self, height=795, width=1536, corner_radius=0, undo=True, fg_color=f"transparent", font=self.main_screen_frame_texbox_font, text_color=(f"black", f"white"), menu=True)
+		self.main_screen_frame_textbox: CTkTextbox = CTkTextbox(master=self, height=795, width=1536, corner_radius=0, undo=True, fg_color=f"transparent", font=self.main_screen_frame_texbox_font, text_color=(f"black", f"white"))
 		self.main_screen_frame_textbox.pack(expand=True, fill=f"both")
 
 		self.main_screen_frame_textbox.drop_target_register(DND_ALL)
@@ -381,17 +381,14 @@ class Program(My_Diary_window.Tk, My_Diary_interface.My_Diary_interface):
 		if locale.getdefaultlocale()[0] == f"sr_RS":
 			self.main_screen_exit: tkinter.messagebox = tkinter.messagebox.askyesno(title=f"излаз", message=f"желите да изађете?")
 			if self.main_screen_exit: sys.exit()
-			else: pass
 
 		elif locale.getdefaultlocale()[0] == f"ru_RU":
 			self.main_screen_exit: tkinter.messagebox = tkinter.messagebox.askyesno(title=f"выход", message=f"желайте выйти?")
 			if self.main_screen_exit: sys.exit()
-			else: pass
 			
 		else:
 			self.main_screen_exit: tkinter.messagebox = tkinter.messagebox.askyesno(title=f"exit", message=f"would you like to exit?")
 			if self.main_screen_exit: sys.exit()
-			else: pass
 
 class Terminal(CTkToplevel):
 
