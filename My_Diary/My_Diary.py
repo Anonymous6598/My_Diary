@@ -1,4 +1,4 @@
-import tkinter, tkinter.filedialog, tkinter.messagebox, pickle, os, sys, docx, typing, My_Diary_interface, My_Diary_window, CTkMenuBar, locale, CTkMessagebox, My_Diary_converterer, My_Diary_AI, tkterminal, My_Diary_PDF_viewer, asyncio
+import tkinter, tkinter.filedialog, tkinter.messagebox, pickle, os, sys, docx, typing, My_Diary_interface, My_Diary_window, CTkMenuBar, locale, My_Diary_converterer, My_Diary_AI, tkterminal, My_Diary_PDF_viewer, asyncio
 from tkinterdnd2 import *
 from customtkinter import *
 
@@ -26,21 +26,16 @@ class Program(My_Diary_window.Tk, My_Diary_interface.My_Diary_interface):
 		self.bind(f"<Alt_L>" + f"<F4>", self.__exit__)
 		self.bind(f"<Control_L>" + f"<s>", self.__save_text__)
 		self.bind(f"<Control_L>" + f"<o>", self.__open_file__)
+		self.bind(f"<Button-3>", self.__open_right_click_menu__)
 		self.protocol(f"WM_DELETE_WINDOW", self.__exit__)
 
 		self.main_screen_title_menu: CTkMenuBar.CTkTitleMenu = CTkMenuBar.CTkTitleMenu(master=self, title_bar_color=f"default")
 
-		self.main_screen_title_menu_menu_button: CTkButton = self.main_screen_title_menu.add_cascade(text=f"☰")
+		self.main_screen_tiltle_menu_menu_button: CTkButton = self.main_screen_title_menu.add_cascade(text=f"☰")
 
-		self.main_screen_title_menu_undo_button: CTkButton = self.main_screen_title_menu.add_cascade(text=f"⟲", command=self.__undo__)
+		self.main_screen_tiltle_menu_undo_button: CTkButton = self.main_screen_title_menu.add_cascade(text=f"⟲", command=self.__undo__)
 
-		self.main_screen_title_menu_redo_button: CTkButton = self.main_screen_title_menu.add_cascade(text=f"⟳", command=self.__redo__)
-
-		self.main_screen_title_menu_ai_button: CTkButton = self.main_screen_title_menu.add_cascade(text=f"AI", command=lambda: AI_Window())
-
-		self.main_screen_title_menu_terminal_button: CTkButton = self.main_screen_title_menu.add_cascade(text=f">_", command=lambda: Bash())
-
-		self.main_screen_title_menu_assistant_button: CTkButton = self.main_screen_title_menu.add_cascade(text=f">?", command=lambda: Terminal())
+		self.main_screen_tiltle_menu_redo_button: CTkButton = self.main_screen_title_menu.add_cascade(text=f"⟳", command=self.__redo__)
 
 		self.main_screen_frame_texbox_font: CTkFont = CTkFont(family=f"Ubuntu", size=22, weight=f"normal", slant=f"roman", underline=False, overstrike=False)
 
@@ -76,6 +71,8 @@ class Program(My_Diary_window.Tk, My_Diary_interface.My_Diary_interface):
 
 		self.main_screen_edit_overstrike_button: CTkComboBox = CTkComboBox(master=self.main_screen_edit_text_window, height=20, width=75, corner_radius=0, values=[f"not overstriked", f"overstriked"], command=self.__edit_text_font__)
 
+		self.main_screen_right_click_menu: tkinter.Menu = tkinter.Menu(self, tearoff=0)
+
 		if locale.getdefaultlocale()[0] == f"sr_RS":
 			self.main_screen_title_menu_submenu: CTkMenuBar.CustomDropdownMenu = CTkMenuBar.CustomDropdownMenu(widget=self.main_screen_tiltle_menu_menu_button, fg_color=f"transparent")
 
@@ -100,6 +97,34 @@ class Program(My_Diary_window.Tk, My_Diary_interface.My_Diary_interface):
 			self.main_screen_txt_to_word_converter_button: CTkButton  = self.main_screen_converter_button.add_option(f"из txt у docx", command=My_Diary_converterer.My_Diary_converterer.txt_to_docx)
 
 			self.main_screen_word_to_txt_converter_button: CTkButton  = self.main_screen_converter_button.add_option(f"из docx у txt", command=My_Diary_converterer.My_Diary_converterer.docx_to_txt)
+
+			self.main_screen_ai_button: CTkButton = self.main_screen_title_menu_submenu.add_option(option=f"ВЕИ", command=lambda: AI_Window())
+
+			self.main_screen_menu_assistant_button: CTkButton = self.main_screen_title_menu_submenu.add_option(option=f"помоћник", command=lambda: Terminal())
+
+			self.main_screen_menu_terminal_button: CTkButton = self.main_screen_title_menu_submenu.add_option(option=f"терминал", command=lambda: Bash())	
+
+			self.main_screen_right_click_menu.add_command(label=f"копирај", command=self.__copy__)
+			self.main_screen_right_click_menu.add_command(label=f"налепи", command=self.__paste__)
+			self.main_screen_right_click_menu.add_command(label=f"исеци", command=self.__cut__)
+
+			self.main_screen_right_click_menu.add_separator()
+
+			self.main_screen_right_click_menu.add_command(label=f"сачувај", command=self.__save_text__)
+			self.main_screen_right_click_menu.add_command(label=f"отвори", command=self.__open_file__)
+
+			self.main_screen_right_click_menu.add_separator()
+            
+			self.main_screen_right_click_menu.add_command(label=f"из docx у pdf", command=My_Diary_converterer.My_Diary_converterer.docx_to_pdf)
+			self.main_screen_right_click_menu.add_command(label=f"из pdf у docx", command=My_Diary_converterer.My_Diary_converterer.pdf_to_docx)
+			self.main_screen_right_click_menu.add_command(label=f"из txt у pdf", command=My_Diary_converterer.My_Diary_converterer.txt_to_pdf)
+			self.main_screen_right_click_menu.add_command(label=f"из pdf у txt", command=My_Diary_converterer.My_Diary_converterer.pdf_to_txt)
+			self.main_screen_right_click_menu.add_command(label=f"из txt у docx", command=My_Diary_converterer.My_Diary_converterer.txt_to_docx)
+			self.main_screen_right_click_menu.add_command(label=f"из docx у txt", command=My_Diary_converterer.My_Diary_converterer.docx_to_txt)
+
+			self.main_screen_right_click_menu.add_separator()
+
+			self.main_screen_right_click_menu.add_command(label=f"изађи", command=self.__exit__)
 
 		elif locale.getdefaultlocale()[0] == f"ru_RU":
 			self.main_screen_title_menu_submenu: CTkMenuBar.CustomDropdownMenu = CTkMenuBar.CustomDropdownMenu(widget=self.main_screen_tiltle_menu_menu_button, fg_color=f"transparent")
@@ -126,6 +151,34 @@ class Program(My_Diary_window.Tk, My_Diary_interface.My_Diary_interface):
 
 			self.main_screen_word_to_txt_converter_button: CTkButton  = self.main_screen_converter_button.add_option(f"из docx в txt", command=My_Diary_converterer.My_Diary_converterer.docx_to_txt)
 
+			self.main_screen_ai_button: CTkButton = self.main_screen_title_menu_submenu.add_option(option=f"Нейро Сеть", command=lambda: AI_Window())
+
+			self.main_screen_menu_assistant_button: CTkButton = self.main_screen_title_menu_submenu.add_option(option=f"помощник", command=lambda: Terminal())
+
+			self.main_screen_menu_terminal_button: CTkButton = self.main_screen_title_menu_submenu.add_option(option=f"терминал", command=lambda: Bash())	
+
+			self.main_screen_right_click_menu.add_command(label=f"копировать", command=self.__copy__)
+			self.main_screen_right_click_menu.add_command(label=f"вставить", command=self.__paste__)
+			self.main_screen_right_click_menu.add_command(label=f"вырезать", command=self.__cut__)
+
+			self.main_screen_right_click_menu.add_separator()
+
+			self.main_screen_right_click_menu.add_command(label=f"сохранить", command=self.__save_text__)
+			self.main_screen_right_click_menu.add_command(label=f"открыть", command=self.__open_file__)
+
+			self.main_screen_right_click_menu.add_separator()
+            
+			self.main_screen_right_click_menu.add_command(label=f"из docx в pdf", command=My_Diary_converterer.My_Diary_converterer.docx_to_pdf)
+			self.main_screen_right_click_menu.add_command(label=f"из pdf в docx", command=My_Diary_converterer.My_Diary_converterer.pdf_to_docx)
+			self.main_screen_right_click_menu.add_command(label=f"из txt в pdf", command=My_Diary_converterer.My_Diary_converterer.txt_to_pdf)
+			self.main_screen_right_click_menu.add_command(label=f"из pdf в txt", command=My_Diary_converterer.My_Diary_converterer.pdf_to_txt)
+			self.main_screen_right_click_menu.add_command(label=f"из txt в docx", command=My_Diary_converterer.My_Diary_converterer.txt_to_docx)
+			self.main_screen_right_click_menu.add_command(label=f"из docx в txt", command=My_Diary_converterer.My_Diary_converterer.docx_to_txt)
+
+			self.main_screen_right_click_menu.add_separator()
+
+			self.main_screen_right_click_menu.add_command(label=f"выйти", command=self.__exit__)
+
 		else:
 			self.main_screen_title_menu_submenu: CTkMenuBar.CustomDropdownMenu = CTkMenuBar.CustomDropdownMenu(widget=self.main_screen_tiltle_menu_menu_button, fg_color=f"transparent")
 
@@ -151,6 +204,34 @@ class Program(My_Diary_window.Tk, My_Diary_interface.My_Diary_interface):
 
 			self.main_screen_word_to_txt_converter_button: CTkButton  = self.main_screen_converter_button.add_option(f"from docx to txt", command=My_Diary_converterer.My_Diary_converterer.docx_to_txt)
 
+			self.main_screen_ai_button: CTkButton = self.main_screen_title_menu_submenu.add_option(option=f"AI", command=lambda: AI_Window())
+
+			self.main_screen_menu_assistant_button: CTkButton = self.main_screen_title_menu_submenu.add_option(option=f"assistant", command=lambda: Terminal())
+
+			self.main_screen_menu_terminal_button: CTkButton = self.main_screen_title_menu_submenu.add_option(option=f"terminal", command=lambda: Bash())	
+
+			self.main_screen_right_click_menu.add_command(label=f"copy", command=self.__copy__)
+			self.main_screen_right_click_menu.add_command(label=f"paste", command=self.__paste__)
+			self.main_screen_right_click_menu.add_command(label=f"cut", command=self.__cut__)
+
+			self.main_screen_right_click_menu.add_separator()
+
+			self.main_screen_right_click_menu.add_command(label=f"save", command=self.__save_text__)
+			self.main_screen_right_click_menu.add_command(label=f"open", command=self.__open_file__)
+
+			self.main_screen_right_click_menu.add_separator()
+            
+			self.main_screen_right_click_menu.add_command(label=f"from docx into pdf", command=My_Diary_converterer.My_Diary_converterer.docx_to_pdf)
+			self.main_screen_right_click_menu.add_command(label=f"from pdf into docx", command=My_Diary_converterer.My_Diary_converterer.pdf_to_docx)
+			self.main_screen_right_click_menu.add_command(label=f"from txt into pdf", command=My_Diary_converterer.My_Diary_converterer.txt_to_pdf)
+			self.main_screen_right_click_menu.add_command(label=f"from pdf into txt", command=My_Diary_converterer.My_Diary_converterer.pdf_to_txt)
+			self.main_screen_right_click_menu.add_command(label=f"from txt into docx", command=My_Diary_converterer.My_Diary_converterer.txt_to_docx)
+			self.main_screen_right_click_menu.add_command(label=f"from docx into txt", command=My_Diary_converterer.My_Diary_converterer.docx_to_txt)
+
+			self.main_screen_right_click_menu.add_separator()
+
+			self.main_screen_right_click_menu.add_command(label=f"exit", command=self.__exit__)
+
 		self.bind(f"<KeyRelease>", self.__text_autosave__)
 		self.main_screen_frame_textbox.bind(f"<F2>", self.__enter_text_autosave__)
 
@@ -158,7 +239,7 @@ class Program(My_Diary_window.Tk, My_Diary_interface.My_Diary_interface):
 
 		self.main_screen_word_counter_data_variable: tkinter.IntVar = tkinter.IntVar(value=self.main_screen_word_counter_variable)
 
-		self.main_screen_title_menu_word_count: CTkButton = self.main_screen_title_menu.add_cascade(textvariable=self.main_screen_word_counter_data_variable, command=self.__word_count_show__)
+		self.main_screen_tiltle_menu_word_count: CTkButton = self.main_screen_title_menu.add_cascade(textvariable=self.main_screen_word_counter_data_variable, command=self.__word_count_show__)
 	
 	@typing.override
 	def __undo__(self: typing.Self) -> None:
@@ -376,6 +457,29 @@ class Program(My_Diary_window.Tk, My_Diary_interface.My_Diary_interface):
 
 	def __html_script__(self: typing.Self, event: str | None = None) -> None:
 		self.main_screen_frame_textbox.insert(f"0.0", f"<!DOCTYPE html> \n  \n  <html lang='en'> \n <head> \n <meta charset='utf-8' /> \n <title></title> \n </head> \n <body> \n \n </body> \n </html>")	  																																			   
+
+	def __open_right_click_menu__(self: typing.Self, event: str | None = None) -> None:
+		self.main_screen_right_click_menu.post(event.x_root, event.y_root)
+
+	def __cut__(self: typing.Self) -> None:
+		self.selected_text: str = self.main_screen_frame_textbox.selection_get()
+		self.main_screen_frame_textbox.delete("sel.first", "sel.last")
+		self.clipboard_clear()
+		self.clipboard_append(self.selected_text)
+
+	def __copy__(self: typing.Self) -> None:
+		self.selected_text: str = self.main_screen_frame_textbox.selection_get()
+		self.clipboard_clear()
+		self.clipboard_append(self.selected_text)
+
+	def __paste__(self: typing.Self) -> None:
+		try:
+			self.cursor_position: int = self.main_screen_frame_textbox.index(tkinter.INSERT)
+			self.clipboard_text: str = self.clipboard_get()
+			self.main_screen_frame_textbox.insert(self.cursor_position, self.clipboard_text)
+		
+		except tkinter.TclError:
+			pass
 
 	def __exit__(self: typing.Self) -> None:
 		if locale.getdefaultlocale()[0] == f"sr_RS":
@@ -650,9 +754,5 @@ class Bash(CTkToplevel):
 		self.bash_terminal.pack(expand=True, fill=f"both")
 
 if __name__ == f"__main__":
-	try:
-		program: Program = Program()
-		program.mainloop()
-		
-	except Exception as exception:
-		tkinter.messagebox.showerror(f"error", message=f"{exception}")
+	program: Program = Program()
+	program.mainloop()
