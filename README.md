@@ -2,7 +2,7 @@
 This is interesting AI-powered text/code editor. It has features of vs code, notepad and word. And now it can read PDF(currently in beta). It has assistant terminal, bash and Mistral-7b-openorca powered chatbot. Now it is local, therefore no dependencies on the region. Embrace the future. And now for everyone!
 
 
-![Snimak ekrana 2024-08-11 154311](https://github.com/user-attachments/assets/5d641499-1c2c-4104-a10f-f7cbfb750ecd)
+![Snimak ekrana 2024-08-11 154311](https://github.com/user-attachments/assets/a0afc048-26ba-47ff-8350-d8b0aad95fe4)
 
 
 (Everything is in serbian)
