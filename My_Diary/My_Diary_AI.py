@@ -1,15 +1,15 @@
-import g4f, g4f.local, typing, My_Diary_AI_interface, asyncio
+import transformers, torch, typing, My_Diary_AI_interface
 
 class My_Diary_LM(My_Diary_AI_interface.My_Diary_AI_interface):
     
-    LM: typing.Final[str] = f"mistral-7b-openorca" # local LM
-    PROVIDER: None = None # If you know, how to set up local provider, write it in the issue section
+    LANGUAGE_MODEL: typing.Final[str] = f"arcee-ai/Llama-3.1-SuperNova-Lite" 
     
     def __init__(self: typing.Self) -> None:
-        self.my_diary_ai_client: g4f.local.LocalClient = g4f.local.LocalClient()
+        self.tokenizer_for_lm: transformers.PreTrainedTokenizer = transformers.AutoTokenizer.from_pretrained(self.LANGUAGE_MODEL)
+        self.pipeline_for_lm: transformers.Pipeline = transformers.pipeline(f"text-generation", model=self.LANGUAGE_MODEL, torch_dtype=torch.float16, device_map=f"auto", max_length=100, pad_token_id=self.tokenizer_for_lm.eos_token_id, eos_token_id=self.tokenizer_for_lm.eos_token_id)
 
     @typing.override
     async def __response__(self: typing.Self, prompt: str) -> str:
-        self.response = self.my_diary_ai_client.chat.completions.create(model=self.LM, messages=[{f"role": f"user", f"content": prompt}])
-        
-        return self.response.choices[0].message.content
+        self.user_query: list[dict[str, str]] = [{"role": "user", "content": prompt}]
+
+        return self.pipeline(self.user_query)[0].get("generated_text")[1].get("content")
