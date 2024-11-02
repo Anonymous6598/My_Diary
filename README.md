@@ -3,7 +3,7 @@ This is interesting AI-powered text/code editor. It has features of vs code, not
 
 ## Windows
 
-![Snimak ekrana 2024-08-11 154311](https://github.com/user-attachments/assets/a0afc048-26ba-47ff-8350-d8b0aad95fe4)
+![Snimak ekrana 2024-11-02 213232](https://github.com/user-attachments/assets/3979b08b-7f6d-4abc-b6a6-cb50b8ad6604)
 
 ## Linux
 
