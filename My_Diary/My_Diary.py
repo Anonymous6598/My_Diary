@@ -1,4 +1,4 @@
-import tkinter, tkinter.filedialog, tkinter.messagebox, pickle, os, sys, docx, typing, My_Diary_interface, My_Diary_window, CTkMenuBar, locale, My_Diary_converterer, My_Diary_AI, tkterminal, My_Diary_PDF_viewer, asyncio
+import tkinter, tkinter.filedialog, tkinter.messagebox, pickle, os, sys, docx, typing, My_Diary_interface, My_Diary_window, CTkMenuBar, locale, My_Diary_converterer, My_Diary_AI, tkterminal, My_Diary_PDF_viewer, asyncio, speech_recognition, pyaudio, multiprocessing, asyncio
 from tkinterdnd2 import *
 from customtkinter import *
 
@@ -98,7 +98,7 @@ class Program(My_Diary_window.Tk, My_Diary_interface.My_Diary_interface):
 
 			self.main_screen_word_to_txt_converter_button: CTkButton  = self.main_screen_converter_button.add_option(f"из docx у txt", command=My_Diary_converterer.My_Diary_converterer.docx_to_txt)
 
-			self.main_screen_ai_button: CTkButton = self.main_screen_title_menu_submenu.add_option(option=f"ВЕИ", command=lambda: AI_Window())
+			self.main_screen_ai_button: CTkButton = self.main_screen_title_menu_submenu.add_option(option=f"AI", command=lambda: AI_Window())
 
 			self.main_screen_menu_assistant_button: CTkButton = self.main_screen_title_menu_submenu.add_option(option=f"помоћник", command=lambda: Terminal())
 
@@ -239,7 +239,9 @@ class Program(My_Diary_window.Tk, My_Diary_interface.My_Diary_interface):
 
 		self.main_screen_word_counter_data_variable: tkinter.IntVar = tkinter.IntVar(value=self.main_screen_word_counter_variable)
 
-		self.main_screen_tiltle_menu_word_count: CTkButton = self.main_screen_title_menu.add_cascade(textvariable=self.main_screen_word_counter_data_variable, command=self.__word_count_show__)
+		self.main_screen_title_menu_word_count: CTkButton = self.main_screen_title_menu.add_cascade(textvariable=self.main_screen_word_counter_data_variable, command=self.__word_count_show__)
+
+		self.main_screen_title_menu_microphone_button: CTkButton = self.main_screen_title_menu.add_cascade(text=f"🎤", command=self.__voice_input__)
 	
 	@typing.override
 	def __undo__(self: typing.Self) -> None:
@@ -480,6 +482,14 @@ class Program(My_Diary_window.Tk, My_Diary_interface.My_Diary_interface):
 		
 		except tkinter.TclError:
 			pass
+
+	def __voice_input__(self: typing.Self) -> None:
+		self.recognizer: speech_recognition.Recognizer = speech_recognition.Recognizer()
+		with speech_recognition.Microphone() as self.source:
+			self.audio_data: speech_recognition.AudioData = self.recognizer.record(self.source, duration=10)
+			self.text: str = self.recognizer.recognize_google(self.audio_data)
+
+		self.main_screen_frame_textbox.insert(f"1.0", self.text)
 
 	def __exit__(self: typing.Self) -> None:
 		if locale.getdefaultlocale()[0] == f"sr_RS":
@@ -723,8 +733,14 @@ class AI_Window(CTkToplevel):
 
 		self.ai_window_textbox.configure(state=f"disabled")
 
-		self.ai_window_entry: CTkEntry = CTkEntry(master=self, height=30, width=524, border_width=0, fg_color=f"transparent", placeholder_text=f"...")
+		self.ai_window_entry: CTkEntry = CTkEntry(master=self, height=30, width=465, border_width=0, fg_color=f"transparent", placeholder_text=f"...")
 		self.ai_window_entry.place(x=0, y=269)
+
+		self.ai_window_microphone_button: CTkButton = CTkButton(master=self, height=30, width=30, border_width=0, fg_color=f"transparent", text=f"🎤", command=self.__audio_input__)
+		self.ai_window_microphone_button.place(x=465, y=269)
+
+		self.ai_window_send_request_button: CTkButton = CTkButton(master=self, height=30, width=30, border_width=0, fg_color=f"transparent", text=f"->", command=self.__response__)
+		self.ai_window_send_request_button.place(x=495, y=269)
 
 		self.ai_window_entry.bind(f"<Return>", self.__response__)
 
@@ -734,9 +750,17 @@ class AI_Window(CTkToplevel):
 		self.ai_window_textbox.configure(state=f"normal")
 		self.query: str = asyncio.run(My_Diary_AI.My_Diary_LM().__response__(self.ai_window_entry_data))
 
-		self.ai_window_textbox.insert(tkinter.END, f"{self.query}\n", f"-1.0")
+		self.ai_window_textbox.insert(tkinter.END, f"USER:\n{self.ai_window_entry_data}\nLlama:\n{self.query}\n", f"-1.0")
 		self.ai_window_textbox.configure(state=f"disabled")
 		self.ai_window_entry.delete(f"-1", tkinter.END)
+
+	def __audio_input__(self: typing.Self) -> None:
+		self.recognizer: speech_recognition.Recognizer = speech_recognition.Recognizer()
+		with speech_recognition.Microphone() as self.source:
+			self.audio_data: speech_recognition.AudioData = self.recognizer.record(self.source, duration=5)
+			self.text: str = self.recognizer.recognize_google(self.audio_data)
+
+		self.ai_window_entry.insert(f"0", self.text)
 
 class Bash(CTkToplevel):
 	
