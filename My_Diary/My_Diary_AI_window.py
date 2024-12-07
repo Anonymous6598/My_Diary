@@ -1,6 +1,6 @@
 import customtkinter, tkinter, typing, My_Diary_AI, asyncio, speech_recognition, My_Diary_AI_window_interface
 
-class AI_Window(customtkinter.CTk, My_Diary_AI_window_interface.My_Diary_AI_window_interface):
+class My_Diary_AI_Window(customtkinter.CTk, My_Diary_AI_window_interface.My_Diary_AI_window_interface):
 
 	TITLE: typing.Final[str] = f"My Diary AI assistant"
 	HEIGHT: typing.Final[int] = 375
@@ -58,4 +58,4 @@ class AI_Window(customtkinter.CTk, My_Diary_AI_window_interface.My_Diary_AI_wind
 		self.ai_window_entry.insert(f"0", self.text)
 		
 if __name__ == f"__main__":
-	AI_Window().mainloop()
+	My_Diary_AI_Window().mainloop()
