@@ -7,7 +7,13 @@ This is interesting AI-powered text/code editor. It has features of vs code, not
 
 ## Linux
 
+### before
+
 ![Snimak ekrana 2024-10-05 003100](https://github.com/user-attachments/assets/83980d5e-ce8d-4fd4-807c-5807d6432cde)
+
+### after
+
+![Снимак екрана од 2024-12-30 20-37-49](https://github.com/user-attachments/assets/3688215b-8795-4c99-98a5-a06c8a3ae44e)
 
 (Everything is in serbian)
 
