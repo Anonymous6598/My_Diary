@@ -1,4 +1,4 @@
-import customtkinter, CTkPDFViewer, typing, My_Diary_PDF_viewer_interface
+import customtkinter, CTkPDFViewer, typing, My_Diary_PDF_viewer_interface, platform
 
 class My_Diary_PDF_viewer(customtkinter.CTkToplevel, My_Diary_PDF_viewer_interface.My_Diary_PDF_reader_interface):
     
@@ -9,7 +9,8 @@ class My_Diary_PDF_viewer(customtkinter.CTkToplevel, My_Diary_PDF_viewer_interfa
         customtkinter.CTkToplevel.__init__(self, *args, **kwargs)
         
         self.title(f"My Diary PDF reader (beta)")
-        self.after(250, lambda: self.iconbitmap(self.ICON))
+        if platform.system() == f"Windows":
+            self.after(250, lambda: self.iconbitmap(self.ICON))
 
     @typing.override    
     def __show_pdf__(self: typing.Self, pdf_file: str) -> None:

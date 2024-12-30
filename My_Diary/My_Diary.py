@@ -1,4 +1,4 @@
-import tkinter, tkinter.filedialog, tkinter.messagebox, pickle, os, sys, docx, typing, My_Diary_interface, My_Diary_window, CTkMenuBar, locale, My_Diary_converterer, tkterminal, My_Diary_PDF_viewer, speech_recognition, subprocess
+import tkinter, tkinter.filedialog, tkinter.messagebox, pickle, os, sys, docx, typing, My_Diary_interface, My_Diary_window, CTkMenuBar, locale, My_Diary_converterer, tkterminal, My_Diary_PDF_viewer, speech_recognition, subprocess, platform
 from tkinterdnd2 import *
 from customtkinter import *
 
@@ -8,9 +8,9 @@ class Program(My_Diary_window.Tk, My_Diary_interface.My_Diary_interface):
 
 	TITLE: typing.Final[str] = f"My Diary"
 	COLOR_THEME: typing.Final[str] = f"dark-blue"
+	ICON: typing.Final[str] = f"my_diary_icon.ico"
 	WIDGET_SCALING: typing.Final[float] = 1.251
 	THEME: typing.Final[str] = f"system"
-	ICON: typing.Final[str] = f"my_diary_icon.ico"
 
 	def __init__(self: typing.Self, *args, **kwargs) -> None:
 		My_Diary_window.Tk.__init__(self, *args, **kwargs)
@@ -21,7 +21,8 @@ class Program(My_Diary_window.Tk, My_Diary_interface.My_Diary_interface):
 		deactivate_automatic_dpi_awareness()
 
 		self.title(self.TITLE)
-		self.iconbitmap(self.ICON)
+		if platform.system() == f"Windows":
+			self.iconbitmap(self.ICON)
   
 		self.bind(f"<Alt_L>" + f"<F4>", self.__exit__)
 		self.bind(f"<Control_L>" + f"<s>", self.__save_text__)
@@ -29,7 +30,11 @@ class Program(My_Diary_window.Tk, My_Diary_interface.My_Diary_interface):
 		self.bind(f"<Button-3>", self.__open_right_click_menu__)
 		self.protocol(f"WM_DELETE_WINDOW", self.__exit__)
 
-		self.main_screen_title_menu: CTkMenuBar.CTkTitleMenu = CTkMenuBar.CTkTitleMenu(master=self, title_bar_color=f"default")
+		if platform.system() == f"Linux":
+			self.main_screen_title_menu: CTkMenuBar.CTkMenuBar = CTkMenuBar.CTkMenuBar(master=self)
+		
+		else:
+			self.main_screen_title_menu: CTkMenuBar.CTkTitleMenu = CTkMenuBar.CTkTitleMenu(master=self)
 
 		self.main_screen_tiltle_menu_menu_button: CTkButton = self.main_screen_title_menu.add_cascade(text=f"☰")
 
@@ -52,8 +57,9 @@ class Program(My_Diary_window.Tk, My_Diary_interface.My_Diary_interface):
 		
 		self.main_screen_edit_text_window.protocol(f"WM_DELETE_WINDOW", lambda: self.main_screen_edit_text_window.withdraw())
 		self.main_screen_edit_text_window.title(f"My Diary font chooser window")
-		self.main_screen_edit_text_window.after(250, lambda: self.main_screen_edit_text_window.iconbitmap(self.ICON))
 		self.main_screen_edit_text_window.resizable(False, False)
+		if platform.system() == f"Windows":
+			self.main_screen_edit_text_window.after(250, lambda: self.main_screen_edit_text_window.iconbitmap(self.ICON))
 		
 		self.main_screen_edit_text_window.withdraw()
 		
@@ -98,7 +104,7 @@ class Program(My_Diary_window.Tk, My_Diary_interface.My_Diary_interface):
 
 			self.main_screen_word_to_txt_converter_button: CTkButton  = self.main_screen_converter_button.add_option(f"из docx у txt", command=My_Diary_converterer.My_Diary_converterer.docx_to_txt)
 
-			self.main_screen_ai_button: CTkButton = self.main_screen_title_menu_submenu.add_option(option=f"AI", command=lambda: os.startfile(f"My_Diary_AI_window.py", show_cmd=False))
+			self.main_screen_ai_button: CTkButton = self.main_screen_title_menu_submenu.add_option(option=f"AI", command=lambda: self.__open_ai_window__())
 
 			self.main_screen_menu_assistant_button: CTkButton = self.main_screen_title_menu_submenu.add_option(option=f"помоћник", command=lambda: Terminal())
 
@@ -151,7 +157,7 @@ class Program(My_Diary_window.Tk, My_Diary_interface.My_Diary_interface):
 
 			self.main_screen_word_to_txt_converter_button: CTkButton  = self.main_screen_converter_button.add_option(f"из docx в txt", command=My_Diary_converterer.My_Diary_converterer.docx_to_txt)
 
-			self.main_screen_ai_button: CTkButton = self.main_screen_title_menu_submenu.add_option(option=f"Нейро Сеть", command=lambda: os.startfile(f"My_Diary_AI_window.py", show_cmd=False))
+			self.main_screen_ai_button: CTkButton = self.main_screen_title_menu_submenu.add_option(option=f"Нейро Сеть", command=lambda: self.__open_ai_window__())
 
 			self.main_screen_menu_assistant_button: CTkButton = self.main_screen_title_menu_submenu.add_option(option=f"помощник", command=lambda: Terminal())
 
@@ -204,7 +210,7 @@ class Program(My_Diary_window.Tk, My_Diary_interface.My_Diary_interface):
 
 			self.main_screen_word_to_txt_converter_button: CTkButton  = self.main_screen_converter_button.add_option(f"from docx to txt", command=My_Diary_converterer.My_Diary_converterer.docx_to_txt)
 
-			self.main_screen_ai_button: CTkButton = self.main_screen_title_menu_submenu.add_option(option=f"AI", command=lambda: os.startfile(f"My_Diary_AI_window.py", show_cmd=False))
+			self.main_screen_ai_button: CTkButton = self.main_screen_title_menu_submenu.add_option(option=f"AI", command=lambda: self.__open_ai_window__())
 
 			self.main_screen_menu_assistant_button: CTkButton = self.main_screen_title_menu_submenu.add_option(option=f"assistant", command=lambda: Terminal())
 
@@ -457,6 +463,13 @@ class Program(My_Diary_window.Tk, My_Diary_interface.My_Diary_interface):
 
 			except FileNotFoundError: pass
 
+	def __open_ai_window__(self: typing.Self) -> None:
+		if platform.system() == f"Linux":
+			os.popen(f"python3 My_Diary_AI_window.py")
+
+		else:
+			os.startfile(f"My_Diary_AI_window.py", show_cmd=False)
+
 	def __html_script__(self: typing.Self, event: str | None = None) -> None:
 		self.main_screen_frame_textbox.insert(f"0.0", f"<!DOCTYPE html> \n  \n  <html lang='en'> \n <head> \n <meta charset='utf-8' /> \n <title></title> \n </head> \n <body> \n \n </body> \n </html>")	  																																			   
 
@@ -494,15 +507,34 @@ class Program(My_Diary_window.Tk, My_Diary_interface.My_Diary_interface):
 	def __exit__(self: typing.Self) -> None:
 		if locale.getdefaultlocale()[0] == f"sr_RS":
 			self.main_screen_exit: tkinter.messagebox = tkinter.messagebox.askyesno(title=f"излаз", message=f"желите да изађете?")
-			if self.main_screen_exit: subprocess.call(f"TASKKILL /F /IM Python.exe", shell=False); sys.exit()
+			if self.main_screen_exit: 
+				if platform.system() == f"Windows":
+					subprocess.call(f"TASKKILL /F /IM Python.exe", shell=False)
+					sys.exit()
+				
+				else:
+					sys.exit()
+
 
 		elif locale.getdefaultlocale()[0] == f"ru_RU":
 			self.main_screen_exit: tkinter.messagebox = tkinter.messagebox.askyesno(title=f"выход", message=f"желайте выйти?")
-			if self.main_screen_exit: subprocess.call(f"TASKKILL /F /IM Python.exe", shell=False); sys.exit()
+			if self.main_screen_exit: 
+				if platform.system() == f"Windows":
+					subprocess.call(f"TASKKILL /F /IM Python.exe", shell=False)
+					sys.exit()
+				
+				else:
+					sys.exit()
 			
 		else:
 			self.main_screen_exit: tkinter.messagebox = tkinter.messagebox.askyesno(title=f"exit", message=f"would you like to exit?")
-			if self.main_screen_exit: subprocess.call(f"TASKKILL /F /IM Python.exe", shell=False); sys.exit()
+			if self.main_screen_exit:
+				if platform.system() == f"Windows":
+					subprocess.call(f"TASKKILL /F /IM Python.exe", shell=False)
+					sys.exit()
+				
+				else:
+					sys.exit()
 
 class Terminal(CTkToplevel):
 
@@ -517,7 +549,8 @@ class Terminal(CTkToplevel):
 		self.geometry(f"{self.WIDTH}x{self.HEIGHT}")
 		self.resizable(False, False)
 		self.title(self.TITLE)
-		self.after(250, lambda: self.iconbitmap(self.ICON))
+		if platform.system() == f"Windows":
+			self.after(250, lambda: self.iconbitmap(self.ICON))
 
 		self.terminal_frame: CTkFrame = CTkFrame(master=self, height=300, width=520, fg_color=f"black", border_width=0)
 		self.terminal_frame.place(x=0, y=0)
@@ -721,8 +754,9 @@ class Bash(CTkToplevel):
 	def __init__(self: typing.Self, *args, **kwargs):
 		CTkToplevel.__init__(self, *args, **kwargs)
 		
-		self.after(250, lambda: self.iconbitmap(self.ICON))
 		self.title(self.TITLE)
+		if platform.system() == f"Windows":
+			self.after(250, lambda: self.iconbitmap(self.ICON))
 
 		self.bash_terminal: tkterminal.Terminal = tkterminal.Terminal(master=self, pady=5, padx=5, background=f"black", foreground=f"white", font=(f"System", 14))
 		self.bash_terminal.shell = True

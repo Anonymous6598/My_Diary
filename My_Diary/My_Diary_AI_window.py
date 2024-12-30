@@ -1,14 +1,14 @@
-import customtkinter, tkinter, typing, My_Diary_AI, asyncio, speech_recognition, My_Diary_AI_window_interface
+import customtkinter, tkinter, typing, My_Diary_AI, asyncio, speech_recognition, My_Diary_AI_window_interface, platform
 
 class My_Diary_AI_Window(customtkinter.CTk, My_Diary_AI_window_interface.My_Diary_AI_window_interface):
 
 	TITLE: typing.Final[str] = f"My Diary AI assistant"
 	HEIGHT: typing.Final[int] = 375
 	WIDTH: typing.Final[int] = 655
-	ICON: typing.Final[str] = f"my_diary_icon.ico"
 	COLOR_THEME: typing.Final[str] = f"dark-blue"
 	WIDGET_SCALING: typing.Final[float] = 1.251
 	THEME: typing.Final[str] = f"system"
+	ICON: typing.Final[str] = f"my_diary_icon.ico"
 
 	def __init__(self: typing.Self, *args, **kwargs) -> None:
 		customtkinter.CTk.__init__(self, *args, **kwargs)
@@ -21,7 +21,8 @@ class My_Diary_AI_Window(customtkinter.CTk, My_Diary_AI_window_interface.My_Diar
 		self.title(self.TITLE)
 		self.geometry(f"{self.WIDTH}x{self.HEIGHT}")
 		self.resizable(False, False)
-		self.after(250, lambda: self.iconbitmap(self.ICON))
+		if platform.system() == f"Windows":
+			self.after(250, lambda: self.iconbitmap(self.ICON))
 
 		self.ai_window_textbox: customtkinter.CTkTextbox = customtkinter.CTkTextbox(master=self, height=265, width=524, corner_radius=0, fg_color=f"transparent", text_color=(f"black", f"white"))
 		self.ai_window_textbox.place(x=0, y=0)
