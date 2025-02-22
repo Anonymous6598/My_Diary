@@ -1,9 +1,9 @@
 # My_Diary
-This is interesting AI-powered text/code editor. It has features of vs code, notepad and word. And now it can read PDF(currently in beta). It has assistant terminal, bash and Llama 3.1 Supernova Lite model powered chatbot. Embrace the future. And now for everyone! And now on Linux!
+This is interesting AI-powered text/code editor. It has features of vs code, notepad and word. And now it can read PDF(currently in beta). It has assistant terminal, bash and GPT-4o mini model powered chatbot. Embrace the future. And now for everyone! And now on Linux! Now with text summary feature (long story short).
 
 ## Windows
 
-![Snimak ekrana 2024-11-02 213232](https://github.com/user-attachments/assets/3979b08b-7f6d-4abc-b6a6-cb50b8ad6604)
+![Snimak ekrana 2025-02-21 234948](https://github.com/user-attachments/assets/c64aad9d-96ef-491c-b013-3e1c64a1db71)
 
 ## Linux
 
