@@ -1,4 +1,3 @@
-from email import message
 import tkinter, tkinter.filedialog, tkinter.messagebox, pickle, os, sys, docx, typing, My_Diary_interface, My_Diary_window, CTkMenuBar, locale, My_Diary_converterer, tkterminal, My_Diary_PDF_viewer, speech_recognition, subprocess, My_Diary_AI_window, g4f, CTkToolTip
 from tkinterdnd2 import *
 from customtkinter import *
