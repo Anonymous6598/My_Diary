@@ -5,7 +5,7 @@ from customtkinter import *
 with open(f"my_diary_saved_text.pickle", f"rb+") as text_data: autosaved_text: str = pickle.load(text_data)
 
 class Program(My_Diary_window.Tk, My_Diary_interface.My_Diary_interface):
-
+    
 	TITLE: typing.Final[str] = f"My Diary"
 	COLOR_THEME: typing.Final[str] = f"dark-blue"
 	WIDGET_SCALING: typing.Final[float] = 1.251
