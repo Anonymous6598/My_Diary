@@ -5,7 +5,7 @@ from customtkinter import *
 with open(f"my_diary_saved_text.pickle", f"rb+") as text_data: autosaved_text: str = pickle.load(text_data)
 
 class Program(My_Diary_window.Tk, My_Diary_interface.My_Diary_interface):
-    
+
 	TITLE: typing.Final[str] = f"My Diary"
 	COLOR_THEME: typing.Final[str] = f"dark-blue"
 	WIDGET_SCALING: typing.Final[float] = 1.251
@@ -14,7 +14,7 @@ class Program(My_Diary_window.Tk, My_Diary_interface.My_Diary_interface):
 
 	def __init__(self: typing.Self, *args, **kwargs) -> None:
 		My_Diary_window.Tk.__init__(self, *args, **kwargs)
-        
+
 		set_widget_scaling(self.WIDGET_SCALING)
 		set_default_color_theme(self.COLOR_THEME)
 		set_appearance_mode(self.THEME)
@@ -114,7 +114,7 @@ class Program(My_Diary_window.Tk, My_Diary_interface.My_Diary_interface):
 			self.main_screen_right_click_menu.add_command(label=f"отвори", command=self.__open_file__)
 
 			self.main_screen_right_click_menu.add_separator()
-            
+			
 			self.main_screen_right_click_menu.add_command(label=f"из docx у pdf", command=My_Diary_converterer.My_Diary_converterer.docx_to_pdf)
 			self.main_screen_right_click_menu.add_command(label=f"из pdf у docx", command=My_Diary_converterer.My_Diary_converterer.pdf_to_docx)
 			self.main_screen_right_click_menu.add_command(label=f"из txt у pdf", command=My_Diary_converterer.My_Diary_converterer.txt_to_pdf)
@@ -167,7 +167,7 @@ class Program(My_Diary_window.Tk, My_Diary_interface.My_Diary_interface):
 			self.main_screen_right_click_menu.add_command(label=f"открыть", command=self.__open_file__)
 
 			self.main_screen_right_click_menu.add_separator()
-            
+			
 			self.main_screen_right_click_menu.add_command(label=f"из docx в pdf", command=My_Diary_converterer.My_Diary_converterer.docx_to_pdf)
 			self.main_screen_right_click_menu.add_command(label=f"из pdf в docx", command=My_Diary_converterer.My_Diary_converterer.pdf_to_docx)
 			self.main_screen_right_click_menu.add_command(label=f"из txt в pdf", command=My_Diary_converterer.My_Diary_converterer.txt_to_pdf)
@@ -220,7 +220,7 @@ class Program(My_Diary_window.Tk, My_Diary_interface.My_Diary_interface):
 			self.main_screen_right_click_menu.add_command(label=f"open", command=self.__open_file__)
 
 			self.main_screen_right_click_menu.add_separator()
-            
+			
 			self.main_screen_right_click_menu.add_command(label=f"from docx into pdf", command=My_Diary_converterer.My_Diary_converterer.docx_to_pdf)
 			self.main_screen_right_click_menu.add_command(label=f"from pdf into docx", command=My_Diary_converterer.My_Diary_converterer.pdf_to_docx)
 			self.main_screen_right_click_menu.add_command(label=f"from txt into pdf", command=My_Diary_converterer.My_Diary_converterer.txt_to_pdf)
