@@ -247,15 +247,15 @@ class Program(My_Diary_window.Tk, My_Diary_interface.My_Diary_interface):
 
 		if locale.getdefaultlocale()[0] == f"sr_RS":
 			self.main_screen_title_menu_menu_button_tooltip: CTkToolTip.CTkToolTip = CTkToolTip.CTkToolTip(self.main_screen_tiltle_menu_menu_button, message=f"мени")
-			self.main_screen_title_menu_summary_button_tooltip:	CTkToolTip.CTkToolTip = CTkToolTip.CTkToolTip(self.main_screen_title_menu_summary_button, message=f"кратак опис текста")
+			self.main_screen_title_menu_summary_button_tooltip: CTkToolTip.CTkToolTip = CTkToolTip.CTkToolTip(self.main_screen_title_menu_summary_button, message=f"кратак опис текста")
 
 		elif locale.getdefaultlocale()[0] == f"ru_RU":
 			self.main_screen_title_menu_menu_button_tooltip: CTkToolTip.CTkToolTip = CTkToolTip.CTkToolTip(self.main_screen_tiltle_menu_menu_button, message=f"меню")
-			self.main_screen_title_menu_summary_button_tooltip:	CTkToolTip.CTkToolTip = CTkToolTip.CTkToolTip(self.main_screen_title_menu_summary_button, message=f"краткое описание текста")
+			self.main_screen_title_menu_summary_button_tooltip: CTkToolTip.CTkToolTip = CTkToolTip.CTkToolTip(self.main_screen_title_menu_summary_button, message=f"краткое описание текста")
 	
 		else:
 			self.main_screen_title_menu_menu_button_tooltip: CTkToolTip.CTkToolTip = CTkToolTip.CTkToolTip(self.main_screen_tiltle_menu_menu_button, message=f"menu")
-			self.main_screen_title_menu_summary_button_tooltip:	CTkToolTip.CTkToolTip = CTkToolTip.CTkToolTip(self.main_screen_title_menu_summary_button, message=f"short story of text")
+			self.main_screen_title_menu_summary_button_tooltip: CTkToolTip.CTkToolTip = CTkToolTip.CTkToolTip(self.main_screen_title_menu_summary_button, message=f"short story of text")
 
 	@typing.override
 	def __undo__(self: typing.Self) -> None:
