@@ -14,7 +14,7 @@ class Program(My_Diary_window.Tk, My_Diary_interface.My_Diary_interface):
 
 	def __init__(self: typing.Self, *args, **kwargs) -> None:
 		My_Diary_window.Tk.__init__(self, *args, **kwargs)
-
+        
 		set_widget_scaling(self.WIDGET_SCALING)
 		set_default_color_theme(self.COLOR_THEME)
 		set_appearance_mode(self.THEME)
