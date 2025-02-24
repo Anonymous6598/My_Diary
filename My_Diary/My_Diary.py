@@ -1,4 +1,4 @@
-import tkinter, tkinter.filedialog, tkinter.messagebox, pickle, os, sys, docx, typing, My_Diary_interface, My_Diary_window, CTkMenuBar, locale, My_Diary_converterer, tkterminal, My_Diary_PDF_viewer, speech_recognition, subprocess, My_Diary_AI_window, g4f, CTkToolTip
+import tkinter, tkinter.filedialog, tkinter.messagebox, pickle, os, sys, docx, typing, My_Diary_interface, My_Diary_window, CTkMenuBar, locale, My_Diary_converterer, tkterminal, My_Diary_PDF_viewer, speech_recognition, subprocess, My_Diary_AI_window, g4f, CTkToolTip, platform
 from tkinterdnd2 import *
 from customtkinter import *
 
@@ -7,7 +7,6 @@ with open(f"my_diary_saved_text.pickle", f"rb+") as text_data: autosaved_text: s
 class Program(My_Diary_window.Tk, My_Diary_interface.My_Diary_interface):
 
     TITLE: typing.Final[str] = f"My Diary"
-    COLOR_THEME: typing.Final[str] = f"dark-blue"
     WIDGET_SCALING: typing.Final[float] = 1.251
     THEME: typing.Final[str] = f"system"
     ICON: typing.Final[str] = f"my_diary_icon.ico"
@@ -21,7 +20,8 @@ class Program(My_Diary_window.Tk, My_Diary_interface.My_Diary_interface):
         deactivate_automatic_dpi_awareness()
 
         self.title(self.TITLE)
-        self.iconbitmap(self.ICON)
+        if platform.system() == f"Windows":
+            self.iconbitmap(self.ICON)
   
         self.bind(f"<Alt_L>" + f"<F4>", self.__exit__)
         self.bind(f"<Control_L>" + f"<s>", self.__save_text__)
@@ -29,13 +29,17 @@ class Program(My_Diary_window.Tk, My_Diary_interface.My_Diary_interface):
         self.bind(f"<Button-3>", self.__open_right_click_menu__)
         self.protocol(f"WM_DELETE_WINDOW", self.__exit__)
 
-        self.main_screen_title_menu: CTkMenuBar.CTkTitleMenu = CTkMenuBar.CTkTitleMenu(master=self, title_bar_color=f"default")
+        if platform.system() == f"Linux":
+            self.main_screen_menu: CTkMenuBar.CTkMenuBar = CTkMenuBar.CTkMenuBar(master=self)
+		
+        else:
+            self.main_screen_menu: CTkMenuBar.CTkTitleMenu = CTkMenuBar.CTkTitleMenu(master=self)
 
-        self.main_screen_tiltle_menu_menu_button: CTkButton = self.main_screen_title_menu.add_cascade(text=f"☰")
+        self.main_screen_menu_menu_button: CTkButton = self.main_screen_menu.add_cascade(text=f"☰")
 
-        self.main_screen_tiltle_menu_undo_button: CTkButton = self.main_screen_title_menu.add_cascade(text=f"⟲", command=self.__undo__)
+        self.main_screen_menu_undo_button: CTkButton = self.main_screen_menu.add_cascade(text=f"⟲", command=self.__undo__)
 
-        self.main_screen_tiltle_menu_redo_button: CTkButton = self.main_screen_title_menu.add_cascade(text=f"⟳", command=self.__redo__)
+        self.main_screen_menu_redo_button: CTkButton = self.main_screen_menu.add_cascade(text=f"⟳", command=self.__redo__)
 
         self.main_screen_frame_texbox_font: CTkFont = CTkFont(family=f"Ubuntu", size=22, weight=f"normal", slant=f"roman", underline=False, overstrike=False)
 
@@ -74,17 +78,17 @@ class Program(My_Diary_window.Tk, My_Diary_interface.My_Diary_interface):
         self.main_screen_right_click_menu: tkinter.Menu = tkinter.Menu(self, tearoff=0)
 
         if locale.getdefaultlocale()[0] == f"sr_RS":
-            self.main_screen_title_menu_submenu: CTkMenuBar.CustomDropdownMenu = CTkMenuBar.CustomDropdownMenu(widget=self.main_screen_tiltle_menu_menu_button, fg_color=f"transparent")
+            self.main_screen_menu_submenu: CTkMenuBar.CustomDropdownMenu = CTkMenuBar.CustomDropdownMenu(widget=self.main_screen_menu_menu_button, fg_color=f"transparent")
 
-            self.main_screen_save_button: CTkButton = self.main_screen_title_menu_submenu.add_option(option=f"сачувај текст", command=self.__save_text__)
+            self.main_screen_save_button: CTkButton = self.main_screen_menu_submenu.add_option(option=f"сачувај текст", command=self.__save_text__)
 
-            self.main_screen_open_button: CTkButton = self.main_screen_title_menu_submenu.add_option(option=f"отвори фајл", command=self.__open_file__)
+            self.main_screen_open_button: CTkButton = self.main_screen_menu_submenu.add_option(option=f"отвори фајл", command=self.__open_file__)
         
-            self.main_screen_clear_button: CTkButton = self.main_screen_title_menu_submenu.add_option(option=f"обриши текст", command=self.__clear_text__)
+            self.main_screen_clear_button: CTkButton = self.main_screen_menu_submenu.add_option(option=f"обриши текст", command=self.__clear_text__)
         
-            self.main_screen_edit_text_button: CTkButton = self.main_screen_title_menu_submenu.add_option(option=f"уреди текст", command=self.__edit_text__)
+            self.main_screen_edit_text_button: CTkButton = self.main_screen_menu_submenu.add_option(option=f"уреди текст", command=self.__edit_text__)
         
-            self.main_screen_converter_button: CTkMenuBar.CustomDropdownMenu = self.main_screen_title_menu_submenu.add_submenu(f"претварач")
+            self.main_screen_converter_button: CTkMenuBar.CustomDropdownMenu = self.main_screen_menu_submenu.add_submenu(f"претварач")
         
             self.main_screen_pdf_to_word_converter_button: CTkButton  = self.main_screen_converter_button.add_option(f"из PDF у docx", command=My_Diary_converterer.My_Diary_converterer.pdf_to_docx)
 
@@ -98,11 +102,11 @@ class Program(My_Diary_window.Tk, My_Diary_interface.My_Diary_interface):
 
             self.main_screen_word_to_txt_converter_button: CTkButton  = self.main_screen_converter_button.add_option(f"из docx у txt", command=My_Diary_converterer.My_Diary_converterer.docx_to_txt)
 
-            self.main_screen_ai_button: CTkButton = self.main_screen_title_menu_submenu.add_option(option=f"AI", command=lambda: My_Diary_AI_window.AI_Window())
+            self.main_screen_ai_button: CTkButton = self.main_screen_menu_submenu.add_option(option=f"AI", command=lambda: My_Diary_AI_window.AI_Window())
 
-            self.main_screen_menu_assistant_button: CTkButton = self.main_screen_title_menu_submenu.add_option(option=f"помоћник", command=lambda: Terminal())
+            self.main_screen_menu_assistant_button: CTkButton = self.main_screen_menu_submenu.add_option(option=f"помоћник", command=lambda: Terminal())
 
-            self.main_screen_menu_terminal_button: CTkButton = self.main_screen_title_menu_submenu.add_option(option=f"терминал", command=lambda: Bash())
+            self.main_screen_menu_terminal_button: CTkButton = self.main_screen_menu_submenu.add_option(option=f"терминал", command=lambda: Bash())
 
             self.main_screen_right_click_menu.add_command(label=f"копирај", command=self.__copy__)
             self.main_screen_right_click_menu.add_command(label=f"налепи", command=self.__paste__)
@@ -127,17 +131,17 @@ class Program(My_Diary_window.Tk, My_Diary_interface.My_Diary_interface):
             self.main_screen_right_click_menu.add_command(label=f"изађи", command=self.__exit__)
 
         elif locale.getdefaultlocale()[0] == f"ru_RU":
-            self.main_screen_title_menu_submenu: CTkMenuBar.CustomDropdownMenu = CTkMenuBar.CustomDropdownMenu(widget=self.main_screen_tiltle_menu_menu_button, fg_color=f"transparent")
+            self.main_screen_menu_submenu: CTkMenuBar.CustomDropdownMenu = CTkMenuBar.CustomDropdownMenu(widget=self.main_screen_menu_menu_button, fg_color=f"transparent")
 
-            self.main_screen_save_button: CTkButton = self.main_screen_title_menu_submenu.add_option(option=f"сохранить текст", command=self.__save_text__)
+            self.main_screen_save_button: CTkButton = self.main_screen_menu_submenu.add_option(option=f"сохранить текст", command=self.__save_text__)
 
-            self.main_screen_open_button: CTkButton = self.main_screen_title_menu_submenu.add_option(option=f"открыть текст", command=self.__open_file__)
+            self.main_screen_open_button: CTkButton = self.main_screen_menu_submenu.add_option(option=f"открыть текст", command=self.__open_file__)
         
-            self.main_screen_clear_button: CTkButton = self.main_screen_title_menu_submenu.add_option(option=f"удалить текст", command=self.__clear_text__)
+            self.main_screen_clear_button: CTkButton = self.main_screen_menu_submenu.add_option(option=f"удалить текст", command=self.__clear_text__)
         
-            self.main_screen_edit_text_button: CTkButton = self.main_screen_title_menu_submenu.add_option(option=f"отредактировать текст", command=self.__edit_text__)
+            self.main_screen_edit_text_button: CTkButton = self.main_screen_menu_submenu.add_option(option=f"отредактировать текст", command=self.__edit_text__)
         
-            self.main_screen_converter_button: CTkMenuBar.CustomDropdownMenu = self.main_screen_title_menu_submenu.add_submenu(f"конвертер")
+            self.main_screen_converter_button: CTkMenuBar.CustomDropdownMenu = self.main_screen_menu_submenu.add_submenu(f"конвертер")
         
             self.main_screen_pdf_to_word_converter_button: CTkButton  = self.main_screen_converter_button.add_option(f"из PDF в docx", command=My_Diary_converterer.My_Diary_converterer.pdf_to_docx)
 
@@ -151,11 +155,11 @@ class Program(My_Diary_window.Tk, My_Diary_interface.My_Diary_interface):
 
             self.main_screen_word_to_txt_converter_button: CTkButton  = self.main_screen_converter_button.add_option(f"из docx в txt", command=My_Diary_converterer.My_Diary_converterer.docx_to_txt)
 
-            self.main_screen_ai_button: CTkButton = self.main_screen_title_menu_submenu.add_option(option=f"Нейро Сеть", command=lambda: My_Diary_AI_window.AI_Window())
+            self.main_screen_ai_button: CTkButton = self.main_screen_menu_submenu.add_option(option=f"Нейро Сеть", command=lambda: My_Diary_AI_window.AI_Window())
 
-            self.main_screen_menu_assistant_button: CTkButton = self.main_screen_title_menu_submenu.add_option(option=f"помощник", command=lambda: Terminal())
+            self.main_screen_menu_assistant_button: CTkButton = self.main_screen_menu_submenu.add_option(option=f"помощник", command=lambda: Terminal())
 
-            self.main_screen_menu_terminal_button: CTkButton = self.main_screen_title_menu_submenu.add_option(option=f"терминал", command=lambda: Bash())	
+            self.main_screen_menu_terminal_button: CTkButton = self.main_screen_menu_submenu.add_option(option=f"терминал", command=lambda: Bash())	
 
             self.main_screen_right_click_menu.add_command(label=f"копировать", command=self.__copy__)
             self.main_screen_right_click_menu.add_command(label=f"вставить", command=self.__paste__)
@@ -180,17 +184,17 @@ class Program(My_Diary_window.Tk, My_Diary_interface.My_Diary_interface):
             self.main_screen_right_click_menu.add_command(label=f"выйти", command=self.__exit__)
 
         else:
-            self.main_screen_title_menu_submenu: CTkMenuBar.CustomDropdownMenu = CTkMenuBar.CustomDropdownMenu(widget=self.main_screen_tiltle_menu_menu_button, fg_color=f"transparent")
+            self.main_screen_menu_submenu: CTkMenuBar.CustomDropdownMenu = CTkMenuBar.CustomDropdownMenu(widget=self.main_screen_menu_menu_button, fg_color=f"transparent")
 
-            self.main_screen_save_button: CTkButton = self.main_screen_title_menu_submenu.add_option(option=f"save", command=self.__save_text__)
+            self.main_screen_save_button: CTkButton = self.main_screen_menu_submenu.add_option(option=f"save", command=self.__save_text__)
 
-            self.main_screen_open_button: CTkButton = self.main_screen_title_menu_submenu.add_option(option=f"open", command=self.__open_file__)
+            self.main_screen_open_button: CTkButton = self.main_screen_menu_submenu.add_option(option=f"open", command=self.__open_file__)
         
-            self.main_screen_clear_button: CTkButton = self.main_screen_title_menu_submenu.add_option(option=f"clear", command=self.__clear_text__)
+            self.main_screen_clear_button: CTkButton = self.main_screen_menu_submenu.add_option(option=f"clear", command=self.__clear_text__)
         
-            self.main_screen_edit_text_button: CTkButton = self.main_screen_title_menu_submenu.add_option(option=f"edit", command=self.__edit_text__)
+            self.main_screen_edit_text_button: CTkButton = self.main_screen_menu_submenu.add_option(option=f"edit", command=self.__edit_text__)
         
-            self.main_screen_converter_button: CTkMenuBar.CustomDropdownMenu = self.main_screen_title_menu_submenu.add_submenu(f"converter")
+            self.main_screen_converter_button: CTkMenuBar.CustomDropdownMenu = self.main_screen_menu_submenu.add_submenu(f"converter")
         
             self.main_screen_pdf_to_word_converter_button: CTkButton  = self.main_screen_converter_button.add_option(f"from PDF to docx", command=My_Diary_converterer.My_Diary_converterer.pdf_to_docx)
 
@@ -204,11 +208,11 @@ class Program(My_Diary_window.Tk, My_Diary_interface.My_Diary_interface):
 
             self.main_screen_word_to_txt_converter_button: CTkButton  = self.main_screen_converter_button.add_option(f"from docx to txt", command=My_Diary_converterer.My_Diary_converterer.docx_to_txt)
 
-            self.main_screen_ai_button: CTkButton = self.main_screen_title_menu_submenu.add_option(option=f"AI", command=lambda: My_Diary_AI_window.AI_Window())
+            self.main_screen_ai_button: CTkButton = self.main_screen_menu_submenu.add_option(option=f"AI", command=lambda: My_Diary_AI_window.AI_Window())
 
-            self.main_screen_menu_assistant_button: CTkButton = self.main_screen_title_menu_submenu.add_option(option=f"assistant", command=lambda: Terminal())
+            self.main_screen_menu_assistant_button: CTkButton = self.main_screen_menu_submenu.add_option(option=f"assistant", command=lambda: Terminal())
 
-            self.main_screen_menu_terminal_button: CTkButton = self.main_screen_title_menu_submenu.add_option(option=f"terminal", command=lambda: Bash())	
+            self.main_screen_menu_terminal_button: CTkButton = self.main_screen_menu_submenu.add_option(option=f"terminal", command=lambda: Bash())	
 
             self.main_screen_right_click_menu.add_command(label=f"copy", command=self.__copy__)
             self.main_screen_right_click_menu.add_command(label=f"paste", command=self.__paste__)
@@ -235,27 +239,27 @@ class Program(My_Diary_window.Tk, My_Diary_interface.My_Diary_interface):
         self.bind(f"<KeyRelease>", self.__text_autosave__)
         self.main_screen_frame_textbox.bind(f"<F2>", self.__enter_text_autosave__)
 
-        self.main_screen_title_menu_microphone_button: CTkButton = self.main_screen_title_menu.add_cascade(text=f"🎤", command=self.__voice_input__)
+        self.main_screen_menu_microphone_button: CTkButton = self.main_screen_menu.add_cascade(text=f"🎤", command=self.__voice_input__)
 
-        self.main_screen_title_menu_summary_button: CTkButton = self.main_screen_title_menu.add_cascade(text=f"long story short", command=self.__text_summary__)
+        self.main_screen_menu_summary_button: CTkButton = self.main_screen_menu.add_cascade(text=f"long story short", command=self.__text_summary__)
 
         self.main_screen_word_counter_variable: int = 0
 
         self.main_screen_word_counter_data_variable: tkinter.IntVar = tkinter.IntVar(value=self.main_screen_word_counter_variable)
 
-        self.main_screen_title_menu_word_count: CTkButton = self.main_screen_title_menu.add_cascade(textvariable=self.main_screen_word_counter_data_variable, command=self.__word_count_show__)
+        self.main_screen_menu_word_count: CTkButton = self.main_screen_menu.add_cascade(textvariable=self.main_screen_word_counter_data_variable, command=self.__word_count_show__)
 
         if locale.getdefaultlocale()[0] == f"sr_RS":
-            self.main_screen_title_menu_menu_button_tooltip: CTkToolTip.CTkToolTip = CTkToolTip.CTkToolTip(self.main_screen_tiltle_menu_menu_button, message=f"мени")
-            self.main_screen_title_menu_summary_button_tooltip: CTkToolTip.CTkToolTip = CTkToolTip.CTkToolTip(self.main_screen_title_menu_summary_button, message=f"кратак опис текста")
+            self.main_screen_title_menu_menu_button_tooltip: CTkToolTip.CTkToolTip = CTkToolTip.CTkToolTip(self.main_screen_menu_menu_button, message=f"мени")
+            self.main_screen_title_menu_summary_button_tooltip: CTkToolTip.CTkToolTip = CTkToolTip.CTkToolTip(self.main_screen_menu_summary_button, message=f"кратак опис текста")
 
         elif locale.getdefaultlocale()[0] == f"ru_RU":
-            self.main_screen_title_menu_menu_button_tooltip: CTkToolTip.CTkToolTip = CTkToolTip.CTkToolTip(self.main_screen_tiltle_menu_menu_button, message=f"меню")
-            self.main_screen_title_menu_summary_button_tooltip: CTkToolTip.CTkToolTip = CTkToolTip.CTkToolTip(self.main_screen_title_menu_summary_button, message=f"краткое описание текста")
+            self.main_screen_title_menu_menu_button_tooltip: CTkToolTip.CTkToolTip = CTkToolTip.CTkToolTip(self.main_screen_menu_menu_button, message=f"меню")
+            self.main_screen_title_menu_summary_button_tooltip: CTkToolTip.CTkToolTip = CTkToolTip.CTkToolTip(self.main_screen_menu_summary_button, message=f"краткое описание текста")
     
         else:
-            self.main_screen_title_menu_menu_button_tooltip: CTkToolTip.CTkToolTip = CTkToolTip.CTkToolTip(self.main_screen_tiltle_menu_menu_button, message=f"menu")
-            self.main_screen_title_menu_summary_button_tooltip: CTkToolTip.CTkToolTip = CTkToolTip.CTkToolTip(self.main_screen_title_menu_summary_button, message=f"short story of text")
+            self.main_screen_title_menu_menu_button_tooltip: CTkToolTip.CTkToolTip = CTkToolTip.CTkToolTip(self.main_screen_menu_menu_button, message=f"menu")
+            self.main_screen_title_menu_summary_button_tooltip: CTkToolTip.CTkToolTip = CTkToolTip.CTkToolTip(self.main_screen_menu_summary_button, message=f"short story of text")
 
     @typing.override
     def __undo__(self: typing.Self) -> None:
@@ -519,15 +523,15 @@ class Program(My_Diary_window.Tk, My_Diary_interface.My_Diary_interface):
     def __exit__(self: typing.Self) -> None:
         if locale.getdefaultlocale()[0] == f"sr_RS":
             self.main_screen_exit: tkinter.messagebox = tkinter.messagebox.askyesno(title=f"излаз", message=f"желите да изађете?")
-            if self.main_screen_exit: subprocess.call(f"TASKKILL /F /IM Python.exe", shell=False); sys.exit()
+            if self.main_screen_exit: sys.exit()
 
         elif locale.getdefaultlocale()[0] == f"ru_RU":
             self.main_screen_exit: tkinter.messagebox = tkinter.messagebox.askyesno(title=f"выход", message=f"желайте выйти?")
-            if self.main_screen_exit: subprocess.call(f"TASKKILL /F /IM Python.exe", shell=False); sys.exit()
+            if self.main_screen_exit: sys.exit()
             
         else:
             self.main_screen_exit: tkinter.messagebox = tkinter.messagebox.askyesno(title=f"exit", message=f"would you like to exit?")
-            if self.main_screen_exit: subprocess.call(f"TASKKILL /F /IM Python.exe", shell=False); sys.exit()
+            if self.main_screen_exit: sys.exit()
 
 class Terminal(CTkToplevel):
 
