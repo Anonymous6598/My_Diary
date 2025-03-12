@@ -1,8 +1,6 @@
-import typing
-from customtkinter import *
-from tkinterdnd2 import *
+import customtkinter, tkinterdnd2, typing
 
-class Tk(CTk, TkinterDnD.DnDWrapper):
+class My_Diary_window(customtkinter.CTk, tkinterdnd2.TkinterDnD.DnDWrapper):
     def __init__(self: typing.Self, *args, **kwargs):
-        CTk.__init__(self, *args, **kwargs)
-        self.TkdndVersion = TkinterDnD._require(self)
+        customtkinter.CTk.__init__(self, *args, **kwargs)
+        self.TkdndVersion = tkinterdnd2.TkinterDnD._require(self)
