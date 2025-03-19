@@ -1,8 +1,8 @@
 import customtkinter, tkinter, tkinter.filedialog, tkinter.messagebox, pickle, os, sys, docx, typing, My_Diary_interface, My_Diary_window, CTkMenuBar, locale, My_Diary_converterer, My_Diary_PDF_viewer, speech_recognition, My_Diary_AI_window, g4f, CTkToolTip, tkinterdnd2, My_Diary_bash_terminal, My_Diary_settings
 
-with open("my_diary_language_settings.pickle", "rb+") as data: language_data: str = pickle.load(data)
+with open(f"my_diary_language_settings.pickle", f"rb+") as data: language_data: str = pickle.load(data)
 
-with open("my_diary_theme_settings.pickle", "rb+") as theme_data: theme: str = pickle.load(theme_data)
+with open(f"my_diary_theme_settings.pickle", f"rb+") as theme_data: theme: str = pickle.load(theme_data)
 
 with open(f"my_diary_saved_text.pickle", f"rb+") as text_data: autosaved_text: str = pickle.load(text_data)
 
@@ -420,10 +420,10 @@ class Program(My_Diary_window.My_Diary_window, My_Diary_interface.My_Diary_inter
         self.main_screen_word_counter_data_variable.set(value=len(self.main_screen_frame_textbox_data.split()))
         
     def __word_count_show__(self: typing.Self) -> None:
-        if locale.getdefaultlocale()[0] == f"sr_RS":
+        if language_data == f"Српски":
             tkinter.messagebox.showinfo(title=f"речи", message=f"речи: {len(self.main_screen_frame_textbox.get(f'1.0', tkinter.END).split())}")
             
-        elif locale.getdefaultlocale()[0] == f"ru_RU":
+        elif language_data == f"Русский":
             tkinter.messagebox.showinfo(title=f"слов", message=f"слов: {len(self.main_screen_frame_textbox.get(f'1.0', tkinter.END).split())}")
             
         else:
@@ -447,7 +447,7 @@ class Program(My_Diary_window.My_Diary_window, My_Diary_interface.My_Diary_inter
 
             except FileNotFoundError: pass
             
-        elif event.data.endswith(".pdf"):
+        elif event.data.endswith(f".pdf"):
             try: self.my_diary_pdf_view: My_Diary_PDF_viewer.My_Diary_PDF_viewer = My_Diary_PDF_viewer.My_Diary_PDF_viewer().__show_pdf__(event.data)
 
             except FileNotFoundError: pass
