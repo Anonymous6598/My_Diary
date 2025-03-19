@@ -1,8 +1,8 @@
 import customtkinter, tkinter.messagebox, pickle, typing
 
-with open(f"my_diary_language_settings.pickle", f"rb+") as data: language_data: str = pickle.load(data)
+with open("my_diary_language_settings.pickle", "rb+") as data: language_data: str = pickle.load(data)
 
-with open(f"my_diary_theme_settings.pickle", f"rb+") as theme_data: theme: str = pickle.load(theme_data)
+with open("my_diary_theme_settings.pickle", "rb+") as theme_data: theme: str = pickle.load(theme_data)
 
 class My_Diary_setting_window(customtkinter.CTkToplevel):
     WIDTH: typing.Final[int] = 655 
@@ -58,28 +58,28 @@ class My_Diary_setting_window(customtkinter.CTkToplevel):
 
     def __language_settings__(self: typing.Self, pickle_serializer: pickle) -> None:
         self.main_screen_settings_language_option_data: str = self.main_screen_settings_language_option.get()
-        with open(f"my_diary_language_settings.pickle", f"wb+") as self.data:
+        with open("my_diary_language_settings.pickle", "wb+") as self.data:
             pickle.dump(self.main_screen_settings_language_option_data, self.data)
 
-        if self.main_screen_settings_language_option_data == f"Српски":
-            tkinter.messagebox.showwarning(title="Пажња", message=f"Рестартуј програм")
+        if self.main_screen_settings_language_option_data == "Српски":
+            tkinter.messagebox.showwarning(title="Пажња", message="Рестартуј програм")
 
-        elif self.main_screen_settings_language_option_data == f"English":
-            tkinter.messagebox.showwarning(title=f"Warning", message=f"Restart program")
+        elif self.main_screen_settings_language_option_data == "English":
+            tkinter.messagebox.showwarning(title="Warning", message="Restart program")
             
         else:
-            tkinter.messagebox.showwarning(title=f"Внимание", message=f"Перезагрузите программу")
+            tkinter.messagebox.showwarning(title="Внимание", message="Перезагрузите программу")
 
     def __theme_settings__(self: typing.Self, pickle_serializer: pickle) -> None:
         self.main_screen_settings_theme_option_data: str = self.main_screen_settings_theme_mode_option.get()
-        with open(f"my_diary_theme_settings.pickle", f"wb+") as self.data:
+        with open("my_diary_theme_settings.pickle", "wb+") as self.data:
             pickle.dump(self.main_screen_settings_theme_option_data, self.data)
 
-        if language_data == f"Српски":
-            tkinter.messagebox.showwarning(title=f"Пажња", message=f"Рестартуј програм")
+        if language_data == "Српски":
+            tkinter.messagebox.showwarning(title="Пажња", message="Рестартуј програм")
 
-        elif language_data == f"English":
-            tkinter.messagebox.showwarning(title=f"Warning", message=f"Restart program")
+        elif language_data == "English":
+            tkinter.messagebox.showwarning(title="Warning", message="Restart program")
             
         else:
-            tkinter.messagebox.showwarning(title=f"Внимание", message=f"Перезагрузите программу")
+            tkinter.messagebox.showwarning(title="Внимание", message="Перезагрузите программу")

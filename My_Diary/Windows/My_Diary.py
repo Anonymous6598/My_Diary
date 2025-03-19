@@ -465,7 +465,7 @@ class Program(My_Diary_window.My_Diary_window, My_Diary_interface.My_Diary_inter
 
     def __cut__(self: typing.Self) -> None:
         self.selected_text: str = self.main_screen_frame_textbox.selection_get()
-        self.main_screen_frame_textbox.delete("sel.first", "sel.last")
+        self.main_screen_frame_textbox.delete(f"sel.first", f"sel.last")
         self.clipboard_clear()
         self.clipboard_append(self.selected_text)
 
@@ -494,13 +494,13 @@ class Program(My_Diary_window.My_Diary_window, My_Diary_interface.My_Diary_inter
     def __text_summary__(self: typing.Self) -> None:
         self.summary = g4f.ChatCompletion.create(model=f"gpt-4o", messages=[{f"role": f"system", f"content": f"Summarize the following text:"}, {f"role": f"user", f"content": self.main_screen_frame_textbox.get(f"1.0", tkinter.END)}])
         if locale.getdefaultlocale()[0] == f"sr_RS":
-            tkinter.messagebox.showinfo(title="long story short", message=f"Резиме: {self.summary}")
+            tkinter.messagebox.showinfo(title=f"long story short", message=f"Резиме: {self.summary}")
         
         elif locale.getdefaultlocale()[0] == f"ru_RU":
-            tkinter.messagebox.showinfo(title="long story short", message=f"Сводка: {self.summary}")
+            tkinter.messagebox.showinfo(title=f"long story short", message=f"Сводка: {self.summary}")
         
         else:
-            tkinter.messagebox.showinfo(title="long story short", message=f"Summary: {self.summary}")
+            tkinter.messagebox.showinfo(title=f"long story short", message=f"Summary: {self.summary}")
 
     def __exit__(self: typing.Self) -> None:
         if locale.getdefaultlocale()[0] == f"sr_RS":

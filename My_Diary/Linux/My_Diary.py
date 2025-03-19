@@ -272,78 +272,83 @@ class Program(My_Diary_window.My_Diary_window, My_Diary_interface.My_Diary_inter
 
     @typing.override
     def __save_text__(self: typing.Self, event: str | None = None) -> None:
-        try:
-            self.file_name: tkinter.filedialog.asksaveasfilename = tkinter.filedialog.asksaveasfilename(filetypes=[(f"All Files (*.*)", f"*.*"), (f"Text file (*.txt)", f"*.txt"), (f"Docx file (*.docx)", f"*.docx"), (f"Python file (*.py)", f"*.py"), (f"Java file (*.java)", f"*.java"), (f"C# file (*.cs)", f"*.cs"), (f"HTML file (*.html)", f"*.html"), (f"CSS file (*.css)", f"*.css"), (f"JavaScript file (*.js)", f"*.js"), (f"C++ file (*.cpp)", f"*.cpp"), (f"Pickle file (*.pickle)", f"*.pickle")], defaultextension=[(f"All Files (*.*)", f"*.*"), (f"Text file (*.txt)", f"*.txt"), (f"Docx file (*.docx)", f"*.docx"), (f"Python file (*.py)", f"*.py"), (f"Java file (*.java)", f"*.java"), (f"C# file (*.cs)", f"*.cs"), (f"HTML file (*.html)", f"*.html"), (f"CSS file (*.css)", f"*.css"), (f"JavaScript file (*.js)", f"*.js"), (f"C++ file (*.cpp)", f"*.cpp"), (f"Pickle file (*.pickle)", f"*.pickle")])
-            match os.path.splitext(self.file_name)[1]:
-                case ".docx":
+        self.file_name: tkinter.filedialog.asksaveasfilename = tkinter.filedialog.asksaveasfilename(filetypes=[(f"All Files (*.*)", f"*.*"), (f"Text file (*.txt)", f"*.txt"), (f"Docx file (*.docx)", f"*.docx"), (f"Python file (*.py)", f"*.py"), (f"Java file (*.java)", f"*.java"), (f"C# file (*.cs)", f"*.cs"), (f"HTML file (*.html)", f"*.html"), (f"CSS file (*.css)", f"*.css"), (f"JavaScript file (*.js)", f"*.js"), (f"C++ file (*.cpp)", f"*.cpp"), (f"Pickle file (*.pickle)", f"*.pickle")], defaultextension=[(f"All Files (*.*)", f"*.*"), (f"Text file (*.txt)", f"*.txt"), (f"Docx file (*.docx)", f"*.docx"), (f"Python file (*.py)", f"*.py"), (f"Java file (*.java)", f"*.java"), (f"C# file (*.cs)", f"*.cs"), (f"HTML file (*.html)", f"*.html"), (f"CSS file (*.css)", f"*.css"), (f"JavaScript file (*.js)", f"*.js"), (f"C++ file (*.cpp)", f"*.cpp"), (f"Pickle file (*.pickle)", f"*.pickle")])
+        match os.path.splitext(self.file_name)[1]:
+            case ".docx":
+                try:
+                    self.file: docx.Document = docx.Document()
+                    self.file_data: str = self.main_screen_frame_textbox.get(f"1.0", tkinter.END)
+                    self.file_run: docx.Document = self.file.add_paragraph().add_run(self.file_data)
+                    self.font: docx.Document = self.file_run.font
+                    self.font.name: str = self.main_screen_edit_font_button_data
+                    self.font.size: docx.shared.Pt = docx.shared.Pt(int(self.main_screen_edit_size_button_data))
+                    match self.main_screen_edit_color_button_data:
+                        case "black": self.font.color.rgb: docx.shared.RGBColor = docx.shared.RGBColor(0, 0, 0)
+
+                        case "white": self.font.color.rgb: docx.shared.RGBColor = docx.shared.RGBColor(255, 255, 255)
+
+                        case "red": self.font.color.rgb: docx.shared.RGBColor = docx.shared.RGBColor(250, 0, 0)
+
+                        case "green": self.font.color.rgb: docx.shared.RGBColor = docx.shared.RGBColor(0, 255, 0)
+
+                        case _: self.font.color.rgb: docx.shared.RGBColor = docx.shared.RGBColor(0, 0, 255)
+
+
+                    match self.main_screen_edit_slant_button_data:
+                        case "italic": self.file_run.italic: bool = True
+
+                        case _: self.file_run.italic: bool = False
+
+
+                    match self.main_screen_edit_weight_button_data:
+                        case "bold": self.file_run.bold: bool = True
+
+                        case _: self.file_run.bold: bool = False
+
+
+                    match self.main_screen_edit_underline_button_data: 
+                        case "underlined": self.file_run.underline: bool = True
+
+                        case _: self.file_run.underline: bool = False
+
+
+                    match self.main_screen_edit_overstrike_button_data:
+                        case "overstriked": self.font.strike: bool = True
+
+                        case _: self.font.strike: bool = False
+
+                    self.file.save(self.file_name)
+
+                except FileNotFoundError: pass
+
+                except AttributeError:
+                    self.file: docx.Document = docx.Document()
+                    self.file_data: str = self.main_screen_frame_textbox.get(f"1.0", tkinter.END)
+                    self.file_run: docx.Document = self.file.add_paragraph().add_run(self.file_data)
+                    self.font: docx.Document = self.file_run.font
+                    self.font.size: docx.shared.Pt = docx.shared.Pt(14)
+                    self.font.color.rgb: docx.shared.RGBColor = docx.shared.RGBColor(0, 0, 0)
+                    self.file_run.italic: bool = False
+                    self.file_run.bold: bool = False
+                    self.file_run.underline: bool = False
+                    self.font.strike: bool = False
+                    self.file.save(self.file_name)
+
+            case ".pickle":
+                with open(self.file_name, f"wb+") as self.file:
                     try:
-                        self.file: docx.Document = docx.Document()
-                        self.file_data: str = self.main_screen_frame_textbox.get(f"1.0", tkinter.END)
-                        self.file_run: docx.Document = self.file.add_paragraph().add_run(self.file_data)
-                        self.font: docx.Document = self.file_run.font
-                        self.font.name: str = self.main_screen_edit_font_button_data
-                        self.font.size: docx.shared.Pt = docx.shared.Pt(int(self.main_screen_edit_size_button_data))
-                        match self.main_screen_edit_color_button_data:
-                            case "black": self.font.color.rgb: docx.shared.RGBColor = docx.shared.RGBColor(0, 0, 0)
-
-                            case "white": self.font.color.rgb: docx.shared.RGBColor = docx.shared.RGBColor(255, 255, 255)
-
-                            case "red": self.font.color.rgb: docx.shared.RGBColor = docx.shared.RGBColor(250, 0, 0)
-
-                            case "green": self.font.color.rgb: docx.shared.RGBColor = docx.shared.RGBColor(0, 255, 0)
-
-                            case _: self.font.color.rgb: docx.shared.RGBColor = docx.shared.RGBColor(0, 0, 255)
-
-
-                        match self.main_screen_edit_slant_button_data:
-                            case "italic": self.file_run.italic: bool = True
-
-                            case _: self.file_run.italic: bool = False
-
-
-                        match self.main_screen_edit_weight_button_data:
-                            case "bold": self.file_run.bold: bool = True
-
-                            case _: self.file_run.bold: bool = False
-
-
-                        match self.main_screen_edit_underline_button_data: 
-                            case "underlined": self.file_run.underline: bool = True
-
-                            case _: self.file_run.underline: bool = False
-
-
-                        match self.main_screen_edit_overstrike_button_data:
-                            case "overstriked": self.font.strike: bool = True
-
-                            case _: self.font.strike: bool = False
-
-                        self.file.save(self.file_name)
-
-                    except AttributeError:
-                        self.file: docx.Document = docx.Document()
-                        self.file_data: str = self.main_screen_frame_textbox.get(f"1.0", tkinter.END)
-                        self.file_run: docx.Document = self.file.add_paragraph().add_run(self.file_data)
-                        self.font: docx.Document = self.file_run.font
-                        self.font.size: docx.shared.Pt = docx.shared.Pt(14)
-                        self.font.color.rgb: docx.shared.RGBColor = docx.shared.RGBColor(0, 0, 0)
-                        self.file_run.italic: bool = False
-                        self.file_run.bold: bool = False
-                        self.file_run.underline: bool = False
-                        self.font.strike: bool = False
-                        self.file.save(self.file_name)
-
-                case ".pickle":
-                    with open(self.file_name, f"wb+") as self.file:
                         self.file_data: str = self.main_screen_frame_textbox.get("1.0", tkinter.END)
                         pickle.dump(self.file_data, self.file)
-                        
-                case _:
-                    with open(self.file_name, f"w+", encoding=f"UTF-8") as self.file:
+                    
+                    except FileNotFoundError: pass
+                    
+            case _:
+                with open(self.file_name, f"w+", encoding=f"UTF-8") as self.file:
+                    try:
                         self.file_data: str = self.main_screen_frame_textbox.get("1.0", tkinter.END)
                         self.file.write(self.file_data)
-
-        except FileNotFoundError: pass
+                    
+                    except FileNotFoundError: pass
             
     def __clear_text__(self: typing.Self) -> None:
         self.main_screen_frame_textbox.delete(f"1.0", tkinter.END)
@@ -385,28 +390,37 @@ class Program(My_Diary_window.My_Diary_window, My_Diary_interface.My_Diary_inter
 
     @typing.override
     def __open_file__(self: typing.Self, event: str | None = None) -> None:
-        try:
-            self.opened_name_file: tkinter.filedialog = tkinter.filedialog.askopenfilename(title=f"open file", filetypes=[(f"All Files (*.*)", f"*.*"), (f"Word file (*.docx)", f"*.docx"), (f"Text file (*.txt)", f"*.txt"), (f"PDF file (*.pdf)", f"*.pdf"), (f"Python file (*.py)", f"*.py"), (f"Java file (*.java)", f"*.java"), (f"C# file (*.cs)", f"*.cs"), (f"HTML file (*.html)", f"*.html"), (f"CSS file (*.css)", f"*.css"), (f"JavaScript file (*.js)", f"*.js"), (f"C++ file (*.cpp)", f"*.cpp"), (f"Pickle file (*.pickle)", f"*.pickle")], defaultextension=[(f"All Files (*.*)", f"*.*"), (f"Text file (*.txt)", f"*.txt"), (f"Word file (*.docx)", f"*.docx"), (f"PDF file (*.pdf)", f"*.pdf"), (f"Python file (*.py)", f"*.py"), (f"Java file (*.java)", f"*.java"), (f"C# file (*.cs)", f"*.cs"), (f"HTML file (*.html)", f"*.html"), (f"CSS file (*.css)", f"*.css"), (f"JavaScript file (*.js)", f"*.js"), (f"C++ file (*.cpp)", f"*.cpp"), (f"Pickle file (*.pickle)", f"*.pickle")])
-            match os.path.splitext(self.opened_name_file)[1]:
-                case ".docx":
+        self.opened_name_file: tkinter.filedialog = tkinter.filedialog.askopenfilename(title=f"open file", filetypes=[(f"All Files (*.*)", f"*.*"), (f"Word file (*.docx)", f"*.docx"), (f"Text file (*.txt)", f"*.txt"), (f"PDF file (*.pdf)", f"*.pdf"), (f"Python file (*.py)", f"*.py"), (f"Java file (*.java)", f"*.java"), (f"C# file (*.cs)", f"*.cs"), (f"HTML file (*.html)", f"*.html"), (f"CSS file (*.css)", f"*.css"), (f"JavaScript file (*.js)", f"*.js"), (f"C++ file (*.cpp)", f"*.cpp"), (f"Pickle file (*.pickle)", f"*.pickle")], defaultextension=[(f"All Files (*.*)", f"*.*"), (f"Text file (*.txt)", f"*.txt"), (f"Word file (*.docx)", f"*.docx"), (f"PDF file (*.pdf)", f"*.pdf"), (f"Python file (*.py)", f"*.py"), (f"Java file (*.java)", f"*.java"), (f"C# file (*.cs)", f"*.cs"), (f"HTML file (*.html)", f"*.html"), (f"CSS file (*.css)", f"*.css"), (f"JavaScript file (*.js)", f"*.js"), (f"C++ file (*.cpp)", f"*.cpp"), (f"Pickle file (*.pickle)", f"*.pickle")])
+        match os.path.splitext(self.opened_name_file)[1]:
+            case ".docx":
+                try:
                     self.openned_file: docx.Document = docx.Document(self.opened_name_file)
                     self.openned_file_data: list[str] = []
                     for self.paragraphs in self.openned_file.paragraphs: self.openned_file_data.append(self.paragraphs.text)
 
                     self.main_screen_frame_textbox.insert(f"1.0", f"\n".join(self.openned_file_data))
-                
-                case ".pickle":
-                    with open(self.opened_name_file, f"rb+") as self.openned_file: self.main_screen_frame_textbox.insert(f"1.0", pickle.load(self.openned_file))
-                    
-                case ".pdf":
-                    self.my_diary_pdf_view: My_Diary_PDF_viewer.My_Diary_PDF_viewer = My_Diary_PDF_viewer.My_Diary_PDF_viewer().__show_pdf__(self.opened_name_file)
-                
-                case _: 
-                    with open(self.opened_name_file, f"r+", encoding=f"UTF-8") as self.openned_file: self.main_screen_frame_textbox.insert(f"1.0", self.openned_file.read())
 
-        except FileNotFoundError: pass
+                except docx.opc.exceptions.PackageNotFoundError: pass
+            
+            case ".pickle":
+                try:
+                    with open(self.opened_name_file, f"rb+") as self.openned_file:
+                        self.main_screen_frame_textbox.insert(f"1.0", pickle.load(self.openned_file))
 
-        except docx.opc.exceptions.PackageNotFoundError: pass
+                except FileNotFoundError: pass
+                
+            case ".pdf":
+                try: self.my_diary_pdf_view: My_Diary_PDF_viewer.My_Diary_PDF_viewer = My_Diary_PDF_viewer.My_Diary_PDF_viewer().__show_pdf__(self.opened_name_file)
+
+                except FileNotFoundError: pass
+            
+            case _:
+                try:
+                    with open(self.opened_name_file, f"r+", encoding=f"UTF-8") as self.openned_file:
+                        self.main_screen_frame_textbox.insert(f"1.0", self.openned_file.read())
+
+                except FileNotFoundError: pass
+
     
     @typing.override		
     def __text_autosave__(self: typing.Self, event: str | None = None) -> None: 
@@ -466,7 +480,7 @@ class Program(My_Diary_window.My_Diary_window, My_Diary_interface.My_Diary_inter
 
     def __cut__(self: typing.Self) -> None:
         self.selected_text: str = self.main_screen_frame_textbox.selection_get()
-        self.main_screen_frame_textbox.delete("sel.first", "sel.last")
+        self.main_screen_frame_textbox.delete(f"sel.first", f"sel.last")
         self.clipboard_clear()
         self.clipboard_append(self.selected_text)
 
@@ -495,13 +509,13 @@ class Program(My_Diary_window.My_Diary_window, My_Diary_interface.My_Diary_inter
     def __text_summary__(self: typing.Self) -> None:
         self.summary = g4f.ChatCompletion.create(model=f"gpt-4o", messages=[{f"role": f"system", f"content": f"Summarize the following text:"}, {f"role": f"user", f"content": self.main_screen_frame_textbox.get(f"1.0", tkinter.END)}])
         if language_data == f"Српски":
-            tkinter.messagebox.showinfo(title="long story short", message=f"Резиме: {self.summary}")
+            tkinter.messagebox.showinfo(title=f"long story short", message=f"Резиме: {self.summary}")
         
         elif language_data == f"Русский":
-            tkinter.messagebox.showinfo(title="long story short", message=f"Сводка: {self.summary}")
+            tkinter.messagebox.showinfo(title=f"long story short", message=f"Сводка: {self.summary}")
         
         else:
-            tkinter.messagebox.showinfo(title="long story short", message=f"Summary: {self.summary}")
+            tkinter.messagebox.showinfo(title=f"long story short", message=f"Summary: {self.summary}")
 
     def __exit__(self: typing.Self) -> None:
         if language_data == f"Српски":
