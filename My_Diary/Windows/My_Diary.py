@@ -446,7 +446,7 @@ class Program(My_Diary_window.My_Diary_window, My_Diary_interface.My_Diary_inter
 
             except FileNotFoundError: pass
             
-        elif event.data.endswith(".pdf"):
+        elif event.data.endswith(f".pdf"):
             try: self.my_diary_pdf_view: My_Diary_PDF_viewer.My_Diary_PDF_viewer = My_Diary_PDF_viewer.My_Diary_PDF_viewer().__show_pdf__(event.data)
 
             except FileNotFoundError: pass
