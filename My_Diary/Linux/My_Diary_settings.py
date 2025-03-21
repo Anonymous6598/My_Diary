@@ -1,8 +1,8 @@
 import customtkinter, tkinter.messagebox, pickle, typing
 
-with open("my_diary_language_settings.pickle", "rb+") as data: language_data: str = pickle.load(data)
+with open(f"my_diary_language_settings.pickle", f"rb+") as data: language_data: str = pickle.load(data)
 
-with open("my_diary_theme_settings.pickle", "rb+") as theme_data: theme: str = pickle.load(theme_data)
+with open(f"my_diary_theme_settings.pickle", f"rb+") as theme_data: theme: str = pickle.load(theme_data)
 
 class My_Diary_setting_window(customtkinter.CTkToplevel):
     WIDTH: typing.Final[int] = 655 
