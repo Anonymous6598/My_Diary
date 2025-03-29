@@ -7,14 +7,12 @@ class AI_Window(customtkinter.CTkToplevel, My_Diary_AI_window_interface.My_Diary
 	WIDTH: typing.Final[int] = 655
 	COLOR_THEME: typing.Final[str] = f"dark-blue"
 	WIDGET_SCALING: typing.Final[float] = 1.251
-	THEME: typing.Final[str] = f"system"
 
 	def __init__(self: typing.Self, *args, **kwargs) -> None:
 		customtkinter.CTkToplevel.__init__(self, *args, **kwargs)
 
 		customtkinter.set_widget_scaling(self.WIDGET_SCALING)
 		customtkinter.set_default_color_theme(self.COLOR_THEME)
-		customtkinter.set_appearance_mode(self.THEME)
 		customtkinter.deactivate_automatic_dpi_awareness()
 
 		self.title(self.TITLE)
