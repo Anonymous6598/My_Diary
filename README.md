@@ -1,9 +1,10 @@
 # My_Diary
-This is interesting AI-powered text/code editor. It has features of vs code, notepad and word. And now it can read PDF(currently in beta). It has assistant terminal, bash and GPT-4o model powered chatbot. Embrace the future. And now for everyone! And now on Linux! Now with text summary feature (long story short).
+This is interesting AI-powered text editor. It has features of vs code, notepad and word. And now it can read PDF. It has assistant terminal, terminal and GPT-4o model powered chatbot. Embrace the future. And now for everyone! And now on Linux! Now with text summary feature (long story short).
 
 ## Windows
 
-![Snimak ekrana 2025-02-21 234948](https://github.com/user-attachments/assets/c64aad9d-96ef-491c-b013-3e1c64a1db71)
+![Snimak ekrana 2025-03-29 004519](https://github.com/user-attachments/assets/f88b48d6-6c2f-41dc-9b55-bdc1ef06fd93)
+
 
 ## Linux
 
