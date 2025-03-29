@@ -8,7 +8,8 @@ This is interesting AI-powered text editor. It has features of vs code, notepad 
 
 ## Linux
 
-![Снимак екрана од 2025-02-24 01-10-58](https://github.com/user-attachments/assets/53df849f-6784-4243-9380-7706d00638e2)
+![Снимак екрана од 2025-03-29 21-47-10](https://github.com/user-attachments/assets/55145863-b71e-4e9b-a69c-fc78d413a8eb)
+
 
 (Everything is in serbian)
 
