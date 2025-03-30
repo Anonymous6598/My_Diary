@@ -7,7 +7,7 @@ with open("my_diary_theme_settings.pickle", "rb+") as theme_data: theme: str = p
 class My_Diary_setting_window(customtkinter.CTkToplevel):
     WIDTH: typing.Final[int] = 655 
     HEIGHT: typing.Final[int] = 330
-    TITLE: typing.Final[str] = "My Calculus settings window"
+    TITLE: typing.Final[str] = "My Diary settings window"
 
     def __init__(self, *args, **kwargs) -> None:
         customtkinter.CTkToplevel.__init__(self, *args, **kwargs)
