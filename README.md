@@ -3,7 +3,7 @@ This is interesting AI-powered text editor. It has features of vs code, notepad 
 
 ## Windows
 
-![Snimak ekrana 2025-03-29 004519](https://github.com/user-attachments/assets/f88b48d6-6c2f-41dc-9b55-bdc1ef06fd93)
+![Snimak ekrana 2025-04-06 215115](https://github.com/user-attachments/assets/dbc65cce-68df-403d-9b2d-671b7505649e)
 
 
 ## Linux
