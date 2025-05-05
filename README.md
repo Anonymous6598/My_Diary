@@ -9,6 +9,18 @@ This is interesting AI-powered text editor. It has features of vs code, notepad 
 
 ![Снимак екрана од 2025-04-06 23-10-13](https://github.com/user-attachments/assets/681349e8-f4fd-49a8-b3ae-1b71ebed3013)
 
+## Copilot+PC
+
+![Snimak ekrana 2025-05-06 005714](https://github.com/user-attachments/assets/f33ddf6c-01c5-4db2-85d2-7843365bf751)
+
+> [!Warning]
+> Copilot+PC version only supports Intel Core Ultra processors
+>
+> Support for AMD and Qualcomm will be soon added
+>
+> Specs for laptop to run app:
+> - Intel Core Ultra proccesors
+> - 24 gb of ram (32 gb is recommended)
 
 (Everything is in serbian)
 
