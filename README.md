@@ -20,7 +20,7 @@ This is interesting AI-powered text editor. It has features of vs code, notepad 
 >
 > Specs for laptop to run app:
 > - Intel Core Ultra proccesors
-> - 24 gb of ram (32 gb is recommended)
+> - 8 gb of ram (16 gb is recommended)
 
 (Everything is in serbian)
 
