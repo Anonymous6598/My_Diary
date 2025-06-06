@@ -9,9 +9,9 @@ class My_Diary_LM(My_Diary_AI_interface.My_Diary_AI_interface):
 
     def __initialize_model__(self: typing.Self) -> transformers.Pipeline:
         self.model_id: str = self.language_model
-        self.model: typing.Any = transformers.AutoModelForCausalLM.from_pretrained(self.model_id, torch_dtype=torch.float16, use_cache=True).eval()
+        self.model: transformers.AutoModelForCausalLM = transformers.AutoModelForCausalLM.from_pretrained(self.model_id, torch_dtype=torch.float16, use_cache=True).eval()
         self.tokenizer: transformers.PreTrainedTokenizer = transformers.AutoTokenizer.from_pretrained(self.model_id)
-        self.model: typing.Any = intel_npu_acceleration_library.compile(self.model, dtype=torch.float16)
+        self.model = intel_npu_acceleration_library.compile(self.model, dtype=torch.float16)
         self.pipe: transformers.Pipeline = transformers.pipeline(f"text-generation", model=self.model, tokenizer=self.tokenizer)
         return self.pipe
 
