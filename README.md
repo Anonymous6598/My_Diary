@@ -1,5 +1,5 @@
 # My_Diary
-This is interesting AI-powered text editor. It has features of vs code, notepad and word. And now it can read PDF. It has assistant terminal, terminal and GPT-4o (Phi3) model powered chatbot. Embrace the future. And now for everyone! And now on Linux! Now with text summary feature (long story short). And now with text creating tool (my shakespeare). And now it supports Copilot+PC laptops!
+This is interesting AI-powered text editor. It has features of vs code, notepad and word. And now it can read PDF. It has assistant terminal, terminal and GPT-4o (Llama3.2) model powered chatbot. Embrace the future. And now for everyone! And now on Linux! Now with text summary feature (long story short). And now with text creating tool (my shakespeare). And now it supports Copilot+PC laptops!
 
 ## Windows
 
