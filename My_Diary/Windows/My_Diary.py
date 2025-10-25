@@ -333,7 +333,8 @@ class Program(My_Diary_window.My_Diary_window, My_Diary_interface.My_Diary_inter
                         self.file.write(self.file_data)
 
         except FileNotFoundError: pass
-            
+
+    @typing.override
     def __clear_text__(self: typing.Self) -> None:
         self.main_screen_frame_textbox.delete(f"1.0", tkinter.END)
     
@@ -400,14 +401,17 @@ class Program(My_Diary_window.My_Diary_window, My_Diary_interface.My_Diary_inter
     @typing.override		
     def __text_autosave__(self: typing.Self, event: str | None = None) -> None: 
         with open(f"my_diary_saved_text.pickle", f"wb+") as self.text_data: pickle.dump(self.main_screen_frame_textbox.get(f"1.0", tkinter.END), self.text_data)
-        
+
+    @typing.override
     def __enter_text_autosave__(self: typing.Self, event: str | None = None) -> None:
         self.main_screen_frame_textbox.insert(f"1.0", autosaved_text)
 
+    @typing.override
     def __word_count__(self: typing.Self, event: str | None = None) -> None:
         self.main_screen_frame_textbox_data: str = self.main_screen_frame_textbox.get(f"0.0", tkinter.END)
         self.main_screen_word_counter_data_variable.set(value=len(self.main_screen_frame_textbox_data.split()))
-        
+
+    @typing.override
     def __word_count_show__(self: typing.Self) -> None:
         if locale.getdefaultlocale()[0] == f"sr_RS":
             tkinter.messagebox.showinfo(title=f"речи", message=f"речи: {len(self.main_screen_frame_textbox.get(f'1.0', tkinter.END).split())}")
@@ -417,7 +421,8 @@ class Program(My_Diary_window.My_Diary_window, My_Diary_interface.My_Diary_inter
             
         else:
             tkinter.messagebox.showinfo(title=f"words", message=f"words: {len(self.main_screen_frame_textbox.get(f'1.0', tkinter.END).split())}")
-        
+
+    @typing.override
     def __drop_file_into_textbox__(self: typing.Self, event: str | None = None) -> None:
         self.main_screen_frame_textbox.delete(f"1.0", tkinter.END)
         if event.data.endswith(f".docx"):
@@ -450,23 +455,28 @@ class Program(My_Diary_window.My_Diary_window, My_Diary_interface.My_Diary_inter
         else:
             self.main_screen_frame_textbox.insert(f"1.0", event.data)
 
+    @typing.override
     def __html_script__(self: typing.Self, event: str | None = None) -> None:
         self.main_screen_frame_textbox.insert(f"0.0", f"<!DOCTYPE html> \n  \n  <html lang='en'> \n <head> \n <meta charset='utf-8' /> \n <title></title> \n </head> \n <body> \n \n </body> \n </html>")	  																																			   
 
+    @typing.override
     def __open_right_click_menu__(self: typing.Self, event: str | None = None) -> None:
         self.main_screen_right_click_menu.post(event.x_root, event.y_root)
 
+    @typing.override
     def __cut__(self: typing.Self) -> None:
         self.selected_text: str = self.main_screen_frame_textbox.selection_get()
         self.main_screen_frame_textbox.delete(f"sel.first", f"sel.last")
         self.clipboard_clear()
         self.clipboard_append(self.selected_text)
 
+    @typing.override
     def __copy__(self: typing.Self) -> None:
         self.selected_text: str = self.main_screen_frame_textbox.selection_get()
         self.clipboard_clear()
         self.clipboard_append(self.selected_text)
 
+    @typing.override
     def __paste__(self: typing.Self) -> None:
         try:
             self.cursor_position: int = self.main_screen_frame_textbox.index(tkinter.INSERT)
@@ -476,6 +486,7 @@ class Program(My_Diary_window.My_Diary_window, My_Diary_interface.My_Diary_inter
         except tkinter.TclError:
             pass
 
+    @typing.override
     def __text_summary__(self: typing.Self) -> None:
         self.summary: str = g4f.ChatCompletion.create(model=f"gpt-4o", messages=[{f"role": f"system", f"content": f"Summarize the following text:"}, {f"role": f"user", f"content": self.main_screen_frame_textbox.get(f"1.0", tkinter.END)}])
         if locale.getdefaultlocale()[0] == f"sr_RS":
@@ -487,6 +498,7 @@ class Program(My_Diary_window.My_Diary_window, My_Diary_interface.My_Diary_inter
         else:
             tkinter.messagebox.showinfo(title=f"long story short", message=f"Summary: {self.summary}")
 
+    @typing.override
     def __create_text__(self: typing.Self) -> None:
         if locale.getdefaultlocale()[0] == f"sr_RS":
             self.text_topic_input: customtkinter.CTkInputDialog = customtkinter.CTkInputDialog(title=f"нови текст", text=f"унесите текст тему")
@@ -503,6 +515,7 @@ class Program(My_Diary_window.My_Diary_window, My_Diary_interface.My_Diary_inter
         self.create_text: str = g4f.ChatCompletion.create(model=f"gpt-4o", messages=[{f"role": f"system", f"content": f"Create text based on user prompt:"}, {f"role": f"user", f"content": self.text_topic_input.get_input()}])
         self.main_screen_frame_textbox.insert(f"1.0", self.create_text)
 
+    @typing.override
     def __exit__(self: typing.Self) -> None:
         if locale.getdefaultlocale()[0] == f"sr_RS":
             self.main_screen_exit: tkinter.messagebox = tkinter.messagebox.askyesno(title=f"излаз", message=f"желите да изађете?")
@@ -518,4 +531,5 @@ class Program(My_Diary_window.My_Diary_window, My_Diary_interface.My_Diary_inter
 
 if __name__ == f"__main__":
     program: Program = Program()
+
     program.mainloop()
