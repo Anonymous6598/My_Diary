@@ -9,6 +9,7 @@ class My_Diary_LM(My_Diary_AI_interface.My_Diary_AI_interface):
         self.language_model = self.LANGUAGE_MODEL
         self.device = self.DEVICE 
 
+    @typing.override
     def __initialize_model__(self: typing.Self) -> openvino_genai.LLMPipeline:
         pipeline_config: dict(str, str) = {f"GENERATE_HINT": f"BEST_PERF"}
         pipe: openvino_genai.LLMPipeline = openvino_genai.LLMPipeline(self.language_model, self.device, pipeline_config)
@@ -29,4 +30,5 @@ class My_Diary_LM(My_Diary_AI_interface.My_Diary_AI_interface):
         self.config.eos_token_id = -1
 
         self.result: str = pipe.generate(query, self.config)
+
         return self.result
