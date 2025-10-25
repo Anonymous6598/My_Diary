@@ -228,7 +228,8 @@ class Program(My_Diary_window.My_Diary_window, My_Diary_interface.My_Diary_inter
                         self.file.write(self.file_data)
 
         except FileNotFoundError: pass
-            
+
+    @typing.override
     def __clear_text__(self: typing.Self) -> None: self.main_screen_frame_textbox.delete(f"1.0", tkinter.END)
     
     @typing.override
@@ -294,15 +295,19 @@ class Program(My_Diary_window.My_Diary_window, My_Diary_interface.My_Diary_inter
     @typing.override		
     def __text_autosave__(self: typing.Self, event: str | None = None) -> None: 
         with open(f"my_diary_saved_text.pickle", f"wb+") as self.text_data: pickle.dump(self.main_screen_frame_textbox.get(f"1.0", tkinter.END), self.text_data)
-        
+
+    @typing.override
     def __enter_text_autosave__(self: typing.Self, event: str | None = None) -> None: self.main_screen_frame_textbox.insert(f"1.0", autosaved_text)
 
+    @typing.override
     def __word_count__(self: typing.Self, event: str | None = None) -> None:
         self.main_screen_frame_textbox_data: str = self.main_screen_frame_textbox.get(f"0.0", tkinter.END)
         self.main_screen_word_counter_data_variable.set(value=len(self.main_screen_frame_textbox_data.split()))
-        
+
+    @typing.override
     def __word_count_show__(self: typing.Self) -> None: tkinter.messagebox.showinfo(title=f"words", message=f"words: {len(self.main_screen_frame_textbox.get(f'1.0', tkinter.END).split())}")
-        
+
+    @typing.override
     def __drop_file_into_textbox__(self: typing.Self, event: str | None = None) -> None:
         self.main_screen_frame_textbox.delete(f"1.0", tkinter.END)
         if event.data.endswith(f".docx"):
@@ -335,23 +340,28 @@ class Program(My_Diary_window.My_Diary_window, My_Diary_interface.My_Diary_inter
         else:
             self.main_screen_frame_textbox.insert(f"1.0", event.data)
 
+    @typing.override
     def __html_script__(self: typing.Self, event: str | None = None) -> None:
         self.main_screen_frame_textbox.insert(f"0.0", f"<!DOCTYPE html> \n  \n  <html lang='en'> \n <head> \n <meta charset='utf-8' /> \n <title></title> \n </head> \n <body> \n \n </body> \n </html>")	  																																			   
 
+    @typing.override
     def __open_right_click_menu__(self: typing.Self, event: str | None = None) -> None:
         self.main_screen_right_click_menu.post(event.x_root, event.y_root)
 
+    @typing.override
     def __cut__(self: typing.Self) -> None:
         self.selected_text: str = self.main_screen_frame_textbox.selection_get()
         self.main_screen_frame_textbox.delete(f"sel.first", f"sel.last")
         self.clipboard_clear()
         self.clipboard_append(self.selected_text)
 
+    @typing.override
     def __copy__(self: typing.Self) -> None:
         self.selected_text: str = self.main_screen_frame_textbox.selection_get()
         self.clipboard_clear()
         self.clipboard_append(self.selected_text)
 
+    @typing.override
     def __paste__(self: typing.Self) -> None:
         try:
             self.cursor_position: int = self.main_screen_frame_textbox.index(tkinter.INSERT)
@@ -361,6 +371,7 @@ class Program(My_Diary_window.My_Diary_window, My_Diary_interface.My_Diary_inter
         except tkinter.TclError:
             pass
 
+    @typing.override
     def __text_summary__(self: typing.Self) -> None:
         def summarize_text() -> None:
             self.summary: str = My_Diary_AI.My_Diary_LM().__response__(pipe=SLM, query=f"<|system|>Summarize the following text:<|end|><|user|>{self.main_screen_frame_textbox.get(f'1.0', tkinter.END)}<|end|><|assistant|>")
@@ -370,6 +381,7 @@ class Program(My_Diary_window.My_Diary_window, My_Diary_interface.My_Diary_inter
 
         threading.Thread(target=summarize_text).start()
 
+    @typing.override
     def __create_text__(self: typing.Self) -> None:
         self.text_topic_input: customtkinter.CTkInputDialog = customtkinter.CTkInputDialog(title=f"new text", text=f"enter text topic")
         self.text_topic_input.after(250, lambda: self.text_topic_input.iconbitmap(self.ICON))
@@ -383,6 +395,7 @@ class Program(My_Diary_window.My_Diary_window, My_Diary_interface.My_Diary_inter
 
         threading.Thread(target=generate_text).start()
 
+    @typing.override
     def __exit__(self: typing.Self) -> None:
         self.main_screen_exit: tkinter.messagebox = tkinter.messagebox.askyesno(title=f"exit", message=f"would you like to exit?")
         if self.main_screen_exit: sys.exit()
@@ -454,4 +467,5 @@ class AI_Window(customtkinter.CTkToplevel, My_Diary_AI_window_interface.My_Diary
 
 if __name__ == f"__main__":
     program: Program = Program()
+
     program.mainloop()
