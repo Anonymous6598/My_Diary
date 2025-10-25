@@ -1,10 +1,10 @@
-import customtkinter, tkinter.messagebox, pickle, typing
+import customtkinter, tkinter.messagebox, pickle, typing, My_Diary_settings_interface
 
 with open(f"my_diary_language_settings.pickle", f"rb+") as data: language_data: str = pickle.load(data)
 
 with open(f"my_diary_theme_settings.pickle", f"rb+") as theme_data: theme: str = pickle.load(theme_data)
 
-class My_Diary_setting_window(customtkinter.CTkToplevel):
+class My_Diary_setting_window(customtkinter.CTkToplevel, My_Diary_settings_interface.My_Diary_settings_window_interface):
     WIDTH: typing.Final[int] = 655 
     HEIGHT: typing.Final[int] = 330
     TITLE: typing.Final[str] = f"My Diary settings window"
@@ -56,6 +56,7 @@ class My_Diary_setting_window(customtkinter.CTkToplevel):
 
         self.main_screen_settings_theme_mode_option.set(theme)
 
+    @typing.override
     def __language_settings__(self: typing.Self, pickle_serializer: pickle) -> None:
         self.main_screen_settings_language_option_data: str = self.main_screen_settings_language_option.get()
         with open(f"my_diary_language_settings.pickle", f"wb+") as self.data:
@@ -70,6 +71,7 @@ class My_Diary_setting_window(customtkinter.CTkToplevel):
         else:
             tkinter.messagebox.showwarning(title=f"Внимание", message=f"Перезагрузите программу")
 
+    @typing.override
     def __theme_settings__(self: typing.Self, pickle_serializer: pickle) -> None:
         self.main_screen_settings_theme_option_data: str = self.main_screen_settings_theme_mode_option.get()
         with open(f"my_diary_theme_settings.pickle", f"wb+") as self.data:
@@ -82,4 +84,5 @@ class My_Diary_setting_window(customtkinter.CTkToplevel):
             tkinter.messagebox.showwarning(title=f"Warning", message=f"Restart program")
             
         else:
+
             tkinter.messagebox.showwarning(title=f"Внимание", message=f"Перезагрузите программу")
