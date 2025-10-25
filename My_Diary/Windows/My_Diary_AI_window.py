@@ -50,6 +50,7 @@ class AI_Window(customtkinter.CTkToplevel, My_Diary_AI_window_interface.My_Diary
 		self.ai_window_textbox.configure(state=f"disabled")
 		self.ai_window_entry.delete(f"-1", tkinter.END)
 
+	@typing.override
 	def __audio_input__(self: typing.Self) -> None:
 		try:
 			self.recognizer: speech_recognition.Recognizer = speech_recognition.Recognizer()
@@ -58,5 +59,6 @@ class AI_Window(customtkinter.CTkToplevel, My_Diary_AI_window_interface.My_Diary
 				self.text: str = self.recognizer.recognize_google(self.audio_data)
 
 			self.ai_window_entry.insert(f"0", self.text)
+
 
 		except speech_recognition.UnknownValueError: pass
