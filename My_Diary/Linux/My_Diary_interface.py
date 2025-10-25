@@ -83,5 +83,5 @@ class My_Diary_interface(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def __fullscreen__(self: typing.Self) -> None:
+    def __fullscreen__(self: typing.Self, event: str | None = None) -> None:
         pass
