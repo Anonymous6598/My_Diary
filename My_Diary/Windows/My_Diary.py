@@ -531,5 +531,4 @@ class Program(My_Diary_window.My_Diary_window, My_Diary_interface.My_Diary_inter
 
 if __name__ == f"__main__":
     program: Program = Program()
-
     program.mainloop()
