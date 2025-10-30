@@ -1,4 +1,4 @@
-import abc, typing
+import abc, typing, pickle
 
 class My_Diary_setting_window_interface(abc.ABC):
 
