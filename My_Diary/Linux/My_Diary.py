@@ -11,7 +11,6 @@ class Program(My_Diary_window.My_Diary_window, My_Diary_interface.My_Diary_inter
     TITLE: typing.Final[str] = f"My Diary"                                
     COLOR_THEME: typing.Final[str] = f"dark-blue"
     WIDGET_SCALING: typing.Final[float] = 1.251
-    THEME: typing.Final[str] = f"system"
 
     def __init__(self: typing.Self, *args, **kwargs) -> None:
         My_Diary_window.My_Diary_window.__init__(self, *args, **kwargs)
@@ -567,3 +566,4 @@ if __name__ == f"__main__":
     program: Program = Program()
 
     program.mainloop()
+
