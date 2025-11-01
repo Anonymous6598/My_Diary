@@ -8,14 +8,12 @@ class AI_Window(customtkinter.CTkToplevel, My_Diary_AI_window_interface.My_Diary
 	ICON: typing.Final[str] = f"my_diary_icon.ico"
 	COLOR_THEME: typing.Final[str] = f"dark-blue"
 	WIDGET_SCALING: typing.Final[float] = 1.251
-	THEME: typing.Final[str] = f"system"
 
 	def __init__(self: typing.Self, *args, **kwargs) -> None:
 		customtkinter.CTkToplevel.__init__(self, *args, **kwargs)
 
 		customtkinter.set_widget_scaling(self.WIDGET_SCALING)
 		customtkinter.set_default_color_theme(self.COLOR_THEME)
-		customtkinter.set_appearance_mode(self.THEME)
 		customtkinter.deactivate_automatic_dpi_awareness()
 
 		self.title(self.TITLE)
@@ -46,7 +44,7 @@ class AI_Window(customtkinter.CTkToplevel, My_Diary_AI_window_interface.My_Diary
 		self.ai_window_textbox.configure(state=f"normal")
 		self.query: str = My_Diary_AI.My_Diary_LM().__response__(self.ai_window_entry_data)
 
-		self.ai_window_textbox.insert(tkinter.END, f"USER:\n{self.ai_window_entry_data}\nGPT-4o:\n{self.query}\n", f"-1.0")
+		self.ai_window_textbox.insert(tkinter.END, f"USER:\n{self.ai_window_entry_data}\nGPT-4:\n{self.query}\n", f"-1.0")
 		self.ai_window_textbox.configure(state=f"disabled")
 		self.ai_window_entry.delete(f"-1", tkinter.END)
 

@@ -9,7 +9,6 @@ class Program(My_Diary_window.My_Diary_window, My_Diary_interface.My_Diary_inter
     TITLE: typing.Final[str] = f"My Diary"
     COLOR_THEME: typing.Final[str] = f"dark-blue"
     WIDGET_SCALING: typing.Final[float] = 1.251
-    THEME: typing.Final[str] = f"system"
     ICON: typing.Final[str] = f"my_diary_icon.ico"
 
     def __init__(self: typing.Self, *args, **kwargs) -> None:
@@ -17,7 +16,6 @@ class Program(My_Diary_window.My_Diary_window, My_Diary_interface.My_Diary_inter
 
         customtkinter.set_widget_scaling(self.WIDGET_SCALING)
         customtkinter.set_default_color_theme(self.COLOR_THEME)
-        customtkinter.set_appearance_mode(self.THEME)
         customtkinter.deactivate_automatic_dpi_awareness()
 
         self.title(self.TITLE)
