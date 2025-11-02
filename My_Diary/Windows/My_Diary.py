@@ -1,4 +1,4 @@
-import customtkinter, tkinter, tkinter.filedialog, tkinter.messagebox, pickle, os, sys, docx, typing, My_Diary_interface, My_Diary_window, CTkMenuBar, locale, My_Diary_converterer, My_Diary_PDF_viewer, speech_recognition, My_Diary_AI_window, g4f, CTkToolTip, tkinterdnd2, warnings, CTkScrollableDropdown
+import customtkinter, tkinter, tkinter.filedialog, tkinter.messagebox, pickle, os, sys, docx, typing, My_Diary_interface, My_Diary_window, CTkMenuBar, locale, My_Diary_converterer, My_Diary_PDF_viewer, My_Diary_AI_window, g4f, CTkToolTip, tkinterdnd2, warnings, CTkScrollableDropdown
 
 with open(f"my_diary_saved_text.pickle", f"rb+") as text_data: autosaved_text: str = pickle.load(text_data)
 
@@ -530,3 +530,4 @@ class Program(My_Diary_window.My_Diary_window, My_Diary_interface.My_Diary_inter
 if __name__ == f"__main__":
     program: Program = Program()
     program.mainloop()
+
