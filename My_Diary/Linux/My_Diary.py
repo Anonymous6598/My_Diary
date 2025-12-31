@@ -27,6 +27,8 @@ class Program(My_Diary_window.My_Diary_window, My_Diary_interface.My_Diary_inter
         self.bind(f"<Control_L>" + f"<s>", self.__save_text__)
         self.bind(f"<Control_L>" + f"<o>", self.__open_file__)
         self.bind(f"<Button-3>", self.__open_right_click_menu__)
+        self.bind(f"<Control_L>" + f"<t>", lambda e: self.__add_new_tab__())
+        self.bind(f"<Control_L>" + f"<w>", lambda e: self.__close_current_tab__())
         self.bind(f"<F11>", lambda event: self.__fullscreen__())
         self.protocol(f"WM_DELETE_WINDOW", self.__exit__)
 
@@ -42,14 +44,17 @@ class Program(My_Diary_window.My_Diary_window, My_Diary_interface.My_Diary_inter
 
         self.main_screen_frame_texbox_font: customtkinter.CTkFont = customtkinter.CTkFont(family=f"Ubuntu", size=22, weight=f"normal", slant=f"roman", underline=False, overstrike=False)
 
-        self.main_screen_frame_textbox: customtkinter.CTkTextbox = customtkinter.CTkTextbox(master=self, height=795, width=1536, corner_radius=0, undo=True, fg_color=f"transparent", font=self.main_screen_frame_texbox_font, text_color=(f"black", f"white"))
-        self.main_screen_frame_textbox.pack(expand=True, fill=f"both")
+        self.tabview: customtkinter.CTkTabview = customtkinter.CTkTabview(master=self, corner_radius=0)
+        self.tabview.pack(expand=True, fill=f"both")
+        
+        self.tab_counter: int = 1
+        self.__add_new_tab__()
 
-        self.main_screen_frame_textbox.drop_target_register(tkinterdnd2.DND_ALL)
-        self.main_screen_frame_textbox.dnd_bind(f"<<Drop>>", self.__drop_file_into_textbox__)
+        self.__get_current_textbox__().drop_target_register(tkinterdnd2.DND_ALL)
+        self.__get_current_textbox__().dnd_bind(f"<<Drop>>", self.__drop_file_into_textbox__)
 
-        self.main_screen_frame_textbox.bind(f"<KeyRelease>", self.__word_count__)
-        self.main_screen_frame_textbox.bind(f"<F1>", self.__html_script__)
+        self.__get_current_textbox__().bind(f"<KeyRelease>", self.__word_count__)
+        self.__get_current_textbox__().bind(f"<F1>", self.__html_script__)
         
         self.main_screen_edit_text_window: customtkinter.CTkToplevel = customtkinter.CTkToplevel()
         
@@ -80,6 +85,10 @@ class Program(My_Diary_window.My_Diary_window, My_Diary_interface.My_Diary_inter
         self.main_screen_menu_submenu: CTkMenuBar.CustomDropdownMenu = CTkMenuBar.CustomDropdownMenu(widget=self.main_screen_menu_menu_button, fg_color=f"transparent")
 
         if language_data == f"Српски":
+            self.main_screen_new_tab_button: customtkinter.CTkButton = self.main_screen_menu_submenu.add_option(option=f"нова картица", command=self.__add_new_tab__)
+            
+            self.main_screen_close_tab_button: customtkinter.CTkButton = self.main_screen_menu_submenu.add_option(option=f"затвори картицу", command=self.__close_current_tab__)
+            
             self.main_screen_save_button: customtkinter.CTkButton = self.main_screen_menu_submenu.add_option(option=f"сачувај текст", command=self.__save_text__)
 
             self.main_screen_open_button: customtkinter.CTkButton = self.main_screen_menu_submenu.add_option(option=f"отвори фајл", command=self.__open_file__)
@@ -127,15 +136,19 @@ class Program(My_Diary_window.My_Diary_window, My_Diary_interface.My_Diary_inter
             self.main_screen_right_click_menu.add_command(label=f"изађи", command=self.__exit__)
 
         elif language_data == f"Русский":
-            self.main_screen_save_button: customtkinter.CTkButton = self.main_screen_title_menu_submenu.add_option(option=f"сохранить текст", command=self.__save_text__)
+            self.main_screen_new_tab_button: customtkinter.CTkButton = self.main_screen_menu_submenu.add_option(option=f"новая вкладка", command=self.__add_new_tab__)
+            
+            self.main_screen_close_tab_button: customtkinter.CTkButton = self.main_screen_menu_submenu.add_option(option=f"закрыть вкладку", command=self.__close_current_tab__)
+            
+            self.main_screen_save_button: customtkinter.CTkButton = self.main_screen_menu_submenu.add_option(option=f"сохранить текст", command=self.__save_text__)
 
-            self.main_screen_open_button: customtkinter.CTkButton = self.main_screen_title_menu_submenu.add_option(option=f"открыть текст", command=self.__open_file__)
+            self.main_screen_open_button: customtkinter.CTkButton = self.main_screen_menu_submenu.add_option(option=f"открыть текст", command=self.__open_file__)
         
-            self.main_screen_clear_button: customtkinter.CTkButton = self.main_screen_title_menu_submenu.add_option(option=f"удалить текст", command=self.__clear_text__)
+            self.main_screen_clear_button: customtkinter.CTkButton = self.main_screen_menu_submenu.add_option(option=f"удалить текст", command=self.__clear_text__)
         
-            self.main_screen_edit_text_button: customtkinter.CTkButton = self.main_screen_title_menu_submenu.add_option(option=f"отредактировать текст", command=self.__edit_text__)
+            self.main_screen_edit_text_button: customtkinter.CTkButton = self.main_screen_menu_submenu.add_option(option=f"отредактировать текст", command=self.__edit_text__)
         
-            self.main_screen_converter_button: CTkMenuBar.CustomDropdownMenu = self.main_screen_title_menu_submenu.add_submenu(f"конвертер")
+            self.main_screen_converter_button: CTkMenuBar.CustomDropdownMenu = self.main_screen_menu_submenu.add_submenu(f"конвертер")
         
             self.main_screen_pdf_to_word_converter_button: customtkinter.CTkButton  = self.main_screen_converter_button.add_option(f"из PDF в docx", command=My_Diary_converterer.My_Diary_converterer.pdf_to_docx)
 
@@ -174,6 +187,10 @@ class Program(My_Diary_window.My_Diary_window, My_Diary_interface.My_Diary_inter
             self.main_screen_right_click_menu.add_command(label=f"выйти", command=self.__exit__)
 
         else:
+            self.main_screen_new_tab_button: customtkinter.CTkButton = self.main_screen_menu_submenu.add_option(option=f"new tab", command=self.__add_new_tab__)
+            
+            self.main_screen_close_tab_button: customtkinter.CTkButton = self.main_screen_menu_submenu.add_option(option=f"close tab", command=self.__close_current_tab__)
+            
             self.main_screen_save_button: customtkinter.CTkButton = self.main_screen_menu_submenu.add_option(option=f"save", command=self.__save_text__)
 
             self.main_screen_open_button: customtkinter.CTkButton = self.main_screen_menu_submenu.add_option(option=f"open", command=self.__open_file__)
@@ -221,7 +238,7 @@ class Program(My_Diary_window.My_Diary_window, My_Diary_interface.My_Diary_inter
             self.main_screen_right_click_menu.add_command(label=f"exit", command=self.__exit__)
 
         self.bind(f"<KeyRelease>", self.__text_autosave__)
-        self.main_screen_frame_textbox.bind(f"<F2>", self.__enter_text_autosave__)
+        self.__get_current_textbox__().bind(f"<F2>", self.__enter_text_autosave__)
 
         self.main_screen_menu_summary_button: customtkinter.CTkButton = self.main_screen_menu_submenu.add_option(option=f"long story short", command=self.__text_summary__)
 
@@ -251,15 +268,53 @@ class Program(My_Diary_window.My_Diary_window, My_Diary_interface.My_Diary_inter
             self.main_screen_title_menu_menu_button_tooltip: CTkToolTip.CTkToolTip = CTkToolTip.CTkToolTip(self.main_screen_menu_menu_button, message=f"menu")
             self.main_screen_title_menu_summary_button_tooltip: CTkToolTip.CTkToolTip = CTkToolTip.CTkToolTip(self.main_screen_menu_summary_button, message=f"short story of text")
 
+    def __add_new_tab__(self: typing.Self, name: str = None) -> customtkinter.CTkTextbox:
+        if name is None:
+            name = f"Tab {self.tab_counter}"
+            self.tab_counter += 1
+        
+        tab = self.tabview.add(name)
+        
+        textbox = customtkinter.CTkTextbox(master=tab, corner_radius=0, undo=True, fg_color=f"transparent", font=self.main_screen_frame_texbox_font, text_color=(f"black", f"white"))
+        textbox.pack(expand=True, fill=f"both")
+        
+        textbox.drop_target_register(tkinterdnd2.DND_ALL)
+        textbox.dnd_bind(f"<<Drop>>", self.__drop_file_into_textbox__)
+        
+        textbox.bind(f"<KeyRelease>", self.__word_count__)
+        textbox.bind(f"<F1>", self.__html_script__)
+        textbox.bind(f"<F2>", self.__enter_text_autosave__)
+        
+        self.tabview.set(name)
+        
+        return textbox
+
+    def __get_current_textbox__(self: typing.Self) -> customtkinter.CTkTextbox:
+        current_tab_name = self.tabview.get()
+        current_tab = self.tabview.tab(current_tab_name)
+        
+        for widget in current_tab.winfo_children():
+            if isinstance(widget, customtkinter.CTkTextbox):
+                return widget
+        return None
+
+    def __close_current_tab__(self: typing.Self) -> None:
+        if len(self.tabview._tab_dict) > 1:
+            current_tab = self.tabview.get()
+            self.tabview.delete(current_tab)
+            self.tab_counter -= 1
+        else:
+            self.__get_current_textbox__().delete(f"1.0", tkinter.END)
+
     @typing.override
     def __undo__(self: typing.Self) -> None:
-        try: self.main_screen_frame_textbox.edit_undo()
+        try: self.__get_current_textbox__().edit_undo()
 
         except tkinter.TclError: pass
 
     @typing.override		
     def __redo__(self: typing.Self) -> None:
-        try: self.main_screen_frame_textbox.edit_redo()
+        try: self.__get_current_textbox__().edit_redo()
 
         except tkinter.TclError: pass
 
@@ -270,7 +325,7 @@ class Program(My_Diary_window.My_Diary_window, My_Diary_interface.My_Diary_inter
             case ".docx":
                 try:
                     self.file: docx.Document = docx.Document()
-                    self.file_data: str = self.main_screen_frame_textbox.get(f"1.0", tkinter.END)
+                    self.file_data: str = self.__get_current_textbox__().get(f"1.0", tkinter.END)
                     self.file_run: docx.Document = self.file.add_paragraph().add_run(self.file_data)
                     self.font: docx.Document = self.file_run.font
                     self.font.name: str = self.main_screen_edit_font_button_data
@@ -316,7 +371,7 @@ class Program(My_Diary_window.My_Diary_window, My_Diary_interface.My_Diary_inter
 
                 except AttributeError:
                     self.file: docx.Document = docx.Document()
-                    self.file_data: str = self.main_screen_frame_textbox.get(f"1.0", tkinter.END)
+                    self.file_data: str = self.__get_current_textbox__().get(f"1.0", tkinter.END)
                     self.file_run: docx.Document = self.file.add_paragraph().add_run(self.file_data)
                     self.font: docx.Document = self.file_run.font
                     self.font.size: docx.shared.Pt = docx.shared.Pt(14)
@@ -330,7 +385,7 @@ class Program(My_Diary_window.My_Diary_window, My_Diary_interface.My_Diary_inter
             case ".pickle":
                 with open(self.file_name, f"wb+") as self.file:
                     try:
-                        self.file_data: str = self.main_screen_frame_textbox.get("1.0", tkinter.END)
+                        self.file_data: str = self.__get_current_textbox__().get("1.0", tkinter.END)
                         pickle.dump(self.file_data, self.file)
                     
                     except FileNotFoundError: pass
@@ -338,14 +393,14 @@ class Program(My_Diary_window.My_Diary_window, My_Diary_interface.My_Diary_inter
             case _:
                 with open(self.file_name, f"w+", encoding=f"UTF-8") as self.file:
                     try:
-                        self.file_data: str = self.main_screen_frame_textbox.get("1.0", tkinter.END)
+                        self.file_data: str = self.__get_current_textbox__().get("1.0", tkinter.END)
                         self.file.write(self.file_data)
                     
                     except FileNotFoundError: pass
 
     @typing.override
     def __clear_text__(self: typing.Self) -> None:
-        self.main_screen_frame_textbox.delete(f"1.0", tkinter.END)
+        self.__get_current_textbox__().delete(f"1.0", tkinter.END)
     
     @typing.override
     def __edit_text__(self: typing.Self) -> None:
@@ -392,14 +447,14 @@ class Program(My_Diary_window.My_Diary_window, My_Diary_interface.My_Diary_inter
                     self.openned_file_data: list[str] = []
                     for self.paragraphs in self.openned_file.paragraphs: self.openned_file_data.append(self.paragraphs.text)
 
-                    self.main_screen_frame_textbox.insert(f"1.0", f"\n".join(self.openned_file_data))
+                    self.__get_current_textbox__().insert(f"1.0", f"\n".join(self.openned_file_data))
 
                 except docx.opc.exceptions.PackageNotFoundError: pass
             
             case ".pickle":
                 try:
                     with open(self.opened_name_file, f"rb+") as self.openned_file:
-                        self.main_screen_frame_textbox.insert(f"1.0", pickle.load(self.openned_file))
+                        self.__get_current_textbox__().insert(f"1.0", pickle.load(self.openned_file))
 
                 except FileNotFoundError: pass
                 
@@ -411,7 +466,7 @@ class Program(My_Diary_window.My_Diary_window, My_Diary_interface.My_Diary_inter
             case _:
                 try:
                     with open(self.opened_name_file, f"r+", encoding=f"UTF-8") as self.openned_file:
-                        self.main_screen_frame_textbox.insert(f"1.0", self.openned_file.read())
+                        self.__get_current_textbox__().insert(f"1.0", self.openned_file.read())
 
                 except FileNotFoundError: pass
 
@@ -422,40 +477,40 @@ class Program(My_Diary_window.My_Diary_window, My_Diary_interface.My_Diary_inter
 
     @typing.override
     def __enter_text_autosave__(self: typing.Self, event: str | None = None) -> None:
-        self.main_screen_frame_textbox.insert(f"1.0", autosaved_text)
+        self.__get_current_textbox__().insert(f"1.0", autosaved_text)
 
     @typing.override
     def __word_count__(self: typing.Self, event: str | None = None) -> None:
-        self.main_screen_frame_textbox_data: str = self.main_screen_frame_textbox.get(f"0.0", tkinter.END)
+        self.main_screen_frame_textbox_data: str = self.__get_current_textbox__().get(f"0.0", tkinter.END)
         self.main_screen_word_counter_data_variable.set(value=len(self.main_screen_frame_textbox_data.split()))
 
     @typing.override
     def __word_count_show__(self: typing.Self) -> None:
         if language_data == f"Српски":
-            tkinter.messagebox.showinfo(title=f"речи", message=f"речи: {len(self.main_screen_frame_textbox.get(f'1.0', tkinter.END).split())}")
+            tkinter.messagebox.showinfo(title=f"речи", message=f"речи: {len(self.__get_current_textbox__().get(f'1.0', tkinter.END).split())}")
             
         elif language_data == f"Русский":
-            tkinter.messagebox.showinfo(title=f"слов", message=f"слов: {len(self.main_screen_frame_textbox.get(f'1.0', tkinter.END).split())}")
+            tkinter.messagebox.showinfo(title=f"слов", message=f"слов: {len(self.__get_current_textbox__().get(f'1.0', tkinter.END).split())}")
             
         else:
-            tkinter.messagebox.showinfo(title=f"words", message=f"words: {len(self.main_screen_frame_textbox.get(f'1.0', tkinter.END).split())}")
+            tkinter.messagebox.showinfo(title=f"words", message=f"words: {len(self.__get_current_textbox__().get(f'1.0', tkinter.END).split())}")
 
     @typing.override
     def __drop_file_into_textbox__(self: typing.Self, event: str | None = None) -> None:
-        self.main_screen_frame_textbox.delete(f"1.0", tkinter.END)
+        self.__get_current_textbox__().delete(f"1.0", tkinter.END)
         if event.data.endswith(f".docx"):
             try:
                 self.openned_file: docx.Document = docx.Document(event.data)
                 self.openned_file_data: list[str] = []
                 for self.paragraphs in self.openned_file.paragraphs: self.openned_file_data.append(self.paragraphs.text)
 
-                self.main_screen_frame_textbox.insert(f"1.0", f"\n".join(self.openned_file_data))
+                self.__get_current_textbox__().insert(f"1.0", f"\n".join(self.openned_file_data))
 
             except docx.opc.exceptions.PackageNotFoundError: pass
 
         elif event.data.endswith(f".pickle"):
             try:
-                with open(event.data, f"rb+") as self.openned_file: self.main_screen_frame_textbox.insert(f"1.0", pickle.load(self.openned_file))
+                with open(event.data, f"rb+") as self.openned_file: self.__get_current_textbox__().insert(f"1.0", pickle.load(self.openned_file))
 
             except FileNotFoundError: pass
             
@@ -466,16 +521,16 @@ class Program(My_Diary_window.My_Diary_window, My_Diary_interface.My_Diary_inter
 
         elif os.path.isfile(event.data):
             try:
-                with open(event.data, f"r+", encoding=f"UTF-8") as self.openned_file: self.main_screen_frame_textbox.insert(f"1.0", self.openned_file.read())
+                with open(event.data, f"r+", encoding=f"UTF-8") as self.openned_file: self.__get_current_textbox__().insert(f"1.0", self.openned_file.read())
 
             except FileNotFoundError: pass
 
         else:
-            self.main_screen_frame_textbox.insert(f"1.0", event.data)
+            self.__get_current_textbox__().insert(f"1.0", event.data)
 
     @typing.override
     def __html_script__(self: typing.Self, event: str | None = None) -> None:
-        self.main_screen_frame_textbox.insert(f"0.0", f"<!DOCTYPE html> \n  \n  <html lang='en'> \n <head> \n <meta charset='utf-8' /> \n <title></title> \n </head> \n <body> \n \n </body> \n </html>")	  																																			   
+        self.__get_current_textbox__().insert(f"0.0", f"<!DOCTYPE html> \n  \n  <html lang='en'> \n <head> \n <meta charset='utf-8' /> \n <title></title> \n </head> \n <body> \n \n </body> \n </html>")	  																																			   
 
     @typing.override
     def __open_right_click_menu__(self: typing.Self, event: str | None = None) -> None:
@@ -483,23 +538,23 @@ class Program(My_Diary_window.My_Diary_window, My_Diary_interface.My_Diary_inter
 
     @typing.override
     def __cut__(self: typing.Self) -> None:
-        self.selected_text: str = self.main_screen_frame_textbox.selection_get()
-        self.main_screen_frame_textbox.delete(f"sel.first", f"sel.last")
+        self.selected_text: str = self.__get_current_textbox__().selection_get()
+        self.__get_current_textbox__().delete(f"sel.first", f"sel.last")
         self.clipboard_clear()
         self.clipboard_append(self.selected_text)
 
     @typing.override
     def __copy__(self: typing.Self) -> None:
-        self.selected_text: str = self.main_screen_frame_textbox.selection_get()
+        self.selected_text: str = self.__get_current_textbox__().selection_get()
         self.clipboard_clear()
         self.clipboard_append(self.selected_text)
 
     @typing.override
     def __paste__(self: typing.Self) -> None:
         try:
-            self.cursor_position: int = self.main_screen_frame_textbox.index(tkinter.INSERT)
+            self.cursor_position: int = self.__get_current_textbox__().index(tkinter.INSERT)
             self.clipboard_text: str = self.clipboard_get()
-            self.main_screen_frame_textbox.insert(self.cursor_position, self.clipboard_text)
+            self.__get_current_textbox__().insert(self.cursor_position, self.clipboard_text)
         
         except tkinter.TclError:
             pass
@@ -528,7 +583,7 @@ class Program(My_Diary_window.My_Diary_window, My_Diary_interface.My_Diary_inter
             self.text_topic_input: customtkinter.CTkInputDialog = customtkinter.CTkInputDialog(title=f"new text", text=f"enter text topic")
 
         self.create_text: str = g4f.ChatCompletion.create(model=f"gpt-4o", messages=[{f"role": f"system", f"content": f"Create text based on user prompt:"}, {f"role": f"user", f"content": self.text_topic_input.get_input()}])
-        self.main_screen_frame_textbox.insert(f"1.0", self.create_text)
+        self.__get_current_textbox__().insert(f"1.0", self.create_text)
 
     @typing.override
     def __fullscreen__(self: typing.Self) -> None:
