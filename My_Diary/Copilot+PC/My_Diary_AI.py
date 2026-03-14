@@ -19,15 +19,14 @@ class My_Diary_LM(My_Diary_AI_interface.My_Diary_AI_interface):
     def __response__(self: typing.Self, pipe: openvino_genai.LLMPipeline = None, query: str = None) -> str:
         self.config: openvino_genai.GenerationConfig = openvino_genai.GenerationConfig()
         self.config.max_new_tokens = 1024
-        self.config.temperature = 0.3
+        self.config.temperature = 0.7
         self.config.top_p = 0.5
-        self.config.top_k = 1
+        self.config.top_k = 50
         self.config.repetition_penalty = 1.1
         self.config.num_return_sequences = 1
         self.config.num_beams = 1
         self.config.num_return_sequences = 1
-        self.config.do_sample = False
-        self.config.eos_token_id = -1
+        self.config.do_sample = True
 
 
         self.result: str = pipe.generate(query, self.config)
