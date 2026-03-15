@@ -1,4 +1,4 @@
-import customtkinter, tkinter, tkinter.filedialog, tkinter.messagebox, pickle, os, sys, docx, typing, My_Diary_interface, My_Diary_window, CTkMenuBar, My_Diary_converterer, My_Diary_PDF_viewer, speech_recognition, CTkToolTip, tkinterdnd2, warnings, CTkScrollableDropdown, My_Diary_AI, My_Diary_AI_window_interface, threading
+import customtkinter, tkinter, tkinter.filedialog, tkinter.messagebox, pickle, os, sys, docx, typing, My_Diary_interface, My_Diary_window, CTkMenuBar, My_Diary_converterer, My_Diary_PDF_viewer, speech_recognition, CTkToolTip, tkinterdnd2, warnings, CTkScrollableDropdown, My_Diary_AI, My_Diary_AI_window_interface, threading, ctk_markdown
 
 with open(f"my_diary_saved_text.pickle", f"rb+") as text_data: autosaved_text: str = pickle.load(text_data)
 
@@ -458,7 +458,7 @@ class AI_Window(customtkinter.CTkToplevel, My_Diary_AI_window_interface.My_Diary
         self.resizable(False, False)
         self.after(250, lambda: self.iconbitmap(self.ICON))
 
-        self.ai_window_textbox: customtkinter.CTkTextbox = customtkinter.CTkTextbox(master=self, height=265, width=524, corner_radius=0, fg_color=f"transparent", text_color=(f"black", f"white"))
+        self.ai_window_textbox: ctk_markdown.CTkMarkdown = ctk_markdown.CTkMarkdown(master=self, height=265, width=524, corner_radius=0, fg_color=f"transparent", text_color=(f"black", f"white"))
         self.ai_window_textbox.place(x=0, y=0)
         self.ai_window_textbox.configure(state=f"disabled")
 
@@ -483,6 +483,7 @@ class AI_Window(customtkinter.CTkToplevel, My_Diary_AI_window_interface.My_Diary
             def update_gui():
                 self.ai_window_textbox.configure(state="normal")
                 self.ai_window_textbox.insert(tkinter.END, f"USER:\n{self.ai_window_entry_data}\nLlama:\n{response_text}\n")
+                self.ai_window_textbox.set_markdown(self.ai_window_textbox.get(f"1.0", tkinter.END))
                 self.ai_window_textbox.configure(state="disabled")
                 self.ai_window_entry.delete(0, tkinter.END)
 
